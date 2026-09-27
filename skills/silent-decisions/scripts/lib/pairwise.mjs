@@ -44,6 +44,14 @@ export function contrariesOf(b) {
 // spurious; the real one (same-account transfer) came from the primary contrary, and the failing
 // reverse probe confirmed it. "all" keeps the run 002 behaviour.
 export const CONTRARY_MODES = ['primary', 'all'];
+
+// Sourcing needs more confidence than contradicting or realising. Across four ledger extractions
+// (runs 002, 003a-c) every pair that sourced a real silent decision from a generic sentence
+// ("Customers can withdraw funds" -> "withdrawing the whole balance is allowed") scored 0.72-0.85,
+// and the correct sole sources scored 0.87 or more with three exceptions. Below this value a
+// "requires what the code does" answer still links the statement as realised, but sources nothing.
+// Tuned on the ledger case: it has to hold on other cases before it means anything.
+export const DEFAULT_SOURCE_THRESHOLD = 0.86;
 export const contrariesFor = (b, mode = 'primary') => (mode === 'all' ? contrariesOf(b) : contrariesOf(b).slice(0, 1));
 
 // Request id for a pair. Contrary 0 keeps the original id shape so older fixtures and traces still read.
@@ -93,7 +101,7 @@ export function callClassifier(cmd, requests, timeoutSec) {
  * outcome and the lower of the two confidences clears the threshold. Labels that move with
  * the position, or answers below threshold, count as "neither" (default to unsourced).
  */
-export function assemble(statements, behaviours, answers, threshold, { contraries: mode = 'primary' } = {}) {
+export function assemble(statements, behaviours, answers, threshold, { contraries: mode = 'primary', sourceThreshold = threshold } = {}) {
   const types = statements.filter((s) => s.source === 'plan').map((s) => {
     const a = answers.get(`type|${s.id}`);
     return { id: s.id, type: TYPE_LABELS.includes(a && a.label) ? a.label : 'behavioural' };
@@ -117,6 +125,7 @@ export function assemble(statements, behaviours, answers, threshold, { contrarie
       if (ans.label === 'neither') return 'neither';
       return (ans.label === 'a') !== swapped ? 'code' : 'contrary';
     };
+    const linkedOnly = [];
     for (const s of statements) {
       // Sourcing is the flip test against the primary contrary only (k = 0), exactly as before.
       // The extra contraries exist to catch contradictions, and must not source anything: against
@@ -136,11 +145,13 @@ export function assemble(statements, behaviours, answers, threshold, { contrarie
         else if (x !== y) note = 'position-dependent answer, discarded';
         else if (x !== 'neither' && conf < threshold) note = `below threshold (${conf.toFixed(2)} < ${threshold})`;
         else outcome = x;
+        if (outcome === 'code' && k === 0 && conf < sourceThreshold) note = `below sourcing threshold (${conf.toFixed(2)} < ${sourceThreshold}): realised, not sourced`;
         pairs.push({ behaviour_id: b.id, statement_id: s.id, contrary: k, contrary_source: c.source, outcome, confidence: conf, ...(note ? { note } : {}) });
         if (outcome === 'contrary') sOutcome = 'contrary';
-        else if (outcome === 'code' && k === 0 && sOutcome === 'neither') sOutcome = 'code';
+        else if (outcome === 'code' && k === 0 && sOutcome === 'neither') sOutcome = conf >= sourceThreshold ? 'code' : 'linked';
       });
       if (sOutcome === 'code') supporting.push(s);
+      if (sOutcome === 'linked') linkedOnly.push(s);
       if (sOutcome === 'contrary') contradicting.push(s);
     }
     const quotes = supporting.map((s) => ({ statement_id: s.id, text: s.text }));
@@ -158,7 +169,7 @@ export function assemble(statements, behaviours, answers, threshold, { contrarie
     for (const s of statements) {
       const r = answers.get(`realises|${b.id}|${s.id}`);
       const yes = r && r.label === 'yes' && (Number(r.confidence) || 0) >= threshold;
-      if (yes || supporting.includes(s)) {
+      if (yes || supporting.includes(s) || linkedOnly.includes(s)) {
         if (!reverse.has(s.id)) reverse.set(s.id, []);
         reverse.get(s.id).push(b.id);
       }
@@ -188,6 +199,7 @@ export function tracePairwise(args) {
   const threshold = Number(args.threshold || process.env.SD_CLASSIFIER_THRESHOLD || 0.7);
   const loo = Boolean(args.loo);
   const mode = String(args.contraries || process.env.SD_CONTRARIES || 'primary');
+  const sourceThreshold = Number(args['source-threshold'] || process.env.SD_SOURCE_THRESHOLD || Math.max(threshold, DEFAULT_SOURCE_THRESHOLD));
   if (!CONTRARY_MODES.includes(mode)) fail(`--contraries must be one of ${CONTRARY_MODES.join(', ')}`);
 
   const stPath = loo ? path.join(runDir, 'loo', 'plan.statements.redacted.json') : path.join(runDir, 'plan.statements.json');
@@ -204,8 +216,8 @@ export function tracePairwise(args) {
     return;
   }
   const answers = callClassifier(cmd, requests, Number(args.timeout || 1800));
-  const trace = assemble(statements, behaviours, answers, threshold, { contraries: mode });
-  trace.classifier = { command: cmd, threshold, contraries: mode, requests: requests.length, answered: answers.size };
+  const trace = assemble(statements, behaviours, answers, threshold, { contraries: mode, sourceThreshold });
+  trace.classifier = { command: cmd, threshold, source_threshold: sourceThreshold, contraries: mode, requests: requests.length, answered: answers.size };
   const outPath = loo ? path.join(runDir, 'loo', 'trace.json') : path.join(runDir, 'trace.json');
   writeJson(outPath, trace);
   const n = (v) => trace.forward.filter((f) => f.verdict === v).length;

@@ -1,0 +1,41 @@
+{
+  "case": "ledger",
+  "truth_version": 2,
+  "arm": "e",
+  "adjudicator": "Claude (Opus 5.5, local session), 2026-09-27. NOT blind to the arm; re-check before publishing.",
+  "legend": "value = truth id the flagged item is the same decision as; 'valid' = a real silent decision the truth file does not list (neither TP nor FP); 'invalid' = not a real silent decision (FP).",
+  "run": "replay of b at source threshold 0.86",
+  "items": {
+    "B-001": "T5",
+    "B-003": "T5",
+    "B-004": "T5",
+    "B-005": "valid",
+    "B-009": "T3",
+    "B-010": "T3",
+    "B-016": "T4",
+    "B-017": "T1",
+    "B-019": "T8",
+    "B-020": "T5",
+    "B-021": "T2",
+    "B-022": "T2",
+    "B-023": "T2",
+    "B-024": "T2",
+    "B-025": "T11",
+    "B-026": "T2",
+    "B-027": "T9",
+    "B-028": "T11",
+    "B-032": "T1",
+    "B-033": "T1",
+    "B-034": "T10",
+    "B-035": "T10",
+    "B-036": "T3",
+    "B-037": "T5",
+    "B-038": "T6",
+    "B-002": "T7",
+    "B-013": "T4",
+    "B-018": "T1"
+  },
+  "notes": [
+    "Replay: extraction, classifier answers and probes reused; sourcing re-derived at 0.86; leave-one-out re-traced. Items as the original adjudication plus the newly flagged ones."
+  ]
+}

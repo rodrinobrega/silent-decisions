@@ -127,3 +127,29 @@ test('runs 001-002 regression: a statement typed process or structural cannot so
   assert.equal(b008.verdict, 'stated', 'a behavioural statement still sources');
   assert.equal(nonSourcingStatements({ statements: [{ id: 'X', type: 'untyped' }] }).size, 0, 'untyped statements stay eligible');
 });
+
+test('run 003 regression: a generic sentence at middling confidence realises but does not source', async () => {
+  const { DEFAULT_SOURCE_THRESHOLD } = await import(path.join(root, 'skills/silent-decisions/scripts/lib/pairwise.mjs'));
+  // Run 003a: "Customers can withdraw funds" sourced "withdrawing exactly the whole balance is allowed"
+  // (a no-overdraft boundary, truth T1) at 0.76, hiding it. Correct sources (P-005 on invalid amounts)
+  // scored 0.92-0.99.
+  const st = [
+    { id: 'P-004', text: 'Customers can withdraw funds from an account.', source: 'plan' },
+    { id: 'P-005', text: 'An amount must be a positive number, otherwise the operation is rejected.', source: 'plan' },
+  ];
+  const bs = [
+    { id: 'B-012', given: "'A' has 100", when: '100 is withdrawn', then: 'ok; balance is 0', contrary_then: 'the withdrawal is rejected as insufficient-funds' },
+    { id: 'B-016', given: "'A' has 100", when: '0 is withdrawn', then: "rejected with 'invalid-amount'", contrary_then: 'the zero withdrawal is accepted' },
+  ];
+  const ans = new Map(Object.entries({
+    'pair|B-012|P-004|ab': { label: 'a', confidence: 0.76 }, 'pair|B-012|P-004|ba': { label: 'b', confidence: 0.76 },
+    'pair|B-016|P-005|ab': { label: 'a', confidence: 0.97 }, 'pair|B-016|P-005|ba': { label: 'b', confidence: 0.97 },
+  }));
+  const t = assemble(st, bs, ans, 0.7, { sourceThreshold: DEFAULT_SOURCE_THRESHOLD });
+  const f = (id) => t.forward.find((x) => x.behaviour_id === id);
+  assert.equal(f('B-012').verdict, 'unsourced');
+  assert.equal(f('B-016').verdict, 'stated');
+  assert.deepEqual(t.reverse.find((r) => r.statement_id === 'P-004').realised_by, ['B-012'], 'still realised');
+  assert.match(t.pairs.find((p) => p.behaviour_id === 'B-012').note, /below sourcing threshold/);
+  assert.equal(assemble(st, bs, ans, 0.7).forward.find((x) => x.behaviour_id === 'B-012').verdict, 'stated', 'without it, the old behaviour');
+});
