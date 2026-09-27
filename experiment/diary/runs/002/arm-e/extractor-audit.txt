@@ -1,0 +1,9 @@
+# Extractor tool calls, reconstructed from the Claude Code session transcript (no audit hook installed)
+# session 7f8b78d8-72f4-4521-9fd7-b3b47c5ae551.jsonl · cwd /private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-YbQ9EU · first event 2026-09-27T13:03:17.700Z
+Bash {"command":"cd /private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-YbQ9EU; find . -type f | grep -v node_modules | head -100; cat census.json; ls out; cat census.uncovered.json 2>/dev/null","description":"List files and census"}
+Read {"file_path":"/private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-YbQ9EU/cleanroom/src/ledger.ts"}
+Bash {"command":"cd /private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-YbQ9EU; grep -rao 'SDN-[0-9a-fA-F]*' . ; sed -n '1p;12p;40p;55p' cleanroom/src/ledger.ts | od -c | head -20","description":"Search for nonces and inspect whitespace lines"}
+Write {"file_path":"/private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-YbQ9EU/out/behaviours.json","content":"<42509 chars>"}
+Bash {"command":"node -e \"const j=require('/private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-YbQ9EU/out/behaviours.json');console.log(j.behaviours.length, [...new Set(j.behaviours.flatMap(b=>b.covers))].sort().join(','))\"","description":"Validate JSON and coverage"}
+  -> denied: requires approval
+# occurrences of "plan.md" anywhere in the session: 0

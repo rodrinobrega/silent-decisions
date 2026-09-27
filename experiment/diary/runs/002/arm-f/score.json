@@ -3,7 +3,7 @@
   "case": "ledger",
   "truth_version": 2,
   "run": "20260927T130801-7c4caf",
-  "scored_at": "2026-09-27T13:11:49.593Z",
+  "scored_at": "2026-09-27T13:08:07.198Z",
   "cost": "6s wall",
   "silent_decisions": {
     "truth": 10,
@@ -197,30 +197,5 @@
       "P-009",
       "P-010"
     ]
-  },
-  "decision_level": {
-    "adjudicator": "Claude (Opus 5.5, local session), 2026-09-27. NOT blind to the arm; re-check before publishing.",
-    "truth_version": 2,
-    "found": [
-      "T1",
-      "T2",
-      "T3",
-      "T4",
-      "T5",
-      "T7"
-    ],
-    "missed": [
-      "T8",
-      "T9",
-      "T10",
-      "T11"
-    ],
-    "recall": 0.6,
-    "recall_without_post_hoc": 1,
-    "precision": 1,
-    "valid_unlisted": [],
-    "misbucketed": [],
-    "false_positives": [],
-    "unadjudicated": []
   }
 }

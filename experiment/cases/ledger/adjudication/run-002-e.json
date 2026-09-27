@@ -1,0 +1,21 @@
+{
+  "case": "ledger", "truth_version": 2, "run": "002", "arm": "e",
+  "adjudicator": "Claude (Opus 5.5, local session), 2026-09-27. NOT blind to the arm; re-check before publishing.",
+  "legend": "value = truth id the flagged item is the same decision as; 'valid' = a real silent decision the truth file does not list (neither TP nor FP); 'invalid' = not a real silent decision (FP).",
+  "items": {
+    "B-001": "valid", "B-003": "T5", "B-004": "T5", "B-009": "T4", "B-011": "T3", "B-012": "T3",
+    "B-013": "T8", "B-016": "T1", "B-017": "T1", "B-018": "T5", "B-021": "T4", "B-022": "T2",
+    "B-023": "T2", "B-024": "T2", "B-025": "T2", "B-027": "T11", "B-028": "T9", "B-029": "T8",
+    "B-034": "T10", "B-035": "T10", "B-037": "T5", "B-038": "T6", "B-039": "T3", "B-040": "valid"
+  },
+  "notes": [
+    "B-038 is T6 (P-007), flagged in the silent bucket AND reported as a dropped requirement through the failing P-007 probe. Same double report as run 001's B-033, but this time the dropped bucket is right too.",
+    "T4 found for the first time: B-009 (txnId reused by another account) and B-021 (withdrawal reusing a deposit's txnId) are repeated txnIds with a different payload, acknowledged and ignored.",
+    "T7 missed again: B-002 (re-opening an existing account keeps its balance) sourced by P-010, the out-of-scope sentence, at 0.92. Same over-match as run 001's B-011.",
+    "B-004, B-018, B-037 (operations on a never-opened account open it implicitly) mapped to T5 following run 001's precedent for B-027. Implicit open on deposit/transfer is arguably its own decision; candidate truth item, not added (truth edits need Rodrigo).",
+    "B-029 (withdrawal rounded before the limit check) mapped to T8 following run 001's precedent for B-015 (rounded before the funds check). Loose fit; it could be T3 instead. Recall is unaffected either way.",
+    "B-001 (a new account starts at 0 with no opening entry) counted valid but weak: whether open() is an 'accepted operation' that P-008 wants recorded is genuinely unspecified. The trace flagged P-008 as contradicted by it; the P-008 probe (deposit + withdraw) passed, which does not settle open().",
+    "B-040 (entries() returns a copy) valid, as run 001's B-012.",
+    "Hidden by sourcing (not flagged, so not scored), for the record: B-019 'rejected withdrawal does not consume its txnId' (T11) sourced by P-004 'Customers can withdraw funds'; B-026 'daily limit per account' (T2) by P-004; B-032 'transfer over balance rejected' (T1) by P-007; B-033 'transfer of the whole balance allowed' (T1) by P-006. All via the primary contrary (k=0). T11, T2, T1 are still found through other scenarios."
+  ]
+}

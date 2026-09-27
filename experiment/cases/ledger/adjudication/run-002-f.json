@@ -1,0 +1,13 @@
+{
+  "case": "ledger", "truth_version": 2, "run": "002", "arm": "f",
+  "adjudicator": "Claude (Opus 5.5, local session), 2026-09-27. NOT blind to the arm; re-check before publishing.",
+  "legend": "see run-002-e.json",
+  "items": {
+    "C-001": "T2", "C-002": "T3", "C-003": "T3", "C-004": "T7", "C-005": "T5", "C-007": "T4",
+    "C-009": "T4", "C-010": "T1", "C-011": "T2", "C-012": "T2", "C-014": "T4", "C-015": "T1"
+  },
+  "notes": [
+    "Flagged set identical to run 001 (same 12 census items undecided; only classifier confidences on C-008/C-013 moved in the second decimal), so the run 001 adjudication is carried over unchanged.",
+    "Arm f cannot express T8-T11 (ordering and absence); it never flags them."
+  ]
+}

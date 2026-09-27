@@ -25,5 +25,6 @@ run can be reproduced or rolled back to.
 |---|---|---|---|---|---|---|---|---|---|
 | [001](runs/001/RUN.md) | 2026-09-27 | `9219a72` (`run-001`) | ledger · v1 | e, f | e 0.95 / 1.0 · f 0.92 / 1.0 | e 1/2 · f 0/2 | e 0/1 · f 1/1* | e: all passed | First end-to-end run. Pipeline works; missed the one dropped requirement; truth file incomplete. |
 | 001 rescored | 2026-09-27 | same | ledger · **v2** | e, f | decision-level: e 1.0 / 0.8 · f 1.0 / 0.6 (v1 items only: e 0.8, f 1.0) | | | | On the original key the census baseline wins; e's edge is only on post-hoc items (biased toward e). |
+| [002](runs/002/RUN.md) | 2026-09-27 | `15f2659` (`run-002`) | ledger · v2 | e, f | line: e 0.96 / 0.8 · f 1.0 / 0.8 · decision-level: e 1.0 / **0.9** (v1 items 1.0) · f 1.0 / 0.6 (v1 1.0) | e 1/2 (B-013 = T8, line artefact) · f 0/2 | e **1/1** (probe-confirmed, P 1.0) · f 1/1* | e: all passed (leak suspect, cleared by transcript review) | Dropped requirement P-007 now caught, by the extractor's reject contrary and a failing probe. Extra trace contraries cost 2.2× calls and added only spurious contradictions. T7 missed again (out-of-scope line sources it). One run per arm. |
 
 \* arm f's dropped recall is meaningless: it lists every plan sentence without a matched census point (precision 0.11).

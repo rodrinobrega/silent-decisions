@@ -8,5 +8,5 @@
 | b. sighted reviewer (one pass) | | not run | | | | | | | | |
 | c. pipeline, sighted extractor | | not run | | | | | | | | |
 | d. pipeline, LLM tracer + adversary | | not run | | | | | | | | |
-| e. pipeline, pairwise classifier | v1 | 0.95 | 1 | 20 | 1/2 | null | 0 | not adjudicated |  | 208s wall |
-| f. census × plan classifier (no extraction) | v1 | 0.917 | 1 | 12 | 0/2 | 0.111 | 1 | not adjudicated |  | 6s wall |
+| e. pipeline, pairwise classifier | v2 | 0.958 | 0.8 | 24 | 1/2 | 1 | 1 | 0.9 (1) | 1 | 285s wall |
+| f. census × plan classifier (no extraction) | v2 | 1 | 0.8 | 12 | 0/2 | 0.111 | 1 | 0.6 (1) | 1 | 6s wall |

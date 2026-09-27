@@ -1,15 +1,15 @@
 {
-  "wrote": ".silent-decisions/runs/20260927T125453-7a5fb4/trace.checked.json",
-  "stated": 13,
+  "wrote": ".silent-decisions/runs/20260927T130316-1614eb/trace.checked.json",
+  "stated": 16,
   "entailed": 0,
-  "unsourced": 29,
+  "unsourced": 24,
   "downgraded_by_rules": 0,
   "candidate_unrealised": [],
   "contradicted": [
     "P-003",
     "P-004",
-    "P-006",
-    "P-007"
+    "P-007",
+    "P-008"
   ],
   "probe_scope": "all",
   "probe_targets": [
