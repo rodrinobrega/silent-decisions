@@ -133,8 +133,10 @@ test('pairwise classifier mode: same downstream artefacts, leave-one-out cannot 
   const sdEnv = (...a) => { const r = spawnSync('node', [SD, ...a], { cwd: proj, encoding: 'utf8', env: { ...process.env, ...env } }); return { code: r.status, json: (() => { try { return JSON.parse(r.stdout); } catch { return null; } })(), err: r.stderr }; };
   const tp = sdEnv('trace-pairwise');
   assert.equal(tp.code, 0, tp.err);
-  // 10 plan statements + D-001 from the previous test's ledger = 11; 8 verified behaviours; 3 calls per pair + 10 type calls.
-  assert.equal(tp.json.requests, 11 * 8 * 3 + 10);
+  // 10 plan statements + D-001 from the previous test's ledger = 11; 8 verified behaviours; 3 calls per
+  // pair (2 orderings + realises) + 10 type calls, plus 2 calls per pair for each extra contrary: three
+  // verified fixture behaviours (B-004, B-007, B-008) get a default accept/reject flip.
+  assert.equal(tp.json.requests, 11 * 8 * 3 + 11 * 3 * 2 + 10);
   assert.equal(tp.json.discarded_position_dependent, 1, 'B-004/P-002 fixture is flaky');
   const ct = sd('check-trace');
   assert.equal(ct.json.stated, 3);
