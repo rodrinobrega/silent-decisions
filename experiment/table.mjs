@@ -2,10 +2,15 @@
 import fs from 'node:fs';
 import path from 'node:path';
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname));
-const cases = process.argv[2] ? [process.argv[2]] : fs.readdirSync(path.join(root, 'out'));
+// results.md always covers every case in out/ (run 004: writing only the case just run dropped the others);
+// the argument only selects what is printed.
+const cases = fs.readdirSync(path.join(root, 'out')).filter((c) => fs.statSync(path.join(root, 'out', c)).isDirectory()).sort();
+const shown = process.argv[2] ? [process.argv[2]] : cases;
 const names = { a: 'implementer self-report', b: 'sighted reviewer (one pass)', c: 'pipeline, sighted extractor', d: 'pipeline, LLM tracer + adversary', e: 'pipeline, pairwise classifier', f: 'census × plan classifier (no extraction)' };
 const L = ['# Trace-mode experiment: results', ''];
+const start = {};
 for (const c of cases) {
+  start[c] = L.length;
   L.push(`## ${c}`, '', '| Arm | Truth ver. | Silent (lines): precision | recall | flagged | Neg. FP | Dropped: precision | recall | Decision-level: recall (w/o post-hoc) | precision | Cost |', '|---|---|---|---|---|---|---|---|---|---|---|');
   for (const arm of 'abcdef') {
     const p = path.join(root, 'out', c, arm, 'score.json');
@@ -17,4 +22,5 @@ for (const c of cases) {
   L.push('');
 }
 fs.writeFileSync(path.join(root, 'results.md'), L.join('\n'));
-process.stdout.write(L.join('\n') + '\n');
+const out = shown.flatMap((c) => { const i = cases.indexOf(c); return i < 0 ? [] : L.slice(start[c], i + 1 < cases.length ? start[cases[i + 1]] : L.length); });
+process.stdout.write(['# Trace-mode experiment: results', '', ...out].join('\n') + '\n');
