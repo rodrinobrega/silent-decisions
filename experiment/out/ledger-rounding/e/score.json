@@ -1,0 +1,524 @@
+{
+  "arm": "e",
+  "case": "ledger-rounding",
+  "truth_version": 1,
+  "run": "20260927T200421-349175",
+  "scored_at": "2026-09-27T20:15:43.401Z",
+  "cost": "393s wall",
+  "silent_decisions": {
+    "truth": 22,
+    "found": 18,
+    "flagged": 30,
+    "flagged_without_lines": 0,
+    "precision": 0.867,
+    "recall": 0.818,
+    "per_item": [
+      {
+        "id": "T1",
+        "label": "no overdrafts: withdrawal, transfer and split may not take the balance below 0",
+        "hits": [
+          "B-024 Withdrawal that uses the whole balance including fee is allowed",
+          "B-025 Withdrawal is refused when the fee pushes it past the balance",
+          "B-026 A refused withdrawal does not consume its txnId",
+          "B-027 Withdrawing from an account that was never funded is insufficient-funds",
+          "B-032 Insufficient funds is reported before the daily limit",
+          "B-035 Transfer of the entire balance is allowed",
+          "B-036 Transfer one cent over the balance is refused",
+          "B-039 Split gives the leftover cent to the first recipient",
+          "B-041 Split over the balance is refused and nothing moves"
+        ]
+      },
+      {
+        "id": "T2",
+        "label": "daily withdrawal cap of 5000 per account",
+        "hits": [
+          "B-029 Withdrawing exactly the 5000 daily limit is allowed",
+          "B-030 Withdrawing one cent over the 5000 daily limit is refused",
+          "B-031 Daily limit accumulates across withdrawals, excluding fees",
+          "B-032 Insufficient funds is reported before the daily limit",
+          "B-033 Daily limit is tracked per account"
+        ]
+      },
+      {
+        "id": "T4",
+        "label": "a repeated txnId with a different payload (other account, other operation, other amount) is acknowledged and ignored",
+        "hits": [
+          "B-008 txnIds are shared across operation types",
+          "B-026 A refused withdrawal does not consume its txnId",
+          "B-042 Split with no recipients is refused, even for a seen txnId",
+          "B-047 Interest that rounds to zero is ok, records nothing, and leaves the txnId reusable"
+        ]
+      },
+      {
+        "id": "T5",
+        "label": "an unknown account reads as balance 0 / empty history, and operations on a never-opened account open it implicitly",
+        "hits": [
+          "B-001 Balance of an account that was never opened is 0"
+        ]
+      },
+      {
+        "id": "T7",
+        "label": "open() on an existing account is a silent no-op",
+        "hits": []
+      },
+      {
+        "id": "T8",
+        "label": "amount validated before rounding: a positive amount below half a cent is accepted and recorded as 0 (a 0-cent withdrawal still pays the minimum fee)",
+        "hits": [
+          "B-043 Split with zero amount and no recipients reports invalid-amount first"
+        ]
+      },
+      {
+        "id": "T9",
+        "label": "insufficient funds (including the fee) is checked before the daily limit",
+        "hits": [
+          "B-024 Withdrawal that uses the whole balance including fee is allowed",
+          "B-025 Withdrawal is refused when the fee pushes it past the balance",
+          "B-026 A refused withdrawal does not consume its txnId",
+          "B-027 Withdrawing from an account that was never funded is insufficient-funds",
+          "B-029 Withdrawing exactly the 5000 daily limit is allowed",
+          "B-030 Withdrawing one cent over the 5000 daily limit is refused",
+          "B-031 Daily limit accumulates across withdrawals, excluding fees",
+          "B-032 Insufficient funds is reported before the daily limit"
+        ]
+      },
+      {
+        "id": "T10",
+        "label": "transfers and split payments do not count toward the daily withdrawal limit",
+        "hits": []
+      },
+      {
+        "id": "T11",
+        "label": "a rejected operation consumes neither its txnId nor daily-limit allowance",
+        "hits": []
+      },
+      {
+        "id": "T12",
+        "label": "entries() returns a copy; changing it does not change the history",
+        "hits": []
+      },
+      {
+        "id": "T13",
+        "label": "amount validation happens before the duplicate-txnId check",
+        "hits": [
+          "B-008 txnIds are shared across operation types",
+          "B-026 A refused withdrawal does not consume its txnId",
+          "B-042 Split with no recipients is refused, even for a seen txnId",
+          "B-043 Split with zero amount and no recipients reports invalid-amount first"
+        ]
+      },
+      {
+        "id": "T14",
+        "label": "the withdrawal fee is rounded UP to the cent (1% of 100.01 = 1.0001 -> 1.01)",
+        "hits": [
+          "B-020 Withdrawal of 50 costs exactly the 0.50 minimum fee",
+          "B-021 Fee is 1% rounded up to the next cent",
+          "B-022 Withdrawal of exactly 100 costs a fee of exactly 1.00",
+          "B-023 Large withdrawal fee is capped at 25.00"
+        ]
+      },
+      {
+        "id": "T15",
+        "label": "the withdrawal fee is capped at 25.00",
+        "hits": [
+          "B-023 Large withdrawal fee is capped at 25.00",
+          "B-031 Daily limit accumulates across withdrawals, excluding fees"
+        ]
+      },
+      {
+        "id": "T16",
+        "label": "the funds check includes the fee: a withdrawal of the whole balance is rejected",
+        "hits": [
+          "B-024 Withdrawal that uses the whole balance including fee is allowed",
+          "B-025 Withdrawal is refused when the fee pushes it past the balance",
+          "B-026 A refused withdrawal does not consume its txnId",
+          "B-027 Withdrawing from an account that was never funded is insufficient-funds",
+          "B-032 Insufficient funds is reported before the daily limit"
+        ]
+      },
+      {
+        "id": "T17",
+        "label": "the daily limit counts the withdrawn amount without the fee",
+        "hits": [
+          "B-029 Withdrawing exactly the 5000 daily limit is allowed",
+          "B-030 Withdrawing one cent over the 5000 daily limit is refused",
+          "B-031 Daily limit accumulates across withdrawals, excluding fees",
+          "B-032 Insufficient funds is reported before the daily limit"
+        ]
+      },
+      {
+        "id": "T18",
+        "label": "interest is rounded DOWN (truncated) to the cent",
+        "hits": [
+          "B-046 Partial-cent interest is rounded down"
+        ]
+      },
+      {
+        "id": "T19",
+        "label": "interest that rounds to 0 cents is not credited: the call returns ok, no entry is recorded and the txnId is not consumed",
+        "hits": [
+          "B-047 Interest that rounds to zero is ok, records nothing, and leaves the txnId reusable"
+        ]
+      },
+      {
+        "id": "T20",
+        "label": "a split's leftover cents go one each to the first recipients in list order",
+        "hits": [
+          "B-039 Split gives the leftover cent to the first recipient",
+          "B-040 Split remainder of 2 cents goes to the first two recipients"
+        ]
+      },
+      {
+        "id": "T21",
+        "label": "PLANTED NEW UNSOURCED RULE: a foreign deposit that converts to less than half a cent is rejected with 'amount-too-small' (unlike a plain sub-half-cent deposit, which is accepted as 0)",
+        "hits": [
+          "B-017 Foreign deposit converting to under half a cent is amount-too-small"
+        ]
+      },
+      {
+        "id": "T22",
+        "label": "a split with no recipients is rejected with 'no-recipients'",
+        "hits": [
+          "B-042 Split with no recipients is refused, even for a seen txnId",
+          "B-043 Split with zero amount and no recipients reports invalid-amount first"
+        ]
+      },
+      {
+        "id": "T23",
+        "label": "a non-positive interest rate or day count, or a non-positive exchange rate, is rejected as 'invalid-amount'",
+        "hits": [
+          "B-015 Foreign deposit with zero rate is invalid-amount"
+        ]
+      },
+      {
+        "id": "T24",
+        "label": "transfers and split payments are not charged a fee",
+        "hits": [
+          "B-035 Transfer of the entire balance is allowed",
+          "B-036 Transfer one cent over the balance is refused",
+          "B-039 Split gives the leftover cent to the first recipient",
+          "B-041 Split over the balance is refused and nothing moves"
+        ]
+      }
+    ]
+  },
+  "negative_controls": {
+    "total": 8,
+    "false_positives": 6,
+    "per_item": [
+      {
+        "id": "N1",
+        "label": "non-positive amounts rejected (P-005)",
+        "hits": [
+          "B-043 Split with zero amount and no recipients reports invalid-amount first"
+        ]
+      },
+      {
+        "id": "N2",
+        "label": "history entry per accepted operation (P-008)",
+        "hits": []
+      },
+      {
+        "id": "N3",
+        "label": "amounts rounded to the nearest cent, halves away from zero (P-011)",
+        "hits": [
+          "B-011 A deposit below half a cent is accepted but credits 0",
+          "B-014 Foreign deposit rounds below-half cents down"
+        ]
+      },
+      {
+        "id": "N4",
+        "label": "withdrawal fee of 1% with a minimum of 0.50 (P-012)",
+        "hits": [
+          "B-020 Withdrawal of 50 costs exactly the 0.50 minimum fee",
+          "B-021 Fee is 1% rounded up to the next cent"
+        ]
+      },
+      {
+        "id": "N5",
+        "label": "interest computed with a 365-day year on the current balance (P-015)",
+        "hits": [
+          "B-045 Interest for a full year uses a 365-day year",
+          "B-046 Partial-cent interest is rounded down"
+        ]
+      },
+      {
+        "id": "N6",
+        "label": "a split divides the amount evenly (P-016)",
+        "hits": [
+          "B-039 Split gives the leftover cent to the first recipient",
+          "B-040 Split remainder of 2 cents goes to the first two recipients"
+        ]
+      },
+      {
+        "id": "N7",
+        "label": "foreign amount converted at the given rate (P-014, conversion part)",
+        "hits": []
+      },
+      {
+        "id": "N8",
+        "label": "balances kept in whole cents (P-010)",
+        "hits": [
+          "B-003 Deposit credits an account and records a deposit entry"
+        ]
+      }
+    ]
+  },
+  "dropped_requirements": {
+    "truth": 3,
+    "found": 3,
+    "flagged": 3,
+    "precision": 1,
+    "recall": 1
+  },
+  "normalised": {
+    "flagged": [
+      {
+        "label": "B-001 Balance of an account that was never opened is 0",
+        "lines": [
+          42
+        ]
+      },
+      {
+        "label": "B-003 Deposit credits an account and records a deposit entry",
+        "lines": [
+          20
+        ]
+      },
+      {
+        "label": "B-008 txnIds are shared across operation types",
+        "lines": [
+          71
+        ]
+      },
+      {
+        "label": "B-011 A deposit below half a cent is accepted but credits 0",
+        "lines": [
+          16
+        ]
+      },
+      {
+        "label": "B-014 Foreign deposit rounds below-half cents down",
+        "lines": [
+          16
+        ]
+      },
+      {
+        "label": "B-015 Foreign deposit with zero rate is invalid-amount",
+        "lines": [
+          59
+        ]
+      },
+      {
+        "label": "B-017 Foreign deposit converting to under half a cent is amount-too-small",
+        "lines": [
+          62
+        ]
+      },
+      {
+        "label": "B-020 Withdrawal of 50 costs exactly the 0.50 minimum fee",
+        "lines": [
+          11,
+          24
+        ]
+      },
+      {
+        "label": "B-021 Fee is 1% rounded up to the next cent",
+        "lines": [
+          10,
+          24
+        ]
+      },
+      {
+        "label": "B-022 Withdrawal of exactly 100 costs a fee of exactly 1.00",
+        "lines": [
+          24
+        ]
+      },
+      {
+        "label": "B-023 Large withdrawal fee is capped at 25.00",
+        "lines": [
+          12,
+          24
+        ]
+      },
+      {
+        "label": "B-024 Withdrawal that uses the whole balance including fee is allowed",
+        "lines": [
+          75
+        ]
+      },
+      {
+        "label": "B-025 Withdrawal is refused when the fee pushes it past the balance",
+        "lines": [
+          75
+        ]
+      },
+      {
+        "label": "B-026 A refused withdrawal does not consume its txnId",
+        "lines": [
+          71,
+          75
+        ]
+      },
+      {
+        "label": "B-027 Withdrawing from an account that was never funded is insufficient-funds",
+        "lines": [
+          75
+        ]
+      },
+      {
+        "label": "B-029 Withdrawing exactly the 5000 daily limit is allowed",
+        "lines": [
+          9,
+          76,
+          77
+        ]
+      },
+      {
+        "label": "B-030 Withdrawing one cent over the 5000 daily limit is refused",
+        "lines": [
+          9,
+          77
+        ]
+      },
+      {
+        "label": "B-031 Daily limit accumulates across withdrawals, excluding fees",
+        "lines": [
+          76,
+          77,
+          12
+        ]
+      },
+      {
+        "label": "B-032 Insufficient funds is reported before the daily limit",
+        "lines": [
+          75,
+          77
+        ]
+      },
+      {
+        "label": "B-033 Daily limit is tracked per account",
+        "lines": [
+          76
+        ]
+      },
+      {
+        "label": "B-035 Transfer of the entire balance is allowed",
+        "lines": [
+          90
+        ]
+      },
+      {
+        "label": "B-036 Transfer one cent over the balance is refused",
+        "lines": [
+          90
+        ]
+      },
+      {
+        "label": "B-039 Split gives the leftover cent to the first recipient",
+        "lines": [
+          105,
+          108,
+          104
+        ]
+      },
+      {
+        "label": "B-040 Split remainder of 2 cents goes to the first two recipients",
+        "lines": [
+          105,
+          108
+        ]
+      },
+      {
+        "label": "B-041 Split over the balance is refused and nothing moves",
+        "lines": [
+          104
+        ]
+      },
+      {
+        "label": "B-042 Split with no recipients is refused, even for a seen txnId",
+        "lines": [
+          99,
+          100
+        ]
+      },
+      {
+        "label": "B-043 Split with zero amount and no recipients reports invalid-amount first",
+        "lines": [
+          98,
+          99
+        ]
+      },
+      {
+        "label": "B-045 Interest for a full year uses a 365-day year",
+        "lines": [
+          13,
+          117
+        ]
+      },
+      {
+        "label": "B-046 Partial-cent interest is rounded down",
+        "lines": [
+          118,
+          117
+        ]
+      },
+      {
+        "label": "B-047 Interest that rounds to zero is ok, records nothing, and leaves the txnId reusable",
+        "lines": [
+          119,
+          115
+        ]
+      }
+    ],
+    "dropped": [
+      "P-007",
+      "P-013",
+      "P-014"
+    ]
+  },
+  "decision_level": {
+    "adjudicator": "Claude (Opus 5.5, local session), 2026-09-27. NOT blind to the arm, AND the author of the case and its truth file; re-check before publishing.",
+    "truth_version": 1,
+    "found": [
+      "T1",
+      "T11",
+      "T14",
+      "T15",
+      "T16",
+      "T17",
+      "T18",
+      "T19",
+      "T2",
+      "T20",
+      "T21",
+      "T22",
+      "T23",
+      "T4",
+      "T5",
+      "T8",
+      "T9"
+    ],
+    "missed": [
+      "T7",
+      "T10",
+      "T12",
+      "T13",
+      "T24"
+    ],
+    "recall": 0.773,
+    "recall_without_post_hoc": 0.773,
+    "precision": 0.897,
+    "valid_unlisted": [
+      "B-043"
+    ],
+    "misbucketed": [],
+    "false_positives": [
+      "B-014",
+      "B-020",
+      "B-045"
+    ],
+    "unadjudicated": []
+  }
+}

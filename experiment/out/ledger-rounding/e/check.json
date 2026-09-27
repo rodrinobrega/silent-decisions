@@ -1,0 +1,34 @@
+{
+  "wrote": ".silent-decisions/runs/20260927T200421-349175/trace.checked.json",
+  "stated": 19,
+  "entailed": 0,
+  "unsourced": 30,
+  "downgraded_by_rules": 0,
+  "candidate_unrealised": [
+    "P-013"
+  ],
+  "contradicted": [
+    "P-004",
+    "P-010",
+    "P-011",
+    "P-012"
+  ],
+  "probe_scope": "all",
+  "probe_targets": [
+    "P-003",
+    "P-004",
+    "P-005",
+    "P-006",
+    "P-007",
+    "P-008",
+    "P-009",
+    "P-010",
+    "P-011",
+    "P-012",
+    "P-013",
+    "P-014",
+    "P-015",
+    "P-016",
+    "P-017"
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "status": "review",
+  "hidden": [
+    "P-005",
+    "P-009",
+    "P-010"
+  ],
+  "collateral": [],
+  "behaviours": [
+    "B-004",
+    "B-005",
+    "B-007",
+    "B-016",
+    "B-028",
+    "B-037",
+    "B-048",
+    "B-006",
+    "B-018",
+    "B-038",
+    "B-044",
+    "B-049",
+    "B-009",
+    "B-034"
+  ],
+  "flipped": 13,
+  "resourced": 1,
+  "cited_hidden": 0,
+  "rows": [
+    {
+      "behaviour_id": "B-004",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-005",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-007",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-016",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-028",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-037",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-048",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-006",
+      "outcome": "resourced",
+      "verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-007",
+          "text": "A transfer to the same account is rejected."
+        }
+      ]
+    },
+    {
+      "behaviour_id": "B-018",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-038",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-044",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-049",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-009",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-034",
+      "outcome": "flipped"
+    }
+  ]
+}

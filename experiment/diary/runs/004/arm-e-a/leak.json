@@ -1,0 +1,77 @@
+{
+  "status": "suspect",
+  "review": "transcript shows no access outside the room and no mention of the plan: the overlap is phrasing, not a leak",
+  "shingle_size": 6,
+  "overlapping_phrases": [
+    "rounded to the nearest cent with"
+  ],
+  "nonce_seen": false,
+  "extractor_reported_nonce": [],
+  "audit": {
+    "source": "transcript",
+    "found": true,
+    "sessions": [
+      "f96adfb4-2f99-426e-b32b-d9d210bcfbc5.jsonl"
+    ],
+    "calls": 7,
+    "by_tool": {
+      "Bash": 4,
+      "Read": 1,
+      "Write": 2
+    },
+    "plan_mentions": 0,
+    "outside_room": [],
+    "denied": 1,
+    "tool_calls": [
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"find . -type f | grep -v node_modules | head -100 && cat census.json && ls out 2>/dev/null; cat census.uncovered.json 2>/dev/null\",\"description\":\"List files and show census\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\":\"/private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-oEFP0v/cleanroom/src/ledger.ts\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Write",
+        "input": "{\"file_path\":\"/private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-oEFP0v/out/gen.js\",\"content\":\"const fs = require('fs');\\nconst IMP = \\\"import { Ledger } from '@sut/src/ledger';\\\";\\nconst B = [];\\nfunction b(title, given, when, then, contrary_then, contrary_alternatives, observed_at, l",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"cd /private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-oEFP0v/out && python3 - <<'EOF'\\np='gen.js'\\ns=open(p).read()\\ns=s.replace(\\\"leaving 4954.99\\\",\\\"leaving 4954.98\\\")\\ns=s.replace(\\\"\\\"\\\"  if (x.contrary_alternatives.length === 0) {\\n    x.contrary_alternatives = x.test.a",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"node /private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-oEFP0v/out/gen.js\",\"description\":\"Run generator script\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": true
+      },
+      {
+        "tool": "Write",
+        "input": "{\"file_path\":\"/private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-oEFP0v/out/behaviours.json\",\"content\":\"{\\n  \\\"nonce_seen\\\": [],\\n  \\\"behaviours\\\": [\\n    {\\n      \\\"id\\\": \\\"B-001\\\",\\n      \\\"title\\\": \\\"A deposit credits the account and records a deposit entry\\\",\\n      \\\"given\\\": \\\"a ",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"rm /private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-oEFP0v/out/gen.js\",\"description\":\"Remove leftover generator script\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      }
+    ]
+  }
+}

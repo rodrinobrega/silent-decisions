@@ -1,0 +1,978 @@
+{
+  "mode": "pairwise-classifier",
+  "classifier": {
+    "command": "node /Users/rodrigonobrega/Workspace/silent-decisions/skills/silent-decisions/scripts/classifiers/jev.mjs",
+    "threshold": 0.7,
+    "source_threshold": 0.86,
+    "contraries": "primary",
+    "requests": 2516,
+    "answered": 2516
+  },
+  "forward": [
+    {
+      "behaviour_id": "B-001",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "reading an unknown account fails with an error",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-002",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-017",
+          "text": "Persistence, authentication, exchange-rate lookup."
+        }
+      ],
+      "reasoning": "",
+      "contrary": "the account is reset to a balance of 0 with no entries",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-003",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "the deposit is refused because account 'a' was never opened",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-004",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-005",
+          "text": "An amount must be a positive number, otherwise the operation is rejected."
+        }
+      ],
+      "reasoning": "",
+      "contrary": "the zero deposit is accepted as a no-op with ok result",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-005",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-005",
+          "text": "An amount must be a positive number, otherwise the operation is rejected."
+        }
+      ],
+      "reasoning": "",
+      "contrary": "the negative deposit is accepted and the balance becomes 95",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-006",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-009",
+          "text": "Each operation carries a client-supplied transaction id so that retries are safe."
+        }
+      ],
+      "reasoning": "",
+      "contrary": "the second deposit is applied and the balance becomes 200",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-007",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-005",
+          "text": "An amount must be a positive number, otherwise the operation is rejected."
+        }
+      ],
+      "reasoning": "",
+      "contrary": "the result is ok because the txnId was already seen",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-008",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "plan text appears to require the contrary: P-004",
+      "contrary": "the withdrawal goes through and the balance becomes 89.5",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "contradicted_by": [
+        "P-004"
+      ],
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-009",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-010",
+          "text": "Balances are kept in whole cents."
+        }
+      ],
+      "reasoning": "",
+      "contrary": "the balance is 0.30000000000000004 (floating-point drift)",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-010",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-011",
+          "text": "An amount with more than two decimals is rounded to the nearest cent, with halves rounded away from zero."
+        }
+      ],
+      "reasoning": "",
+      "contrary": "the balance is 10 (half-cent truncated)",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-011",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "the deposit is refused as too small",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-012",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-014",
+          "text": "Customers can deposit an amount in a foreign currency together with an exchange rate; the amount is converted at that rate and rounded to the nearest cent, with halves rounded to even."
+        }
+      ],
+      "reasoning": "",
+      "contrary": "the unconverted 100 is credited",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-013",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-011",
+          "text": "An amount with more than two decimals is rounded to the nearest cent, with halves rounded away from zero."
+        }
+      ],
+      "reasoning": "",
+      "contrary": "the balance is 0.12 (round half down / to even)",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-014",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "the balance is 1.24 (converted amount rounded up)",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-015",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "the result is 'amount-too-small'",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-016",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-005",
+          "text": "An amount must be a positive number, otherwise the operation is rejected."
+        }
+      ],
+      "reasoning": "",
+      "contrary": "the call is accepted with ok",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-017",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "the deposit is accepted with ok and credits 0",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-018",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-009",
+          "text": "Each operation carries a client-supplied transaction id so that retries are safe."
+        }
+      ],
+      "reasoning": "",
+      "contrary": "the deposit is applied again and the balance becomes 220",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-019",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-012",
+          "text": "Each withdrawal is charged a fee of 1% of the amount, with a minimum fee of 0.50."
+        }
+      ],
+      "reasoning": "",
+      "contrary": "only a 1% fee of 0.10 is charged and the balance becomes 89.9",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-020",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "plan text appears to require the contrary: P-010",
+      "contrary": "the fee is 1.00 and the balance becomes 49",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "contradicted_by": [
+        "P-010"
+      ],
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-021",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "the fee is rounded to 1.00 and the balance becomes 98.99",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-022",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "the fee rounds up to 1.01 and the balance becomes 98.99",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-023",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "plan text appears to require the contrary: P-012",
+      "contrary": "the uncapped fee of 30 is charged and the balance becomes 1970",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "contradicted_by": [
+        "P-012"
+      ],
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-024",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "the withdrawal is refused with 'insufficient-funds' and the balance stays 101",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-025",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "the withdrawal is accepted because 99.5 alone fits within the balance",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-026",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "the retry is silently ignored as a duplicate and the balance stays 150",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-027",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "the result is an 'unknown-account' refusal",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-028",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-005",
+          "text": "An amount must be a positive number, otherwise the operation is rejected."
+        }
+      ],
+      "reasoning": "",
+      "contrary": "the zero withdrawal is accepted and the minimum fee of 0.50 is charged (balance 99.5)",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-029",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "the withdrawal is refused with 'daily-limit' and the balance stays 10000",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-030",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "the withdrawal is accepted and the balance becomes 4974.99",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-031",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "the third withdrawal succeeds and the balance becomes 948.5",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-032",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "the result reason is 'daily-limit'",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-033",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "the withdrawal from 'b' is refused with 'daily-limit' because the limit is shared",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-034",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-010",
+          "text": "Balances are kept in whole cents."
+        }
+      ],
+      "reasoning": "",
+      "contrary": "a withdrawal fee of 0.50 is taken and 'a' becomes 19.5",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-035",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "plan text appears to require the contrary: P-012",
+      "contrary": "the transfer is refused with 'insufficient-funds'",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "contradicted_by": [
+        "P-012"
+      ],
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-036",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "the transfer goes through and 'a' becomes -0.01",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-037",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-005",
+          "text": "An amount must be a positive number, otherwise the operation is rejected."
+        }
+      ],
+      "reasoning": "",
+      "contrary": "the transfer is accepted as a no-op",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-038",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-009",
+          "text": "Each operation carries a client-supplied transaction id so that retries are safe."
+        }
+      ],
+      "reasoning": "",
+      "contrary": "the transfer is applied again: 'a' becomes 10 and 'b' 40",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-039",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "the leftover cent goes to the last recipient: 'x' 33.33 and 'z' 33.34",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-040",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "the first recipient gets the whole remainder: 'x' 0.03, 'y' 0.01, 'z' 0.01",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-041",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "the split goes through and 'a' becomes -0.01",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-042",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "the call returns ok because txnId 'd1' was already seen",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-043",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "'no-recipients'",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-044",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-009",
+          "text": "Each operation carries a client-supplied transaction id so that retries are safe."
+        }
+      ],
+      "reasoning": "",
+      "contrary": "the split is applied again: 'a' becomes 60 and 'x' 20",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-045",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "a 360-day year is used and 50.69 is credited (balance 1050.69)",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-046",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "plan text appears to require the contrary: P-010, P-011",
+      "contrary": "interest is rounded to the nearest cent, 4.11, and the balance becomes 1004.11",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "contradicted_by": [
+        "P-010",
+        "P-011"
+      ],
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-047",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "",
+      "contrary": "the second call is ignored because 'i1' was already used, leaving balance 1000",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-048",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-005",
+          "text": "An amount must be a positive number, otherwise the operation is rejected."
+        }
+      ],
+      "reasoning": "",
+      "contrary": "both are accepted as ok with no interest",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-049",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-009",
+          "text": "Each operation carries a client-supplied transaction id so that retries are safe."
+        }
+      ],
+      "reasoning": "",
+      "contrary": "interest is applied again on 1050 and the balance becomes 1102.5",
+      "contrary_argument": "",
+      "cluster": "unclustered",
+      "notes": []
+    }
+  ],
+  "reverse": [
+    {
+      "statement_id": "P-001",
+      "type": "structural",
+      "status": "not_behavioural",
+      "realised_by": [
+        "B-001",
+        "B-002",
+        "B-003",
+        "B-004",
+        "B-005",
+        "B-006",
+        "B-007",
+        "B-008",
+        "B-009",
+        "B-010",
+        "B-011",
+        "B-012",
+        "B-013",
+        "B-014",
+        "B-016",
+        "B-017",
+        "B-018",
+        "B-019",
+        "B-020",
+        "B-021",
+        "B-022",
+        "B-023",
+        "B-024",
+        "B-025",
+        "B-026",
+        "B-027",
+        "B-028",
+        "B-029",
+        "B-030",
+        "B-031",
+        "B-032",
+        "B-033",
+        "B-034",
+        "B-035",
+        "B-036",
+        "B-037",
+        "B-038",
+        "B-039",
+        "B-040",
+        "B-041",
+        "B-042",
+        "B-044",
+        "B-045",
+        "B-046",
+        "B-047",
+        "B-048",
+        "B-049"
+      ]
+    },
+    {
+      "statement_id": "P-002",
+      "type": "structural",
+      "status": "not_behavioural",
+      "realised_by": []
+    },
+    {
+      "statement_id": "P-003",
+      "type": "behavioural",
+      "status": "realised",
+      "realised_by": [
+        "B-003",
+        "B-006",
+        "B-009",
+        "B-010",
+        "B-012",
+        "B-013",
+        "B-014",
+        "B-018",
+        "B-026"
+      ]
+    },
+    {
+      "statement_id": "P-004",
+      "type": "behavioural",
+      "status": "contradicted",
+      "realised_by": [
+        "B-008",
+        "B-019",
+        "B-020",
+        "B-021",
+        "B-022",
+        "B-023",
+        "B-024",
+        "B-026",
+        "B-029",
+        "B-031",
+        "B-033"
+      ],
+      "contradicted_by": [
+        "B-008"
+      ]
+    },
+    {
+      "statement_id": "P-005",
+      "type": "behavioural",
+      "status": "realised",
+      "realised_by": [
+        "B-003",
+        "B-004",
+        "B-005",
+        "B-007",
+        "B-015",
+        "B-016",
+        "B-028",
+        "B-037",
+        "B-043",
+        "B-048"
+      ]
+    },
+    {
+      "statement_id": "P-006",
+      "type": "behavioural",
+      "status": "realised",
+      "realised_by": [
+        "B-034",
+        "B-035",
+        "B-038"
+      ]
+    },
+    {
+      "statement_id": "P-007",
+      "type": "behavioural",
+      "status": "realised",
+      "realised_by": [
+        "B-006",
+        "B-007",
+        "B-038"
+      ]
+    },
+    {
+      "statement_id": "P-008",
+      "type": "behavioural",
+      "status": "realised",
+      "realised_by": [
+        "B-002",
+        "B-003",
+        "B-012",
+        "B-031",
+        "B-034",
+        "B-039",
+        "B-045",
+        "B-047"
+      ]
+    },
+    {
+      "statement_id": "P-009",
+      "type": "behavioural",
+      "status": "realised",
+      "realised_by": [
+        "B-002",
+        "B-006",
+        "B-007",
+        "B-008",
+        "B-017",
+        "B-018",
+        "B-026",
+        "B-031",
+        "B-038",
+        "B-044",
+        "B-047",
+        "B-049"
+      ]
+    },
+    {
+      "statement_id": "P-010",
+      "type": "behavioural",
+      "status": "contradicted",
+      "realised_by": [
+        "B-009",
+        "B-010",
+        "B-011",
+        "B-012",
+        "B-013",
+        "B-014",
+        "B-016",
+        "B-017",
+        "B-021",
+        "B-023",
+        "B-031",
+        "B-034",
+        "B-036",
+        "B-039",
+        "B-040",
+        "B-041",
+        "B-045",
+        "B-047"
+      ],
+      "contradicted_by": [
+        "B-020",
+        "B-046"
+      ]
+    },
+    {
+      "statement_id": "P-011",
+      "type": "behavioural",
+      "status": "contradicted",
+      "realised_by": [
+        "B-010",
+        "B-011",
+        "B-013",
+        "B-014",
+        "B-021",
+        "B-039",
+        "B-046",
+        "B-047"
+      ],
+      "contradicted_by": [
+        "B-046"
+      ]
+    },
+    {
+      "statement_id": "P-012",
+      "type": "behavioural",
+      "status": "contradicted",
+      "realised_by": [
+        "B-019",
+        "B-020",
+        "B-021",
+        "B-022",
+        "B-024",
+        "B-025",
+        "B-026",
+        "B-029",
+        "B-033"
+      ],
+      "contradicted_by": [
+        "B-023",
+        "B-035"
+      ]
+    },
+    {
+      "statement_id": "P-013",
+      "type": "behavioural",
+      "status": "candidate_unrealised",
+      "realised_by": []
+    },
+    {
+      "statement_id": "P-014",
+      "type": "behavioural",
+      "status": "realised",
+      "realised_by": [
+        "B-009",
+        "B-010",
+        "B-011",
+        "B-012",
+        "B-013",
+        "B-014"
+      ]
+    },
+    {
+      "statement_id": "P-015",
+      "type": "behavioural",
+      "status": "realised",
+      "realised_by": [
+        "B-045",
+        "B-046",
+        "B-047"
+      ]
+    },
+    {
+      "statement_id": "P-016",
+      "type": "behavioural",
+      "status": "realised",
+      "realised_by": [
+        "B-039"
+      ]
+    },
+    {
+      "statement_id": "P-017",
+      "type": "behavioural",
+      "status": "realised",
+      "realised_by": [
+        "B-002",
+        "B-003",
+        "B-006",
+        "B-008",
+        "B-011",
+        "B-012",
+        "B-013",
+        "B-014",
+        "B-017",
+        "B-018",
+        "B-019",
+        "B-020",
+        "B-026",
+        "B-027",
+        "B-033",
+        "B-034"
+      ]
+    }
+  ],
+  "probe_scope": "all",
+  "probe_targets": [
+    "P-003",
+    "P-004",
+    "P-005",
+    "P-006",
+    "P-007",
+    "P-008",
+    "P-009",
+    "P-010",
+    "P-011",
+    "P-012",
+    "P-013",
+    "P-014",
+    "P-015",
+    "P-016",
+    "P-017"
+  ]
+}

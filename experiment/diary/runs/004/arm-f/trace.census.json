@@ -1,0 +1,460 @@
+{
+  "mode": "census-classifier",
+  "items": [
+    {
+      "census_id": "C-001",
+      "kind": "constant",
+      "file": "src/ledger.ts",
+      "line": 9,
+      "code": "DAILY_WITHDRAWAL_LIMIT = 5000",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-002",
+      "kind": "constant",
+      "file": "src/ledger.ts",
+      "line": 10,
+      "code": "FEE_PERCENT = 1",
+      "verdict": "decided",
+      "decided_by": [
+        {
+          "statement_id": "P-012",
+          "confidence": 0.89
+        }
+      ]
+    },
+    {
+      "census_id": "C-003",
+      "kind": "constant",
+      "file": "src/ledger.ts",
+      "line": 11,
+      "code": "MIN_FEE_CENTS = 50",
+      "verdict": "decided",
+      "decided_by": [
+        {
+          "statement_id": "P-012",
+          "confidence": 0.93
+        }
+      ]
+    },
+    {
+      "census_id": "C-004",
+      "kind": "constant",
+      "file": "src/ledger.ts",
+      "line": 12,
+      "code": "MAX_FEE_CENTS = 2500",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-005",
+      "kind": "constant",
+      "file": "src/ledger.ts",
+      "line": 13,
+      "code": "DAYS_PER_YEAR = 365",
+      "verdict": "decided",
+      "decided_by": [
+        {
+          "statement_id": "P-015",
+          "confidence": 0.92
+        }
+      ]
+    },
+    {
+      "census_id": "C-006",
+      "kind": "rounding",
+      "file": "src/ledger.ts",
+      "line": 16,
+      "code": "Math.round(Math.abs(amount) * 100 + 1e-7)",
+      "verdict": "decided",
+      "decided_by": [
+        {
+          "statement_id": "P-010",
+          "confidence": 0.77
+        },
+        {
+          "statement_id": "P-011",
+          "confidence": 0.72
+        }
+      ]
+    },
+    {
+      "census_id": "C-007",
+      "kind": "literal",
+      "file": "src/ledger.ts",
+      "line": 20,
+      "code": "cents / 100",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-008",
+      "kind": "rounding",
+      "file": "src/ledger.ts",
+      "line": 24,
+      "code": "Math.ceil((cents * FEE_PERCENT) / 100 - 1e-9)",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-009",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 35,
+      "code": "!this.balances.has(account)",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-010",
+      "kind": "default",
+      "file": "src/ledger.ts",
+      "line": 42,
+      "code": "this.balances.get(account) ?? 0",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-011",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 50,
+      "code": "!(amount > 0)",
+      "verdict": "decided",
+      "decided_by": [
+        {
+          "statement_id": "P-005",
+          "confidence": 0.9
+        }
+      ]
+    },
+    {
+      "census_id": "C-012",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 51,
+      "code": "this.seen.has(txnId)",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-013",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 59,
+      "code": "!(amount > 0) || !(rate > 0)",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-014",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 60,
+      "code": "this.seen.has(txnId)",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-015",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 62,
+      "code": "cents <= 0",
+      "verdict": "decided",
+      "decided_by": [
+        {
+          "statement_id": "P-005",
+          "confidence": 0.81
+        }
+      ]
+    },
+    {
+      "census_id": "C-016",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 70,
+      "code": "!(amount > 0)",
+      "verdict": "decided",
+      "decided_by": [
+        {
+          "statement_id": "P-005",
+          "confidence": 0.88
+        }
+      ]
+    },
+    {
+      "census_id": "C-017",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 71,
+      "code": "this.seen.has(txnId)",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-018",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 75,
+      "code": "this.cents(account) - (cents + fee) < 0",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-019",
+      "kind": "default",
+      "file": "src/ledger.ts",
+      "line": 76,
+      "code": "this.withdrawnToday.get(account) ?? 0",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-020",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 77,
+      "code": "used + cents > DAILY_WITHDRAWAL_LIMIT * 100",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-021",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 85,
+      "code": "!(amount > 0)",
+      "verdict": "decided",
+      "decided_by": [
+        {
+          "statement_id": "P-005",
+          "confidence": 0.87
+        }
+      ]
+    },
+    {
+      "census_id": "C-022",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 86,
+      "code": "this.seen.has(txnId)",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-023",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 90,
+      "code": "this.cents(from) - cents < 0",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-024",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 98,
+      "code": "!(amount > 0)",
+      "verdict": "decided",
+      "decided_by": [
+        {
+          "statement_id": "P-005",
+          "confidence": 0.89
+        }
+      ]
+    },
+    {
+      "census_id": "C-025",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 99,
+      "code": "recipients.length === 0",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-026",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 100,
+      "code": "this.seen.has(txnId)",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-027",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 104,
+      "code": "this.cents(from) - cents < 0",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-028",
+      "kind": "rounding",
+      "file": "src/ledger.ts",
+      "line": 105,
+      "code": "Math.floor(cents / recipients.length)",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-029",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 108,
+      "code": "i < remainder",
+      "verdict": "decided",
+      "decided_by": [
+        {
+          "statement_id": "P-014",
+          "confidence": 0.7
+        }
+      ]
+    },
+    {
+      "census_id": "C-030",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 114,
+      "code": "!(annualRatePercent > 0) || !(days > 0)",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-031",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 115,
+      "code": "this.seen.has(txnId)",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-032",
+      "kind": "literal",
+      "file": "src/ledger.ts",
+      "line": 117,
+      "code": "100 * DAYS_PER_YEAR",
+      "verdict": "decided",
+      "decided_by": [
+        {
+          "statement_id": "P-010",
+          "confidence": 0.71
+        }
+      ]
+    },
+    {
+      "census_id": "C-033",
+      "kind": "rounding",
+      "file": "src/ledger.ts",
+      "line": 118,
+      "code": "Math.floor(exact + 1e-7)",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-034",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 119,
+      "code": "cents <= 0",
+      "verdict": "decided",
+      "decided_by": [
+        {
+          "statement_id": "P-005",
+          "confidence": 0.82
+        }
+      ]
+    },
+    {
+      "census_id": "C-035",
+      "kind": "default",
+      "file": "src/ledger.ts",
+      "line": 126,
+      "code": "this.balances.get(account) ?? 0",
+      "verdict": "undecided",
+      "decided_by": []
+    }
+  ],
+  "reverse": [
+    {
+      "statement_id": "P-001",
+      "status": "untouched"
+    },
+    {
+      "statement_id": "P-002",
+      "status": "untouched"
+    },
+    {
+      "statement_id": "P-003",
+      "status": "untouched"
+    },
+    {
+      "statement_id": "P-004",
+      "status": "untouched"
+    },
+    {
+      "statement_id": "P-005",
+      "status": "touched"
+    },
+    {
+      "statement_id": "P-006",
+      "status": "untouched"
+    },
+    {
+      "statement_id": "P-007",
+      "status": "untouched"
+    },
+    {
+      "statement_id": "P-008",
+      "status": "untouched"
+    },
+    {
+      "statement_id": "P-009",
+      "status": "untouched"
+    },
+    {
+      "statement_id": "P-010",
+      "status": "touched"
+    },
+    {
+      "statement_id": "P-011",
+      "status": "touched"
+    },
+    {
+      "statement_id": "P-012",
+      "status": "touched"
+    },
+    {
+      "statement_id": "P-013",
+      "status": "untouched"
+    },
+    {
+      "statement_id": "P-014",
+      "status": "touched"
+    },
+    {
+      "statement_id": "P-015",
+      "status": "touched"
+    },
+    {
+      "statement_id": "P-016",
+      "status": "untouched"
+    },
+    {
+      "statement_id": "P-017",
+      "status": "untouched"
+    }
+  ],
+  "classifier": {
+    "command": "node /Users/rodrigonobrega/Workspace/silent-decisions/skills/silent-decisions/scripts/classifiers/jev.mjs",
+    "threshold": 0.7,
+    "requests": 595,
+    "answered": 595
+  }
+}

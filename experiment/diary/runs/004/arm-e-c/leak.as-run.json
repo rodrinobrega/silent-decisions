@@ -1,0 +1,53 @@
+{
+  "status": "clean",
+  "shingle_size": 6,
+  "overlapping_phrases": [],
+  "nonce_seen": false,
+  "extractor_reported_nonce": [],
+  "audit": {
+    "source": "transcript",
+    "found": true,
+    "sessions": [
+      "6565f3fe-4163-4fdd-8b05-fec7fcf26bbf.jsonl"
+    ],
+    "calls": 4,
+    "by_tool": {
+      "Bash": 2,
+      "Read": 1,
+      "Write": 1
+    },
+    "plan_mentions": 0,
+    "outside_room": [],
+    "denied": 1,
+    "tool_calls": [
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"cd /var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-yjNGDx && find . -type f | grep -v node_modules | head -100 && cat census.json && ls out 2>/dev/null\",\"description\":\"List files and show census\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\":\"/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-yjNGDx/cleanroom/src/ledger.ts\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"mkdir -p /var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-yjNGDx/out; grep -r \\\"SDN-\\\" /var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-yjNGDx; node -e \\\"console.log(10.005*100, 0.125*100, 10*0.12345*100, 100*1.1, 1*0.004*100, 100000*5*30/36500)\\\"\",\"description\":\"Check no",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": true
+      },
+      {
+        "tool": "Write",
+        "input": "{\"file_path\":\"/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-yjNGDx/out/behaviours.json\",\"content\":\"{\\n  \\\"nonce_seen\\\": [],\\n  \\\"behaviours\\\": [\\n    {\\n      \\\"id\\\": \\\"B-001\\\",\\n      \\\"title\\\": \\\"Balance of an account that was never opened is 0\\\",\\n      \\\"given\\\": \\\"a new Ledger with n",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      }
+    ]
+  }
+}

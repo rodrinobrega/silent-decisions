@@ -1,0 +1,426 @@
+{
+  "arm": "f",
+  "case": "ledger-rounding",
+  "truth_version": 1,
+  "run": "20260927T201101-0dd93e",
+  "scored_at": "2026-09-27T20:15:43.446Z",
+  "cost": null,
+  "silent_decisions": {
+    "truth": 22,
+    "found": 15,
+    "flagged": 23,
+    "flagged_without_lines": 0,
+    "precision": 0.913,
+    "recall": 0.682,
+    "per_item": [
+      {
+        "id": "T1",
+        "label": "no overdrafts: withdrawal, transfer and split may not take the balance below 0",
+        "hits": [
+          "C-018 this.cents(account) - (cents + fee) < 0",
+          "C-023 this.cents(from) - cents < 0",
+          "C-027 this.cents(from) - cents < 0"
+        ]
+      },
+      {
+        "id": "T2",
+        "label": "daily withdrawal cap of 5000 per account",
+        "hits": [
+          "C-001 DAILY_WITHDRAWAL_LIMIT = 5000",
+          "C-019 this.withdrawnToday.get(account) ?? 0",
+          "C-020 used + cents > DAILY_WITHDRAWAL_LIMIT * 100"
+        ]
+      },
+      {
+        "id": "T4",
+        "label": "a repeated txnId with a different payload (other account, other operation, other amount) is acknowledged and ignored",
+        "hits": [
+          "C-012 this.seen.has(txnId)",
+          "C-014 this.seen.has(txnId)",
+          "C-017 this.seen.has(txnId)",
+          "C-022 this.seen.has(txnId)",
+          "C-026 this.seen.has(txnId)",
+          "C-031 this.seen.has(txnId)"
+        ]
+      },
+      {
+        "id": "T5",
+        "label": "an unknown account reads as balance 0 / empty history, and operations on a never-opened account open it implicitly",
+        "hits": [
+          "C-010 this.balances.get(account) ?? 0",
+          "C-035 this.balances.get(account) ?? 0"
+        ]
+      },
+      {
+        "id": "T7",
+        "label": "open() on an existing account is a silent no-op",
+        "hits": [
+          "C-009 !this.balances.has(account)"
+        ]
+      },
+      {
+        "id": "T8",
+        "label": "amount validated before rounding: a positive amount below half a cent is accepted and recorded as 0 (a 0-cent withdrawal still pays the minimum fee)",
+        "hits": []
+      },
+      {
+        "id": "T9",
+        "label": "insufficient funds (including the fee) is checked before the daily limit",
+        "hits": [
+          "C-018 this.cents(account) - (cents + fee) < 0",
+          "C-020 used + cents > DAILY_WITHDRAWAL_LIMIT * 100"
+        ]
+      },
+      {
+        "id": "T10",
+        "label": "transfers and split payments do not count toward the daily withdrawal limit",
+        "hits": []
+      },
+      {
+        "id": "T11",
+        "label": "a rejected operation consumes neither its txnId nor daily-limit allowance",
+        "hits": []
+      },
+      {
+        "id": "T12",
+        "label": "entries() returns a copy; changing it does not change the history",
+        "hits": []
+      },
+      {
+        "id": "T13",
+        "label": "amount validation happens before the duplicate-txnId check",
+        "hits": [
+          "C-012 this.seen.has(txnId)",
+          "C-017 this.seen.has(txnId)",
+          "C-022 this.seen.has(txnId)",
+          "C-026 this.seen.has(txnId)"
+        ]
+      },
+      {
+        "id": "T14",
+        "label": "the withdrawal fee is rounded UP to the cent (1% of 100.01 = 1.0001 -> 1.01)",
+        "hits": [
+          "C-008 Math.ceil((cents * FEE_PERCENT) / 100 - 1e-9)"
+        ]
+      },
+      {
+        "id": "T15",
+        "label": "the withdrawal fee is capped at 25.00",
+        "hits": [
+          "C-004 MAX_FEE_CENTS = 2500"
+        ]
+      },
+      {
+        "id": "T16",
+        "label": "the funds check includes the fee: a withdrawal of the whole balance is rejected",
+        "hits": [
+          "C-018 this.cents(account) - (cents + fee) < 0"
+        ]
+      },
+      {
+        "id": "T17",
+        "label": "the daily limit counts the withdrawn amount without the fee",
+        "hits": [
+          "C-020 used + cents > DAILY_WITHDRAWAL_LIMIT * 100"
+        ]
+      },
+      {
+        "id": "T18",
+        "label": "interest is rounded DOWN (truncated) to the cent",
+        "hits": [
+          "C-033 Math.floor(exact + 1e-7)"
+        ]
+      },
+      {
+        "id": "T19",
+        "label": "interest that rounds to 0 cents is not credited: the call returns ok, no entry is recorded and the txnId is not consumed",
+        "hits": []
+      },
+      {
+        "id": "T20",
+        "label": "a split's leftover cents go one each to the first recipients in list order",
+        "hits": []
+      },
+      {
+        "id": "T21",
+        "label": "PLANTED NEW UNSOURCED RULE: a foreign deposit that converts to less than half a cent is rejected with 'amount-too-small' (unlike a plain sub-half-cent deposit, which is accepted as 0)",
+        "hits": []
+      },
+      {
+        "id": "T22",
+        "label": "a split with no recipients is rejected with 'no-recipients'",
+        "hits": [
+          "C-025 recipients.length === 0"
+        ]
+      },
+      {
+        "id": "T23",
+        "label": "a non-positive interest rate or day count, or a non-positive exchange rate, is rejected as 'invalid-amount'",
+        "hits": [
+          "C-013 !(amount > 0) || !(rate > 0)",
+          "C-030 !(annualRatePercent > 0) || !(days > 0)"
+        ]
+      },
+      {
+        "id": "T24",
+        "label": "transfers and split payments are not charged a fee",
+        "hits": [
+          "C-023 this.cents(from) - cents < 0",
+          "C-027 this.cents(from) - cents < 0"
+        ]
+      }
+    ]
+  },
+  "negative_controls": {
+    "total": 8,
+    "false_positives": 2,
+    "per_item": [
+      {
+        "id": "N1",
+        "label": "non-positive amounts rejected (P-005)",
+        "hits": []
+      },
+      {
+        "id": "N2",
+        "label": "history entry per accepted operation (P-008)",
+        "hits": []
+      },
+      {
+        "id": "N3",
+        "label": "amounts rounded to the nearest cent, halves away from zero (P-011)",
+        "hits": []
+      },
+      {
+        "id": "N4",
+        "label": "withdrawal fee of 1% with a minimum of 0.50 (P-012)",
+        "hits": []
+      },
+      {
+        "id": "N5",
+        "label": "interest computed with a 365-day year on the current balance (P-015)",
+        "hits": []
+      },
+      {
+        "id": "N6",
+        "label": "a split divides the amount evenly (P-016)",
+        "hits": [
+          "C-028 Math.floor(cents / recipients.length)"
+        ]
+      },
+      {
+        "id": "N7",
+        "label": "foreign amount converted at the given rate (P-014, conversion part)",
+        "hits": []
+      },
+      {
+        "id": "N8",
+        "label": "balances kept in whole cents (P-010)",
+        "hits": [
+          "C-007 cents / 100",
+          "C-035 this.balances.get(account) ?? 0"
+        ]
+      }
+    ]
+  },
+  "dropped_requirements": {
+    "truth": 3,
+    "found": 2,
+    "flagged": 11,
+    "precision": 0.182,
+    "recall": 0.667
+  },
+  "normalised": {
+    "flagged": [
+      {
+        "label": "C-001 DAILY_WITHDRAWAL_LIMIT = 5000",
+        "lines": [
+          9
+        ]
+      },
+      {
+        "label": "C-004 MAX_FEE_CENTS = 2500",
+        "lines": [
+          12
+        ]
+      },
+      {
+        "label": "C-007 cents / 100",
+        "lines": [
+          20
+        ]
+      },
+      {
+        "label": "C-008 Math.ceil((cents * FEE_PERCENT) / 100 - 1e-9)",
+        "lines": [
+          24
+        ]
+      },
+      {
+        "label": "C-009 !this.balances.has(account)",
+        "lines": [
+          35
+        ]
+      },
+      {
+        "label": "C-010 this.balances.get(account) ?? 0",
+        "lines": [
+          42
+        ]
+      },
+      {
+        "label": "C-012 this.seen.has(txnId)",
+        "lines": [
+          51
+        ]
+      },
+      {
+        "label": "C-013 !(amount > 0) || !(rate > 0)",
+        "lines": [
+          59
+        ]
+      },
+      {
+        "label": "C-014 this.seen.has(txnId)",
+        "lines": [
+          60
+        ]
+      },
+      {
+        "label": "C-017 this.seen.has(txnId)",
+        "lines": [
+          71
+        ]
+      },
+      {
+        "label": "C-018 this.cents(account) - (cents + fee) < 0",
+        "lines": [
+          75
+        ]
+      },
+      {
+        "label": "C-019 this.withdrawnToday.get(account) ?? 0",
+        "lines": [
+          76
+        ]
+      },
+      {
+        "label": "C-020 used + cents > DAILY_WITHDRAWAL_LIMIT * 100",
+        "lines": [
+          77
+        ]
+      },
+      {
+        "label": "C-022 this.seen.has(txnId)",
+        "lines": [
+          86
+        ]
+      },
+      {
+        "label": "C-023 this.cents(from) - cents < 0",
+        "lines": [
+          90
+        ]
+      },
+      {
+        "label": "C-025 recipients.length === 0",
+        "lines": [
+          99
+        ]
+      },
+      {
+        "label": "C-026 this.seen.has(txnId)",
+        "lines": [
+          100
+        ]
+      },
+      {
+        "label": "C-027 this.cents(from) - cents < 0",
+        "lines": [
+          104
+        ]
+      },
+      {
+        "label": "C-028 Math.floor(cents / recipients.length)",
+        "lines": [
+          105
+        ]
+      },
+      {
+        "label": "C-030 !(annualRatePercent > 0) || !(days > 0)",
+        "lines": [
+          114
+        ]
+      },
+      {
+        "label": "C-031 this.seen.has(txnId)",
+        "lines": [
+          115
+        ]
+      },
+      {
+        "label": "C-033 Math.floor(exact + 1e-7)",
+        "lines": [
+          118
+        ]
+      },
+      {
+        "label": "C-035 this.balances.get(account) ?? 0",
+        "lines": [
+          126
+        ]
+      }
+    ],
+    "dropped": [
+      "P-001",
+      "P-002",
+      "P-003",
+      "P-004",
+      "P-006",
+      "P-007",
+      "P-008",
+      "P-009",
+      "P-013",
+      "P-016",
+      "P-017"
+    ]
+  },
+  "decision_level": {
+    "adjudicator": "Claude (Opus 5.5, local session), 2026-09-27. NOT blind to the arm, AND the author of the case and its truth file; re-check before publishing.",
+    "truth_version": 1,
+    "found": [
+      "T1",
+      "T14",
+      "T15",
+      "T16",
+      "T18",
+      "T2",
+      "T20",
+      "T22",
+      "T23",
+      "T4",
+      "T5",
+      "T7"
+    ],
+    "missed": [
+      "T8",
+      "T9",
+      "T10",
+      "T11",
+      "T12",
+      "T13",
+      "T17",
+      "T19",
+      "T21",
+      "T24"
+    ],
+    "recall": 0.545,
+    "recall_without_post_hoc": 0.545,
+    "precision": 0.957,
+    "valid_unlisted": [],
+    "misbucketed": [],
+    "false_positives": [
+      "C-007"
+    ],
+    "unadjudicated": []
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "total": 35,
+  "covered": 34,
+  "waived": 1,
+  "uncovered": 0,
+  "basis": "declared",
+  "uncovered_items": [],
+  "waived_items": [
+    {
+      "census_id": "C-035",
+      "reason": "private cents() default of 0 is unreachable at the boundary: every public operation calls open() on the account before cents() reads it, so the key always exists; the public-facing default is exercised via balance() in C-010 (B-001)."
+    }
+  ],
+  "unknown_refs": []
+}
