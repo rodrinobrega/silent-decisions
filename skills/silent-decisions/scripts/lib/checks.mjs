@@ -51,9 +51,16 @@ export function censusCoverage(args) {
 
 // ---------- quote verification and verdict rules -----------------------------
 
-/** Statements the trace typed as not behavioural (id -> type). Untyped statements stay eligible. */
-export function nonSourcingStatements(trace) {
-  return new Map((trace.statements || []).filter((s) => s.type === 'structural' || s.type === 'process').map((s) => [s.id, s.type]));
+// A plan section that lists what is NOT being built. Its lines are typed by where they sit, not by the
+// classifier: run 004 typed "Persistence, authentication, exchange-rate lookup." as behavioural in all
+// three repetitions, and it sourced a real silent decision each time.
+export const OUT_OF_SCOPE_HEADING = /\b(out of scope|not in scope|non-goals?|excluded|won'?t do)\b/i;
+
+/** Statements that cannot source (id -> type): typed structural/process, or under an out-of-scope heading. */
+export function nonSourcingStatements(trace, statements = []) {
+  const m = new Map((trace.statements || []).filter((s) => s.type === 'structural' || s.type === 'process').map((s) => [s.id, s.type]));
+  for (const s of statements) if (s.source === 'plan' && OUT_OF_SCOPE_HEADING.test(s.heading || '')) m.set(s.id, 'out-of-scope');
+  return m;
 }
 
 function quoteIndex(statements, hiddenIds = new Set()) {
@@ -127,7 +134,7 @@ export function checkTrace(args) {
   const results = readJson(path.join(runDir, 'results.json')).results;
   const traceable = new Set(results.filter((r) => r.status === 'verified' && r.on_base !== 'preexisting').map((r) => r.id));
 
-  const forward = applyRules((trace.forward || []).filter((f) => traceable.has(f.behaviour_id)), quoteIndex(statements), adversary, nonSourcingStatements(trace));
+  const forward = applyRules((trace.forward || []).filter((f) => traceable.has(f.behaviour_id)), quoteIndex(statements), adversary, nonSourcingStatements(trace, statements));
   const missing = [...traceable].filter((id) => !forward.some((f) => f.behaviour_id === id));
   for (const id of missing) {
     forward.push({ behaviour_id: id, verdict: 'unsourced', tracer_verdict: null, quotes: [], reasoning: '', contrary: '', contrary_argument: '', cluster: 'unclustered', notes: ['tracer returned no verdict'] });
@@ -136,6 +143,7 @@ export function checkTrace(args) {
   // Reverse direction. Only behavioural plan statements count; a statement is realised
   // if a verified quote cites it or the tracer links it to a verified behaviour.
   const types = new Map((trace.statements || []).map((s) => [s.id, s.type]));
+  for (const s of statements) if (s.source === 'plan' && OUT_OF_SCOPE_HEADING.test(s.heading || '')) types.set(s.id, 'out-of-scope');
   // A quote that exists but fails the flip test still shows the statement is exercised
   // (the code does let customers withdraw; it is the overdraft policy that is unsourced).
   const cited = new Set(forward.flatMap((f) => f.quotes.map((q) => q.statement_id)));
@@ -239,7 +247,7 @@ export function looScore(args) {
   const raw = readJson(tracePath).forward || [];
   // Same typing as the main pass, so the control measures the same rules.
   const mainTrace = path.join(runDir, 'trace.json');
-  const nonSourcing = nonSourcingStatements(fs.existsSync(mainTrace) ? readJson(mainTrace) : {});
+  const nonSourcing = nonSourcingStatements(fs.existsSync(mainTrace) ? readJson(mainTrace) : {}, statements);
 
   const rows = control.behaviours.map((id) => {
     const f = raw.find((x) => x.behaviour_id === id);
@@ -294,12 +302,23 @@ export function auditTranscript(session, { planName = 'plan.md', projectsDir = p
       }
     }
   }
-  const outside = (input) => {
-    const paths = input.match(/(?:\/(?:Users|home|private|var|tmp|etc|opt)\/[^\s"'`;|&)]+)/g) || [];
-    return paths.some((p) => !rooms.some((r) => p.startsWith(r))) || /\.\.\//.test(input) || /(^|[\s"'])~\//.test(input);
+  // Only what the call can reach counts: a path argument, or the text of a shell command. The content a
+  // Write puts into a file is data (run 004: a generator script containing "../census.json" was read as
+  // an escape). Relative "../" paths are resolved against the command's working directory (its leading
+  // `cd`, else the room), so `cd <room>/out && require('../census.json')` stays inside the room.
+  const inRoom = (p) => rooms.some((r) => p === r || p.startsWith(r + '/'));
+  const outside = (tool, input) => {
+    let obj = {};
+    try { obj = JSON.parse(input); } catch { /* keep {} */ }
+    const text = tool === 'Bash' ? String(obj.command || '') : [obj.file_path, obj.path, obj.pattern, obj.notebook_path].filter(Boolean).join(' ');
+    const cd = text.match(/(?:^|[;&|]\s*)cd\s+("[^"]+"|'[^']+'|[^\s;&|]+)/);
+    const base = cd ? path.resolve(session.cwd, cd[1].replace(/^["']|["']$/g, '')) : session.cwd;
+    const abs = text.match(/(?:\/(?:Users|home|private|var|tmp|etc|opt)\/[^\s"'`;|&)]+)/g) || [];
+    const rel = (text.match(/(?:^|[\s"'`(=])((?:\.\.\/)+[^\s"'`;|&)]*)/g) || []).map((m) => m.replace(/^[\s"'`(=]/, ''));
+    return abs.some((p) => !inRoom(p)) || !inRoom(base) && Boolean(cd) || rel.some((p) => !inRoom(path.resolve(base, p))) || /(^|[\s"'])~\//.test(text);
   };
   const denied = (c) => /requires approval|permission (?:was |has been )?denied/i.test(results.get(c.id) || '');
-  const rows = calls.map((c) => ({ tool: c.tool, input: c.input.slice(0, 300), outside_room: outside(c.input), mentions_plan: c.input.includes(planName), denied: denied(c) }));
+  const rows = calls.map((c) => ({ tool: c.tool, input: c.input.slice(0, 300), outside_room: outside(c.tool, c.input), mentions_plan: c.input.includes(planName), denied: denied(c) }));
   return {
     source: 'transcript',
     found: true,

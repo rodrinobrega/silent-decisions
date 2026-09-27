@@ -153,3 +153,13 @@ test('run 003 regression: a generic sentence at middling confidence realises but
   assert.match(t.pairs.find((p) => p.behaviour_id === 'B-012').note, /below sourcing threshold/);
   assert.equal(assemble(st, bs, ans, 0.7).forward.find((x) => x.behaviour_id === 'B-012').verdict, 'stated', 'without it, the old behaviour');
 });
+
+test('run 004 regression: a line under an "Out of scope" heading cannot source, whatever the classifier typed', async () => {
+  const { applyRules, nonSourcingStatements } = await import(path.join(root, 'skills/silent-decisions/scripts/lib/checks.mjs'));
+  const st = [{ id: 'P-017', text: 'Persistence, authentication, exchange-rate lookup.', heading: 'Out of scope', source: 'plan' }];
+  const non = nonSourcingStatements({ statements: [{ id: 'P-017', type: 'behavioural' }] }, st);
+  assert.equal(non.get('P-017'), 'out-of-scope');
+  const [f] = applyRules([{ behaviour_id: 'B-010', verdict: 'stated', quotes: [{ statement_id: 'P-017', text: st[0].text }] }], st.map((s) => ({ id: s.id, text: s.text.toLowerCase() })), [], non);
+  assert.equal(f.verdict, 'unsourced');
+  assert.equal(nonSourcingStatements({}, [{ id: 'P-003', heading: 'Requirements', source: 'plan' }]).size, 0);
+});
