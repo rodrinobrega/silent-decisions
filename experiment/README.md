@@ -35,6 +35,13 @@ Outputs land in `experiment/out/<case>/<arm>/` (delta.md, score.json) and `exper
 
 `run.sh` drives every model role through `claude -p --bare`, so the whole experiment is reproducible from a shell with no plugin installed. It has **not** been run end to end yet; expect to fix small things on the first pass (the `--bare` flag's authentication, prompt paths, JSON parsing of a role's output).
 
+## Cases
+
+| Case | Written by | Truth | Notes |
+|---|---|---|---|
+| `ledger` | us (planted) | v2, 10 silent · 1 dropped · 2 negative | saturated after run 003: decision recall at or near 1.0 |
+| `ledger-rounding` | the operator (Claude), at Rodrigo's request, 2026-09-27 (planted) | v1, 22 silent · 3 dropped · 8 negative | ledger core plus rounding rules (fee, foreign currency, interest, split); one planted rule nobody would guess (T21). Not independent evidence. |
+
 ## Before you publish numbers
 
 1. **One planted case is a demo, not evidence.** Add at least two cases you did not write the decisions for: take a real small repo, pick a merged feature, use its ticket or design doc as the plan, and have someone else (or a separate model session, blind to the pipeline) annotate the truth by reading the diff. `cases/<name>/truth.json` is all that is needed.

@@ -1,0 +1,373 @@
+{
+ "case": "ledger-rounding",
+ "version": 1,
+ "plan": "examples/ledger-rounding/plan.md",
+ "project": "examples/ledger-rounding",
+ "provenance": "PLANTED. Written by the operator (Claude Opus 5.5, local session) on 2026-09-27 at Rodrigo's explicit request, as a harder follow-up to the saturated ledger case: the ledger core plus rounding business rules (fee, foreign-currency deposit, interest, split payment), some planned, some deliberately left out of the plan, some planned but not implemented. The author of the truth file also wrote the code and the plan, and knows the pipeline: results on this case are not independent evidence (experiment/README.md). Truth written before any run.",
+ "note": "Silent decisions are matched by source line at line level; use decision-level adjudication (sd score --adjudication) as the primary score. Items with kind 'interaction' live in how pieces of code combine. T3 of the ledger case (rounding to cents) is DECIDED here by P-011 and appears as negative control N3. T21 is the planted new unsourced rule: a foreign deposit that converts to less than half a cent is rejected, while a plain deposit below half a cent is accepted as 0 (T8).",
+ "silent_decisions": [
+  {
+   "id": "T1",
+   "label": "no overdrafts: withdrawal, transfer and split may not take the balance below 0",
+   "file": "src/ledger.ts",
+   "lines": [
+    75,
+    90,
+    104
+   ],
+   "kind": "line",
+   "note": "Same decision as the ledger case's item of the same id (code carried over, re-implemented in integer cents)."
+  },
+  {
+   "id": "T2",
+   "label": "daily withdrawal cap of 5000 per account",
+   "file": "src/ledger.ts",
+   "lines": [
+    9,
+    76,
+    77,
+    78
+   ],
+   "kind": "line",
+   "note": "Same decision as the ledger case's item of the same id (code carried over, re-implemented in integer cents)."
+  },
+  {
+   "id": "T4",
+   "label": "a repeated txnId with a different payload (other account, other operation, other amount) is acknowledged and ignored",
+   "file": "src/ledger.ts",
+   "lines": [
+    51,
+    60,
+    71,
+    86,
+    100,
+    115
+   ],
+   "kind": "line",
+   "note": "Same decision as the ledger case's item of the same id (code carried over, re-implemented in integer cents)."
+  },
+  {
+   "id": "T5",
+   "label": "an unknown account reads as balance 0 / empty history, and operations on a never-opened account open it implicitly",
+   "file": "src/ledger.ts",
+   "lines": [
+    42,
+    52,
+    63,
+    72,
+    87,
+    88,
+    101,
+    102,
+    116,
+    126
+   ],
+   "kind": "line",
+   "note": "Same decision as the ledger case's item of the same id (code carried over, re-implemented in integer cents)."
+  },
+  {
+   "id": "T7",
+   "label": "open() on an existing account is a silent no-op",
+   "file": "src/ledger.ts",
+   "lines": [
+    35
+   ],
+   "kind": "line",
+   "note": "Same decision as the ledger case's item of the same id (code carried over, re-implemented in integer cents)."
+  },
+  {
+   "id": "T8",
+   "label": "amount validated before rounding: a positive amount below half a cent is accepted and recorded as 0 (a 0-cent withdrawal still pays the minimum fee)",
+   "file": "src/ledger.ts",
+   "lines": [
+    50,
+    53,
+    70,
+    73,
+    85,
+    89,
+    98,
+    103
+   ],
+   "kind": "line",
+   "note": "Same decision as the ledger case's item of the same id (code carried over, re-implemented in integer cents)."
+  },
+  {
+   "id": "T9",
+   "label": "insufficient funds (including the fee) is checked before the daily limit",
+   "file": "src/ledger.ts",
+   "lines": [
+    75,
+    77
+   ],
+   "kind": "interaction",
+   "note": "Same decision as the ledger case's item of the same id (code carried over, re-implemented in integer cents)."
+  },
+  {
+   "id": "T10",
+   "label": "transfers and split payments do not count toward the daily withdrawal limit",
+   "file": "src/ledger.ts",
+   "lines": [
+    78,
+    91,
+    107
+   ],
+   "kind": "interaction",
+   "note": "Same decision as the ledger case's item of the same id (code carried over, re-implemented in integer cents)."
+  },
+  {
+   "id": "T11",
+   "label": "a rejected operation consumes neither its txnId nor daily-limit allowance",
+   "file": "src/ledger.ts",
+   "lines": [
+    54,
+    78,
+    80,
+    93,
+    109,
+    121
+   ],
+   "kind": "interaction",
+   "note": "Same decision as the ledger case's item of the same id (code carried over, re-implemented in integer cents)."
+  },
+  {
+   "id": "T12",
+   "label": "entries() returns a copy; changing it does not change the history",
+   "file": "src/ledger.ts",
+   "lines": [
+    46
+   ],
+   "kind": "line",
+   "note": "Known before this case was written: first surfaced by arm e on the ledger case (runs 001-004). Not post-hoc for this case, but its provenance favours arm e."
+  },
+  {
+   "id": "T13",
+   "label": "amount validation happens before the duplicate-txnId check",
+   "file": "src/ledger.ts",
+   "lines": [
+    50,
+    51,
+    70,
+    71,
+    85,
+    86,
+    98,
+    100
+   ],
+   "kind": "interaction",
+   "note": "Known before this case was written: first surfaced by arm e on the ledger case (runs 001-004). Not post-hoc for this case, but its provenance favours arm e."
+  },
+  {
+   "id": "T14",
+   "label": "the withdrawal fee is rounded UP to the cent (1% of 100.01 = 1.0001 -> 1.01)",
+   "file": "src/ledger.ts",
+   "lines": [
+    24
+   ],
+   "kind": "line"
+  },
+  {
+   "id": "T15",
+   "label": "the withdrawal fee is capped at 25.00",
+   "file": "src/ledger.ts",
+   "lines": [
+    12,
+    25
+   ],
+   "kind": "line"
+  },
+  {
+   "id": "T16",
+   "label": "the funds check includes the fee: a withdrawal of the whole balance is rejected",
+   "file": "src/ledger.ts",
+   "lines": [
+    75
+   ],
+   "kind": "interaction"
+  },
+  {
+   "id": "T17",
+   "label": "the daily limit counts the withdrawn amount without the fee",
+   "file": "src/ledger.ts",
+   "lines": [
+    77,
+    78
+   ],
+   "kind": "interaction"
+  },
+  {
+   "id": "T18",
+   "label": "interest is rounded DOWN (truncated) to the cent",
+   "file": "src/ledger.ts",
+   "lines": [
+    118
+   ],
+   "kind": "line"
+  },
+  {
+   "id": "T19",
+   "label": "interest that rounds to 0 cents is not credited: the call returns ok, no entry is recorded and the txnId is not consumed",
+   "file": "src/ledger.ts",
+   "lines": [
+    119
+   ],
+   "kind": "line"
+  },
+  {
+   "id": "T20",
+   "label": "a split's leftover cents go one each to the first recipients in list order",
+   "file": "src/ledger.ts",
+   "lines": [
+    106,
+    108
+   ],
+   "kind": "line"
+  },
+  {
+   "id": "T21",
+   "label": "PLANTED NEW UNSOURCED RULE: a foreign deposit that converts to less than half a cent is rejected with 'amount-too-small' (unlike a plain sub-half-cent deposit, which is accepted as 0)",
+   "file": "src/ledger.ts",
+   "lines": [
+    62
+   ],
+   "kind": "line"
+  },
+  {
+   "id": "T22",
+   "label": "a split with no recipients is rejected with 'no-recipients'",
+   "file": "src/ledger.ts",
+   "lines": [
+    99
+   ],
+   "kind": "line"
+  },
+  {
+   "id": "T23",
+   "label": "a non-positive interest rate or day count, or a non-positive exchange rate, is rejected as 'invalid-amount'",
+   "file": "src/ledger.ts",
+   "lines": [
+    59,
+    114
+   ],
+   "kind": "line"
+  },
+  {
+   "id": "T24",
+   "label": "transfers and split payments are not charged a fee",
+   "file": "src/ledger.ts",
+   "lines": [
+    89,
+    90,
+    103,
+    104
+   ],
+   "kind": "interaction"
+  }
+ ],
+ "dropped_requirements": [
+  {
+   "id": "T6",
+   "statement": "P-007",
+   "label": "transfer to the same account is not rejected",
+   "note": "Same decision as the ledger case's item of the same id (code carried over, re-implemented in integer cents)."
+  },
+  {
+   "id": "T25",
+   "statement": "P-013",
+   "label": "the fee is not recorded as its own history entry: the withdrawal entry carries amount + fee"
+  },
+  {
+   "id": "T26",
+   "statement": "P-014",
+   "label": "foreign conversion rounds halves away from zero (up), not to even: 2.50 at 0.01 = 0.025 -> 0.03 instead of 0.02"
+  }
+ ],
+ "negative_controls": [
+  {
+   "id": "N1",
+   "label": "non-positive amounts rejected (P-005)",
+   "file": "src/ledger.ts",
+   "lines": [
+    50,
+    70,
+    85,
+    98
+   ],
+   "kind": "line"
+  },
+  {
+   "id": "N2",
+   "label": "history entry per accepted operation (P-008)",
+   "file": "src/ledger.ts",
+   "lines": [
+    131,
+    136
+   ],
+   "kind": "line"
+  },
+  {
+   "id": "N3",
+   "label": "amounts rounded to the nearest cent, halves away from zero (P-011)",
+   "file": "src/ledger.ts",
+   "lines": [
+    16
+   ],
+   "kind": "line"
+  },
+  {
+   "id": "N4",
+   "label": "withdrawal fee of 1% with a minimum of 0.50 (P-012)",
+   "file": "src/ledger.ts",
+   "lines": [
+    10,
+    11
+   ],
+   "kind": "line"
+  },
+  {
+   "id": "N5",
+   "label": "interest computed with a 365-day year on the current balance (P-015)",
+   "file": "src/ledger.ts",
+   "lines": [
+    13,
+    117
+   ],
+   "kind": "line"
+  },
+  {
+   "id": "N6",
+   "label": "a split divides the amount evenly (P-016)",
+   "file": "src/ledger.ts",
+   "lines": [
+    105
+   ],
+   "kind": "line"
+  },
+  {
+   "id": "N7",
+   "label": "foreign amount converted at the given rate (P-014, conversion part)",
+   "file": "src/ledger.ts",
+   "lines": [
+    61
+   ],
+   "kind": "line"
+  },
+  {
+   "id": "N8",
+   "label": "balances kept in whole cents (P-010)",
+   "file": "src/ledger.ts",
+   "lines": [
+    20,
+    126
+   ],
+   "kind": "line"
+  }
+ ],
+ "changelog": [
+  {
+   "version": 1,
+   "date": "2026-09-27",
+   "change": "initial truth, written with the case before any run"
+  }
+ ]
+}
