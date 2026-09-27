@@ -13,6 +13,16 @@ TRUTH="$ROOT/experiment/cases/$CASE/truth.json"
 PROJ="$ROOT/$(node -p "require('$TRUTH').project")"
 PLAN="$(node -p "require('$TRUTH').plan" | sed "s#^$(basename "$PROJ")/##; s#^examples/$CASE/##")"
 SD="node $ROOT/skills/silent-decisions/scripts/sd.mjs"
+
+# Blindness guard. `claude -p` loads every CLAUDE.md from its working directory upwards, and the roles
+# below run inside this repo, so the operator notes in the repo's CLAUDE.md would reach the extractor
+# and the baseline arms. Move them aside for the duration of the run and put them back on any exit.
+HIDDEN=()
+for f in "$ROOT/CLAUDE.md" "$ROOT/CLAUDE.local.md" "$ROOT/.claude/CLAUDE.md"; do
+  if [ -f "$f" ]; then mv "$f" "$f.hidden-during-run"; HIDDEN+=("$f"); fi
+done
+restore_notes() { for f in "${HIDDEN[@]+"${HIDDEN[@]}"}"; do [ -f "$f.hidden-during-run" ] && mv "$f.hidden-during-run" "$f"; done; }
+trap restore_notes EXIT
 OUT="$ROOT/experiment/out/$CASE"; mkdir -p "$OUT"
 export SD_CLASSIFIER_CMD="${SD_CLASSIFIER_CMD:-node $ROOT/skills/silent-decisions/scripts/classifiers/jev.mjs}"
 
