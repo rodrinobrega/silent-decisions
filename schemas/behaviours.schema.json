@@ -89,6 +89,11 @@
           "contrary_then": {
             "type": "string",
             "description": "Plain-language outcome checked by test.twin_assert"
+          },
+          "contrary_alternatives": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Other plausible outcomes for the same Given/When, not executed; used only to detect contradictions with the source text"
           }
         }
       }

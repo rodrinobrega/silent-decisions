@@ -12,8 +12,10 @@ process.stdin.on('end', () => {
     const req = JSON.parse(line);
     let a = fx[req.id];
     if (!a && req.id.startsWith('pair|')) {
-      const [, b, s, order] = req.id.split('|');
-      const base = fx[`pair|${b}|${s}`];
+      // pair|<b>|<s>|<order> or pair|<b>|<s>|c<k>|<order> (extra contraries); the fixture key drops the order.
+      const parts = req.id.split('|');
+      const order = parts.pop();
+      const base = fx[parts.join('|')];
       if (base) {
         // base.label is "code" | "contrary" | "neither"; translate to a/b for this ordering.
         const label = base.label === 'neither' ? 'neither' : (base.label === 'code') === (order === 'ab') ? 'a' : 'b';

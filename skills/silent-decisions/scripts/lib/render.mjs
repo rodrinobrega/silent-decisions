@@ -19,8 +19,10 @@ export function render(args) {
   const silent = checked.forward.filter((f) => f.verdict === 'unsourced');
   const entailed = checked.forward.filter((f) => f.verdict === 'entailed');
   const probeBy = new Map((probes ? probes.results : []).map((p) => [p.statement_id, p]));
-  const candidates = checked.reverse.filter((r) => r.status === 'candidate_unrealised');
-  const dropped = candidates.filter((r) => (probeBy.get(r.statement_id) || {}).outcome === 'dropped');
+  // Candidates: statements the trace could not show realised, or that a verified behaviour contradicts.
+  // A probe decides every statement it ran on, including ones the trace called realised.
+  const candidates = checked.reverse.filter((r) => r.status === 'candidate_unrealised' || r.status === 'contradicted');
+  const dropped = checked.reverse.filter((r) => (probeBy.get(r.statement_id) || {}).outcome === 'dropped');
   const unprobed = candidates.filter((r) => !probeBy.has(r.statement_id) || probeBy.get(r.statement_id).outcome === 'inconclusive');
   const missed = candidates.filter((r) => (probeBy.get(r.statement_id) || {}).outcome === 'realised_missed_by_extractor');
 
@@ -101,6 +103,8 @@ export function render(args) {
     const s = statements.get(r.statement_id);
     const p = probeBy.get(r.statement_id);
     L.push(`#### ${r.statement_id}`, '', `> ${s.text}`, '', `Plan line ${s.line_start}. Probe \`${p.probe_id}\` fails against the code: ${(p.message || '').split('\n')[0] || 'assertion failed'}`, '');
+    if (r.status === 'realised') L.push(`_The trace had marked this realised (by ${r.realised_by.join(', ') || 'a quote'}); the probe overrules it._`, '');
+    if (r.contradicted_by) L.push(`Contradicting behaviour(s): ${r.contradicted_by.join(', ')}.`, '');
   }
   if (unprobed.length) {
     L.push('### Not confirmed', '', 'No behaviour was traced to these statements, and no probe settled it:', '');

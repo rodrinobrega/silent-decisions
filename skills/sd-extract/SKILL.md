@@ -32,6 +32,8 @@ Each scenario carries a test that proves it, written for Vitest:
 
 Alongside `then`, write `contrary_then`: the same contrary outcome in plain language, the way a business owner would say it ("the withdrawal is accepted and the balance becomes -50"). Pick the contrary a competent engineer might plausibly have built, not an absurd one. It must describe what `twin_assert` checks.
 
+Then write `contrary_alternatives`: one to three *other* outcomes a competent engineer might plausibly have built for the same Given and When, in the same plain language. If the action succeeds in this code, one of them must be that it is refused ("the transfer is rejected and both balances stay as they were"); if the action is refused, one must be that it goes through. These are not tested; they are the other ways the rule could have gone, so name the realistic ones.
+
 You cannot run the tests. Read carefully enough to be right: every scenario is executed after you finish, and wrong ones are thrown out.
 
 ## Covering the census
@@ -51,6 +53,7 @@ Write exactly this shape to `out/behaviours.json`:
       "title": "one line, plain language",
       "given": "…", "when": "…", "then": "…",
       "contrary_then": "…",
+      "contrary_alternatives": ["…"],
       "observed_at": "return value | readable state | emitted event | response",
       "literals": ["100", "150"],
       "covers": ["C-010"],

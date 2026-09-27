@@ -1,0 +1,16 @@
+{
+  "case": "ledger", "truth_version": 2, "run": "001", "arm": "e",
+  "adjudicator": "Claude, 2026-09-27. NOT blind to the arm; re-check before publishing.",
+  "legend": "value = truth id the flagged item is the same decision as; 'valid' = a real silent decision the truth file does not list (neither TP nor FP); 'invalid' = not a real silent decision (FP).",
+  "items": {
+    "B-007": "T3", "B-008": "T8", "B-009": "valid", "B-010": "T5", "B-012": "valid",
+    "B-014": "T1", "B-015": "T8", "B-018": "valid", "B-019": "T11", "B-020": "T2",
+    "B-021": "T2", "B-022": "T2", "B-023": "T2", "B-024": "T9", "B-025": "T11",
+    "B-026": "T10", "B-027": "T5", "B-029": "T1", "B-030": "T1", "B-033": "T6"
+  },
+  "notes": [
+    "B-033 is the dropped requirement T6 (P-007) reported in the silent-decision bucket: found, wrong bucket.",
+    "T4 (repeated txnId with a DIFFERENT payload) was not found: B-005/B-017/B-032 only test same-payload retries, and were sourced by P-009. The census counted C-007/C-009/C-014 as covered by those scenarios, so coverage was satisfied by the wrong scenario.",
+    "T7 was not flagged: B-011 (opening an existing account does not reset it) was sourced by P-010, an out-of-scope sentence. Classifier over-match."
+  ]
+}

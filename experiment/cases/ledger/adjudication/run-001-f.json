@@ -1,0 +1,13 @@
+{
+  "case": "ledger", "truth_version": 2, "run": "001", "arm": "f",
+  "adjudicator": "Claude, 2026-09-27. NOT blind to the arm; re-check before publishing.",
+  "legend": "see run-001-e.json",
+  "items": {
+    "C-001": "T2", "C-002": "T3", "C-003": "T3", "C-004": "T7", "C-005": "T5", "C-007": "T4",
+    "C-009": "T4", "C-010": "T1", "C-011": "T2", "C-012": "T2", "C-014": "T4", "C-015": "T1"
+  },
+  "notes": [
+    "C-007/C-009/C-014 point at the duplicate-txnId guard, which is where T4 lives, so they count as T4; the census item cannot say whether a different payload is acknowledged.",
+    "Arm f cannot express T8-T11 (ordering and absence); it never flags them."
+  ]
+}

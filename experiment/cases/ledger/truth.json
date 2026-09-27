@@ -2,19 +2,164 @@
   "case": "ledger",
   "plan": "examples/ledger/plan.md",
   "project": "examples/ledger",
-  "note": "Ground truth for the planted example. Silent decisions are matched by source line: an arm 'finds' one if it flags anything whose lines overlap. Negative controls are decisions the plan DOES make; flagging them is a false positive.",
+  "note": "Ground truth for the planted example. Silent decisions are matched by source line: an arm 'finds' one if it flags anything whose lines overlap. Negative controls are decisions the plan DOES make; flagging them is a false positive. Version 2 adds post-hoc items (post_hoc: true) found by reading run 001's output; the scorer reports recall with and without them, because items discovered through one arm's output favour that arm. Items with kind 'interaction' live in how pieces of code combine, so line overlap cannot score them fairly: use decision-level adjudication (sd score --adjudication).",
   "silent_decisions": [
-    { "id": "T1", "label": "no overdrafts (balance may not go below 0)", "file": "src/ledger.ts", "lines": [56, 72] },
-    { "id": "T2", "label": "daily withdrawal cap of 5000", "file": "src/ledger.ts", "lines": [10, 57, 58, 59] },
-    { "id": "T3", "label": "amounts rounded half-up to cents", "file": "src/ledger.ts", "lines": [13, 14] },
-    { "id": "T4", "label": "repeated txn id with a different payload is acknowledged and ignored", "file": "src/ledger.ts", "lines": [41, 52, 68] },
-    { "id": "T5", "label": "unknown account reads as balance 0 instead of an error", "file": "src/ledger.ts", "lines": [31] }
+    {
+      "id": "T1",
+      "label": "no overdrafts (balance may not go below 0)",
+      "file": "src/ledger.ts",
+      "lines": [
+        56,
+        72
+      ],
+      "kind": "line"
+    },
+    {
+      "id": "T2",
+      "label": "daily withdrawal cap of 5000",
+      "file": "src/ledger.ts",
+      "lines": [
+        10,
+        57,
+        58,
+        59
+      ],
+      "kind": "line"
+    },
+    {
+      "id": "T3",
+      "label": "amounts rounded half-up to cents",
+      "file": "src/ledger.ts",
+      "lines": [
+        13,
+        14
+      ],
+      "kind": "line"
+    },
+    {
+      "id": "T4",
+      "label": "repeated txn id with a different payload is acknowledged and ignored",
+      "file": "src/ledger.ts",
+      "lines": [
+        41,
+        52,
+        68
+      ],
+      "kind": "line"
+    },
+    {
+      "id": "T5",
+      "label": "unknown account reads as balance 0 instead of an error",
+      "file": "src/ledger.ts",
+      "lines": [
+        31
+      ],
+      "kind": "line"
+    },
+    {
+      "id": "T7",
+      "label": "open() on an existing account is a silent no-op (not an error, not a reset)",
+      "file": "src/ledger.ts",
+      "lines": [
+        24
+      ],
+      "kind": "line",
+      "post_hoc": true,
+      "reason": "Plan never says what opening an existing account does. Surfaced by arm f (C-004) and arm e (B-011), run 001."
+    },
+    {
+      "id": "T8",
+      "label": "amount is validated before rounding: a positive amount below half a cent is accepted and recorded as 0",
+      "file": "src/ledger.ts",
+      "lines": [
+        43,
+        54,
+        71
+      ],
+      "kind": "line",
+      "post_hoc": true,
+      "reason": "P-005 requires a positive amount but not whether that is checked before or after rounding to cents. Surfaced by arm e (B-008, B-015), run 001; v1 scored it as a false positive on N1 because it touches line 39."
+    },
+    {
+      "id": "T9",
+      "label": "insufficient funds is checked before the daily limit",
+      "file": "src/ledger.ts",
+      "lines": [
+        56,
+        58
+      ],
+      "kind": "interaction",
+      "post_hoc": true,
+      "reason": "Order of two rejections decides which reason the customer sees. Surfaced by arm e (B-024), run 001."
+    },
+    {
+      "id": "T10",
+      "label": "transfers do not count toward the daily withdrawal limit",
+      "file": "src/ledger.ts",
+      "lines": [
+        71,
+        72
+      ],
+      "kind": "interaction",
+      "post_hoc": true,
+      "reason": "The limit is only applied in withdraw(); a transfer out moves money without it. Surfaced by arm e (B-026), run 001. Line scoring is weak here: the decision is an absence."
+    },
+    {
+      "id": "T11",
+      "label": "a rejected operation consumes neither its txnId nor daily-limit allowance",
+      "file": "src/ledger.ts",
+      "lines": [
+        46,
+        62,
+        77
+      ],
+      "kind": "interaction",
+      "post_hoc": true,
+      "reason": "txnId is recorded only after all checks pass, so a rejected id can be reused. Surfaced by arm e (B-019, B-025), run 001."
+    }
   ],
   "dropped_requirements": [
-    { "id": "T6", "statement": "P-007", "label": "transfer to the same account is not rejected" }
+    {
+      "id": "T6",
+      "statement": "P-007",
+      "label": "transfer to the same account is not rejected"
+    }
   ],
   "negative_controls": [
-    { "id": "N1", "label": "non-positive amounts rejected (plan P-005)", "file": "src/ledger.ts", "lines": [39, 51, 67] },
-    { "id": "N2", "label": "history entry per accepted operation (plan P-008)", "file": "src/ledger.ts", "lines": [45, 61, 76, 77] }
+    {
+      "id": "N1",
+      "label": "non-positive amounts rejected (plan P-005)",
+      "file": "src/ledger.ts",
+      "lines": [
+        39,
+        51,
+        67
+      ]
+    },
+    {
+      "id": "N2",
+      "label": "history entry per accepted operation (plan P-008)",
+      "file": "src/ledger.ts",
+      "lines": [
+        45,
+        61,
+        76,
+        77
+      ]
+    }
+  ],
+  "version": 2,
+  "changelog": [
+    {
+      "version": 1,
+      "date": "2026-09-21",
+      "change": "planted case: T1-T5 silent, T6 dropped, N1-N2 controls"
+    },
+    {
+      "version": 2,
+      "date": "2026-09-27",
+      "after_run": "001",
+      "change": "added T7, T8 (real decisions missed by v1, surfaced by run 001 arm e and arm f's C-004) and T9-T11 (interaction decisions surfaced by arm e). All marked post_hoc. v1 kept as truth.v1.json."
+    }
   ]
 }

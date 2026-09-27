@@ -1,0 +1,203 @@
+{
+  "mode": "census-classifier",
+  "items": [
+    {
+      "census_id": "C-001",
+      "kind": "constant",
+      "file": "src/ledger.ts",
+      "line": 10,
+      "code": "DAILY_WITHDRAWAL_LIMIT = 5000",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-002",
+      "kind": "rounding",
+      "file": "src/ledger.ts",
+      "line": 14,
+      "code": "Math.round(amount * 100)",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-003",
+      "kind": "literal",
+      "file": "src/ledger.ts",
+      "line": 14,
+      "code": "Math.round(amount * 100) / 100",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-004",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 24,
+      "code": "!this.balances.has(account)",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-005",
+      "kind": "default",
+      "file": "src/ledger.ts",
+      "line": 31,
+      "code": "this.balances.get(account) ?? 0",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-006",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 39,
+      "code": "!(amount > 0)",
+      "verdict": "decided",
+      "decided_by": [
+        {
+          "statement_id": "P-005",
+          "confidence": 0.88
+        }
+      ]
+    },
+    {
+      "census_id": "C-007",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 41,
+      "code": "this.seen.has(txnId)",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-008",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 51,
+      "code": "!(amount > 0)",
+      "verdict": "decided",
+      "decided_by": [
+        {
+          "statement_id": "P-005",
+          "confidence": 0.89
+        }
+      ]
+    },
+    {
+      "census_id": "C-009",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 52,
+      "code": "this.seen.has(txnId)",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-010",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 56,
+      "code": "this.balance(account) - value < 0",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-011",
+      "kind": "default",
+      "file": "src/ledger.ts",
+      "line": 57,
+      "code": "this.withdrawnToday.get(account) ?? 0",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-012",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 58,
+      "code": "used + value > DAILY_WITHDRAWAL_LIMIT",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-013",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 67,
+      "code": "!(amount > 0)",
+      "verdict": "decided",
+      "decided_by": [
+        {
+          "statement_id": "P-005",
+          "confidence": 0.89
+        }
+      ]
+    },
+    {
+      "census_id": "C-014",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 68,
+      "code": "this.seen.has(txnId)",
+      "verdict": "undecided",
+      "decided_by": []
+    },
+    {
+      "census_id": "C-015",
+      "kind": "condition",
+      "file": "src/ledger.ts",
+      "line": 72,
+      "code": "this.balance(from) - value < 0",
+      "verdict": "undecided",
+      "decided_by": []
+    }
+  ],
+  "reverse": [
+    {
+      "statement_id": "P-001",
+      "status": "untouched"
+    },
+    {
+      "statement_id": "P-002",
+      "status": "untouched"
+    },
+    {
+      "statement_id": "P-003",
+      "status": "untouched"
+    },
+    {
+      "statement_id": "P-004",
+      "status": "untouched"
+    },
+    {
+      "statement_id": "P-005",
+      "status": "touched"
+    },
+    {
+      "statement_id": "P-006",
+      "status": "untouched"
+    },
+    {
+      "statement_id": "P-007",
+      "status": "untouched"
+    },
+    {
+      "statement_id": "P-008",
+      "status": "untouched"
+    },
+    {
+      "statement_id": "P-009",
+      "status": "untouched"
+    },
+    {
+      "statement_id": "P-010",
+      "status": "untouched"
+    }
+  ],
+  "classifier": {
+    "command": "node /Users/rodrigonobrega/Workspace/silent-decisions/skills/silent-decisions/scripts/classifiers/jev.mjs",
+    "threshold": 0.7,
+    "requests": 150,
+    "answered": 150
+  }
+}

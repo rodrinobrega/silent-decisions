@@ -130,16 +130,25 @@ export function checkTrace(args) {
   // (the code does let customers withdraw; it is the overdraft policy that is unsourced).
   const cited = new Set(forward.flatMap((f) => f.quotes.map((q) => q.statement_id)));
   const linked = new Map((trace.reverse || []).map((r) => [r.statement_id, (r.realised_by || []).filter((b) => traceable.has(b) || results.some((x) => x.id === b && x.status === 'verified'))]));
+  // A verified behaviour whose outcome the statement appears to forbid (pairwise mode: the statement
+  // required one of the behaviour's contraries). That is a lead on a dropped requirement, never a verdict.
+  const contradicted = new Map((trace.reverse || []).filter((r) => (r.contradicted_by || []).length).map((r) => [r.statement_id, r.contradicted_by]));
   const reverse = statements.filter((s) => s.source === 'plan').map((s) => {
     const type = types.get(s.id) || 'untyped';
     let status = 'not_behavioural';
     if (type === 'behavioural' || type === 'untyped') {
-      status = cited.has(s.id) || (linked.get(s.id) || []).length ? 'realised' : 'candidate_unrealised';
+      if (contradicted.has(s.id)) status = 'contradicted';
+      else status = cited.has(s.id) || (linked.get(s.id) || []).length ? 'realised' : 'candidate_unrealised';
     }
-    return { statement_id: s.id, type, status, realised_by: linked.get(s.id) || [] };
+    return { statement_id: s.id, type, status, realised_by: linked.get(s.id) || [], ...(contradicted.has(s.id) ? { contradicted_by: contradicted.get(s.id) } : {}) };
   });
+  // Which statements get a reverse probe. "all" (default since run 002): every behavioural statement,
+  // because in run 001 the trace marked a dropped requirement "realised" on the strength of two
+  // unrelated scenarios and nothing executed it. "candidates": only unrealised or contradicted ones.
+  const probeScope = String(args['probe-scope'] || process.env.SD_PROBE_SCOPE || 'all');
+  const probeTargets = reverse.filter((r) => r.status !== 'not_behavioural' && (probeScope === 'all' || r.status !== 'realised')).map((r) => r.statement_id);
 
-  const out = { mode: trace.mode || 'llm-tracer', ...(trace.classifier ? { classifier: trace.classifier } : {}), forward, reverse };
+  const out = { mode: trace.mode || 'llm-tracer', ...(trace.classifier ? { classifier: trace.classifier } : {}), forward, reverse, probe_scope: probeScope, probe_targets: probeTargets };
   writeJson(path.join(runDir, 'trace.checked.json'), out);
   const n = (v) => forward.filter((f) => f.verdict === v).length;
   process.stdout.write(JSON.stringify({
@@ -147,6 +156,9 @@ export function checkTrace(args) {
     stated: n('stated'), entailed: n('entailed'), unsourced: n('unsourced'),
     downgraded_by_rules: forward.filter((f) => f.tracer_verdict && f.tracer_verdict !== f.verdict).length,
     candidate_unrealised: reverse.filter((r) => r.status === 'candidate_unrealised').map((r) => r.statement_id),
+    contradicted: reverse.filter((r) => r.status === 'contradicted').map((r) => r.statement_id),
+    probe_scope: probeScope,
+    probe_targets: probeTargets,
   }, null, 2) + '\n');
 }
 

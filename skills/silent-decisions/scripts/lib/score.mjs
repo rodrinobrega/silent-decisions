@@ -40,6 +40,43 @@ export function normalise(arm, runDir, inputFile) {
   };
 }
 
+// Key a flagged item for adjudication: its behaviour/census id (B-007, C-004), else its position.
+export const keyOf = (f, i) => ((f.label || '').match(/^[BC]-\d+/) || [`#${i + 1}`])[0];
+
+/**
+ * Decision-level score from a human adjudication: each flagged item is mapped to the truth id it is
+ * the same decision as, 'valid' (a real decision the truth file does not list) or 'invalid'.
+ * Line overlap cannot tell "found the decision" from "touched the line"; this can, at the price of
+ * a judgement, so the adjudication file records who made it.
+ */
+export function decisionLevel(truth, norm, adj) {
+  const silentIds = new Set(truth.silent_decisions.map((t) => t.id));
+  const droppedIds = new Set(truth.dropped_requirements.map((d) => d.id));
+  const items = norm.flagged.map((f, i) => ({ key: keyOf(f, i), label: f.label, verdict: (adj.items || {})[keyOf(f, i)] }));
+  const unadjudicated = items.filter((x) => x.verdict === undefined).map((x) => x.key);
+  const tp = items.filter((x) => silentIds.has(x.verdict));
+  const misbucketed = items.filter((x) => droppedIds.has(x.verdict));
+  const valid = items.filter((x) => x.verdict === 'valid');
+  const fp = items.filter((x) => x.verdict === 'invalid' || (x.verdict && !silentIds.has(x.verdict) && !droppedIds.has(x.verdict) && x.verdict !== 'valid'));
+  const foundIds = new Set(tp.map((x) => x.verdict));
+  const r = (n, d) => (d ? Number((n / d).toFixed(3)) : null);
+  const judged = tp.length + misbucketed.length + fp.length; // 'valid' items are excluded from precision
+  const orig = truth.silent_decisions.filter((t) => !t.post_hoc);
+  return {
+    adjudicator: adj.adjudicator || null,
+    truth_version: truth.version || 1,
+    found: [...foundIds].sort(),
+    missed: truth.silent_decisions.filter((t) => !foundIds.has(t.id)).map((t) => t.id),
+    recall: r(foundIds.size, truth.silent_decisions.length),
+    recall_without_post_hoc: r(orig.filter((t) => foundIds.has(t.id)).length, orig.length),
+    precision: r(tp.length + misbucketed.length, judged),
+    valid_unlisted: valid.map((x) => x.key),
+    misbucketed: misbucketed.map((x) => `${x.key}→${x.verdict}`),
+    false_positives: fp.map((x) => x.key),
+    unadjudicated,
+  };
+}
+
 export function scoreAgainst(truth, norm) {
   const flagged = norm.flagged.map((f) => ({ ...f, set: linesOf(f) }));
   const found = truth.silent_decisions.map((t) => ({ id: t.id, label: t.label, hits: flagged.filter((f) => overlaps(f.set, linesOf(t))).map((f) => f.label) }));
@@ -67,13 +104,14 @@ export function scoreAgainst(truth, norm) {
 
 export function score(args) {
   const arm = args.arm && String(args.arm);
-  if (!arm || !/^[a-f]$/.test(arm)) fail('usage: sd score --arm a|b|c|d|e|f --truth <truth.json> [--input <arm-output.json>] [--out <results.json>] [--cost "<free text>"]');
+  if (!arm || !/^[a-f]$/.test(arm)) fail('usage: sd score --arm a|b|c|d|e|f --truth <truth.json> [--input <arm-output.json>] [--out <results.json>] [--cost "<free text>"] [--adjudication <file>] [--run <run id>]');
   const truth = readJson(path.resolve(String(args.truth)));
   const { proj, runDir } = loadRun(args);
   const norm = normalise(arm, runDir, args.input && path.resolve(String(args.input)));
-  const result = { arm, case: truth.case, run: path.basename(runDir), scored_at: new Date().toISOString(), cost: args.cost || null, ...scoreAgainst(truth, norm), normalised: norm };
+  const result = { arm, case: truth.case, truth_version: truth.version || 1, run: path.basename(runDir), scored_at: new Date().toISOString(), cost: args.cost || null, ...scoreAgainst(truth, norm), normalised: norm };
+  if (args.adjudication) result.decision_level = decisionLevel(truth, norm, readJson(path.resolve(String(args.adjudication))));
   const out = args.out ? path.resolve(String(args.out)) : path.join(runDir, `score.${arm}.json`);
   writeJson(out, result);
   const sd = result.silent_decisions, dr = result.dropped_requirements;
-  process.stdout.write(JSON.stringify({ wrote: rel(proj, out), arm, silent: { precision: sd.precision, recall: sd.recall, flagged: sd.flagged, found: `${sd.found}/${sd.truth}` }, negative_false_positives: result.negative_controls.false_positives, dropped: { precision: dr.precision, recall: dr.recall } }, null, 2) + '\n');
+  process.stdout.write(JSON.stringify({ wrote: rel(proj, out), arm, silent: { precision: sd.precision, recall: sd.recall, flagged: sd.flagged, found: `${sd.found}/${sd.truth}` }, negative_false_positives: result.negative_controls.false_positives, dropped: { precision: dr.precision, recall: dr.recall }, ...(result.decision_level ? { decision_level: { recall: result.decision_level.recall, recall_without_post_hoc: result.decision_level.recall_without_post_hoc, precision: result.decision_level.precision, missed: result.decision_level.missed, unadjudicated: result.decision_level.unadjudicated.length } } : {}) }, null, 2) + '\n');
 }

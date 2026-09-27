@@ -56,3 +56,35 @@ test('a statement that requires the contrary is reported', () => {
   const t = assemble(statements, behaviours, ans, 0.7);
   assert.deepEqual(t.forward.find((x) => x.behaviour_id === 'B-002').contradicted_by, ['P-004']);
 });
+
+test('run 001 regression: an accepted same-account transfer is caught by the default rejection contrary', async () => {
+  const { contrariesOf, DEFAULT_REJECT } = await import(path.join(root, 'skills/silent-decisions/scripts/lib/pairwise.mjs'));
+  const st = [
+    { id: 'P-006', text: 'Customers can transfer funds between two accounts.', source: 'plan' },
+    { id: 'P-007', text: 'A transfer to the same account is rejected.', source: 'plan' },
+  ];
+  const b = { id: 'B-033', given: "'A' has 100", when: "50 is transferred from 'A' to 'A'", then: 'ok; balance stays 100; two entries', contrary_then: 'the balance ends at 50' };
+  const cs = contrariesOf(b);
+  assert.deepEqual(cs.map((c) => c.text), ['the balance ends at 50', DEFAULT_REJECT]);
+  assert.ok(buildRequests(st, [b]).some((r) => r.id === 'pair|B-033|P-007|c1|ab' && r.outcome_b === DEFAULT_REJECT));
+  const ans = new Map(Object.entries({
+    // P-007 is silent on the primary contrary but requires the rejection.
+    'pair|B-033|P-007|c1|ab': { label: 'b', confidence: 0.95 },
+    'pair|B-033|P-007|c1|ba': { label: 'a', confidence: 0.95 },
+    // P-006 prefers "accepted" over "rejected": must NOT source the behaviour (extra contraries never source).
+    'pair|B-033|P-006|c1|ab': { label: 'a', confidence: 0.95 },
+    'pair|B-033|P-006|c1|ba': { label: 'b', confidence: 0.95 },
+  }));
+  const t = assemble(st, [b], ans, 0.7);
+  const f = t.forward[0];
+  assert.equal(f.verdict, 'unsourced');
+  assert.deepEqual(f.contradicted_by, ['P-007']);
+  assert.deepEqual(t.reverse.find((r) => r.statement_id === 'P-007').contradicted_by, ['B-033']);
+});
+
+test('a rejected outcome gets an acceptance contrary; an existing one is not duplicated', async () => {
+  const { contrariesOf, DEFAULT_ACCEPT } = await import(path.join(root, 'skills/silent-decisions/scripts/lib/pairwise.mjs'));
+  assert.deepEqual(contrariesOf({ then: 'the withdrawal is rejected', contrary_then: 'rejected with a different reason' }).map((c) => c.text), ['rejected with a different reason', DEFAULT_ACCEPT]);
+  assert.equal(contrariesOf({ then: 'ok', contrary_then: 'x', contrary_alternatives: ['the transfer is rejected'] }).length, 2);
+  assert.equal(contrariesOf({ then: 'ok' }).length, 0, 'no primary contrary, no pairs');
+});

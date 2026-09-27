@@ -18,7 +18,7 @@ const HELP = `silent-decisions: find what the code decided that the plan did not
         Baseline (experiment arm f): plan sentence x census item through the classifier. No extraction,
         no execution. Writes trace.census.json and census-delta.md; does not feed check-trace.
   sd check-trace    Verify quotes, apply the verdict rules and the adversary's flip-test findings.
-  sd run --probes   Execute reverse probes for statements that look unrealised.
+  sd run --probes   Execute reverse probes (every behavioural statement by default).
   sd loo-prepare [--k 3]   Hide k sole-source plan statements for the leave-one-out control.
   sd loo-score      Score the tracer's second pass on the redacted plan.
   sd leak-check     Look for plan text and the run nonce in the extractor's output.

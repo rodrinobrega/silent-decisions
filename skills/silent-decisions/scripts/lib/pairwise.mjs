@@ -15,6 +15,33 @@ import { readJson, writeJson, fail, loadRun, rel, normalizeWs } from './util.mjs
 
 export const TYPE_LABELS = ['behavioural', 'structural', 'process'];
 
+// A behaviour's contraries: the extractor's primary contrary_then (what its twin asserts), any
+// contrary_alternatives it wrote, and a default flip of acceptance. One contrary per scenario only
+// catches a plan contradiction if it happens to be the alternative the plan talks about: in run 001
+// "transfer A to A is accepted" was only tested against "the balance ends at 50", which the plan
+// sentence "a transfer to the same account is rejected" neither requires nor forbids.
+const REJECTED = /\b(reject|refus|den(y|ied)|error|throws?|fails?|invalid|not allowed|forbidden)/i;
+export const DEFAULT_REJECT = 'the operation is rejected and nothing changes';
+export const DEFAULT_ACCEPT = 'the operation is accepted and takes effect';
+
+export function contrariesOf(b) {
+  const list = [];
+  const add = (text, source) => {
+    const t = normalizeWs(text || '');
+    if (t && !list.some((c) => c.text.toLowerCase() === t.toLowerCase())) list.push({ text: t, source });
+  };
+  add(b.contrary_then, 'extractor');
+  for (const alt of b.contrary_alternatives || []) add(alt, 'extractor-alternative');
+  if (!list.length) return list;
+  const thenRejected = REJECTED.test(b.then || '');
+  const want = thenRejected ? (t) => !REJECTED.test(t) : (t) => REJECTED.test(t);
+  if (!list.some((c) => want(c.text))) add(thenRejected ? DEFAULT_ACCEPT : DEFAULT_REJECT, 'default-flip');
+  return list;
+}
+
+// Request id for a pair. Contrary 0 keeps the original id shape so older fixtures and traces still read.
+export const pairId = (b, s, k, order) => (k === 0 ? `pair|${b}|${s}|${order}` : `pair|${b}|${s}|c${k}|${order}`);
+
 export function buildRequests(statements, behaviours) {
   const reqs = [];
   for (const s of statements.filter((x) => x.source === 'plan')) {
@@ -22,12 +49,14 @@ export function buildRequests(statements, behaviours) {
   }
   for (const b of behaviours) {
     const a = normalizeWs(b.then);
-    const contrary = normalizeWs(b.contrary_then || '');
-    if (!contrary) continue;
+    const contraries = contrariesOf(b);
+    if (!contraries.length) continue;
     for (const s of statements) {
       const base = { task: 'decides', statement: s.text, given: normalizeWs(b.given), when: normalizeWs(b.when), labels: ['a', 'b', 'neither'] };
-      reqs.push({ id: `pair|${b.id}|${s.id}|ab`, ...base, outcome_a: a, outcome_b: contrary });
-      reqs.push({ id: `pair|${b.id}|${s.id}|ba`, ...base, outcome_a: contrary, outcome_b: a });
+      contraries.forEach((c, k) => {
+        reqs.push({ id: pairId(b.id, s.id, k, 'ab'), ...base, outcome_a: a, outcome_b: c.text });
+        reqs.push({ id: pairId(b.id, s.id, k, 'ba'), ...base, outcome_a: c.text, outcome_b: a });
+      });
       // Realisation is a different question from decision: "customers can withdraw funds" does not
       // decide the overdraft policy, but a withdrawal scenario is still an instance of it.
       reqs.push({ id: `realises|${b.id}|${s.id}`, task: 'realises', statement: s.text, given: normalizeWs(b.given), when: normalizeWs(b.when), outcome: a, labels: ['yes', 'no'] });
@@ -65,34 +94,47 @@ export function assemble(statements, behaviours, answers, threshold) {
   const byStatement = new Map(statements.map((s) => [s.id, s]));
   const forward = [];
   const reverse = new Map();
+  const contradictions = new Map();
   const pairs = [];
   for (const b of behaviours) {
     const supporting = [];
     const contradicting = [];
-    if (!b.contrary_then) {
+    const contraries = contrariesOf(b);
+    if (!contraries.length) {
       forward.push({ behaviour_id: b.id, verdict: 'unsourced', quotes: [], reasoning: 'no contrary outcome supplied by the extractor; pair could not be formed', contrary: { then: '' }, cluster: b.cluster || 'unclustered' });
       continue;
     }
+    // Map each ordering's label back to "code" / "contrary" / "neither".
+    const norm = (ans, swapped) => {
+      if (!ans || !['a', 'b', 'neither'].includes(ans.label)) return null;
+      if (ans.label === 'neither') return 'neither';
+      return (ans.label === 'a') !== swapped ? 'code' : 'contrary';
+    };
     for (const s of statements) {
-      const ab = answers.get(`pair|${b.id}|${s.id}|ab`);
-      const ba = answers.get(`pair|${b.id}|${s.id}|ba`);
-      // Map each ordering's label back to "code" / "contrary" / "neither".
-      const norm = (ans, swapped) => {
-        if (!ans || !['a', 'b', 'neither'].includes(ans.label)) return null;
-        if (ans.label === 'neither') return 'neither';
-        return (ans.label === 'a') !== swapped ? 'code' : 'contrary';
-      };
-      const x = norm(ab, false), y = norm(ba, true);
-      const conf = Math.min(Number(ab && ab.confidence) || 0, Number(ba && ba.confidence) || 0);
-      let outcome = 'neither';
-      let note = '';
-      if (x === null || y === null) note = 'no answer';
-      else if (x !== y) note = 'position-dependent answer, discarded';
-      else if (x !== 'neither' && conf < threshold) note = `below threshold (${conf.toFixed(2)} < ${threshold})`;
-      else outcome = x;
-      pairs.push({ behaviour_id: b.id, statement_id: s.id, outcome, confidence: conf, ...(note ? { note } : {}) });
-      if (outcome === 'code') supporting.push(s);
-      if (outcome === 'contrary') contradicting.push(s);
+      // Sourcing is the flip test against the primary contrary only (k = 0), exactly as before.
+      // The extra contraries exist to catch contradictions, and must not source anything: against
+      // "the operation is rejected", a generic sentence like "customers can transfer funds" would
+      // appear to require every accepted transfer, and quietly empty the silent-decision bucket.
+      // A contradiction is a lead, not a verdict: it forces a reverse probe of the statement, and the
+      // probe decides. A contradiction outranks support for the same statement.
+      let sOutcome = 'neither';
+      contraries.forEach((c, k) => {
+        const ab = answers.get(pairId(b.id, s.id, k, 'ab'));
+        const ba = answers.get(pairId(b.id, s.id, k, 'ba'));
+        const x = norm(ab, false), y = norm(ba, true);
+        const conf = Math.min(Number(ab && ab.confidence) || 0, Number(ba && ba.confidence) || 0);
+        let outcome = 'neither';
+        let note = '';
+        if (x === null || y === null) note = 'no answer';
+        else if (x !== y) note = 'position-dependent answer, discarded';
+        else if (x !== 'neither' && conf < threshold) note = `below threshold (${conf.toFixed(2)} < ${threshold})`;
+        else outcome = x;
+        pairs.push({ behaviour_id: b.id, statement_id: s.id, contrary: k, contrary_source: c.source, outcome, confidence: conf, ...(note ? { note } : {}) });
+        if (outcome === 'contrary') sOutcome = 'contrary';
+        else if (outcome === 'code' && k === 0 && sOutcome === 'neither') sOutcome = 'code';
+      });
+      if (sOutcome === 'code') supporting.push(s);
+      if (sOutcome === 'contrary') contradicting.push(s);
     }
     const quotes = supporting.map((s) => ({ statement_id: s.id, text: s.text }));
     let reasoning = '';
@@ -102,7 +144,7 @@ export function assemble(statements, behaviours, answers, threshold) {
       verdict: quotes.length ? 'stated' : 'unsourced',
       quotes,
       reasoning,
-      contrary: { then: b.contrary_then },
+      contrary: { then: contraries[0].text, ...(contraries.length > 1 ? { alternatives: contraries.slice(1).map((c) => c.text) } : {}) },
       cluster: b.cluster || 'unclustered',
       ...(contradicting.length ? { contradicted_by: contradicting.map((s) => s.id) } : {}),
     });
@@ -113,13 +155,21 @@ export function assemble(statements, behaviours, answers, threshold) {
         if (!reverse.has(s.id)) reverse.set(s.id, []);
         reverse.get(s.id).push(b.id);
       }
+      if (contradicting.includes(s)) {
+        if (!contradictions.has(s.id)) contradictions.set(s.id, []);
+        contradictions.get(s.id).push(b.id);
+      }
     }
   }
   return {
     mode: 'pairwise-classifier',
     statements: types,
     forward,
-    reverse: [...reverse].map(([statement_id, realised_by]) => ({ statement_id, realised_by })),
+    reverse: [...new Set([...reverse.keys(), ...contradictions.keys()])].map((statement_id) => ({
+      statement_id,
+      realised_by: reverse.get(statement_id) || [],
+      ...(contradictions.has(statement_id) ? { contradicted_by: contradictions.get(statement_id) } : {}),
+    })),
     pairs,
   };
 }

@@ -67,7 +67,7 @@ for arm in $(echo "$ARMS" | grep -o .); do
         role adversary "behaviours $RUN/behaviours.verified.json; trace $RUN/trace.json; write $RUN/adversary.json"
       fi
       $SD check-trace > "$OUT/$arm/check.json"
-      cands=$(node -p "JSON.parse(require('fs').readFileSync('$OUT/$arm/check.json','utf8')).candidate_unrealised.join(', ')")
+      cands=$(node -p "const c=JSON.parse(require('fs').readFileSync('$OUT/$arm/check.json','utf8')); (c.probe_targets||c.candidate_unrealised).join(', ')")
       if [ -n "$cands" ]; then
         role probe-writer "statements $RUN/plan.statements.json; probe these ids: $cands; source $PROJ/src; write $RUN/probes.json"
         $SD run --probes >/dev/null || true

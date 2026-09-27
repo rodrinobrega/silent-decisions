@@ -1,0 +1,20 @@
+{
+  "case": "ledger",
+  "plan": "examples/ledger/plan.md",
+  "project": "examples/ledger",
+  "note": "Ground truth for the planted example. Silent decisions are matched by source line: an arm 'finds' one if it flags anything whose lines overlap. Negative controls are decisions the plan DOES make; flagging them is a false positive.",
+  "silent_decisions": [
+    { "id": "T1", "label": "no overdrafts (balance may not go below 0)", "file": "src/ledger.ts", "lines": [56, 72] },
+    { "id": "T2", "label": "daily withdrawal cap of 5000", "file": "src/ledger.ts", "lines": [10, 57, 58, 59] },
+    { "id": "T3", "label": "amounts rounded half-up to cents", "file": "src/ledger.ts", "lines": [13, 14] },
+    { "id": "T4", "label": "repeated txn id with a different payload is acknowledged and ignored", "file": "src/ledger.ts", "lines": [41, 52, 68] },
+    { "id": "T5", "label": "unknown account reads as balance 0 instead of an error", "file": "src/ledger.ts", "lines": [31] }
+  ],
+  "dropped_requirements": [
+    { "id": "T6", "statement": "P-007", "label": "transfer to the same account is not rejected" }
+  ],
+  "negative_controls": [
+    { "id": "N1", "label": "non-positive amounts rejected (plan P-005)", "file": "src/ledger.ts", "lines": [39, 51, 67] },
+    { "id": "N2", "label": "history entry per accepted operation (plan P-008)", "file": "src/ledger.ts", "lines": [45, 61, 76, 77] }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "run_id": "20260927T123101-751c21",
+  "silent_decisions": 20,
+  "dropped_requirements": 0,
+  "delta": 20,
+  "cap": 100,
+  "over_cap": false,
+  "voided": false,
+  "scenarios": {
+    "extracted": 33,
+    "verified": 33,
+    "vacuous": 0,
+    "refuted": 0
+  },
+  "census": {
+    "total": 15,
+    "covered": 15,
+    "waived": 0,
+    "uncovered": 0
+  },
+  "extraction_recall_misses": 0,
+  "loo": "passed",
+  "leak": "clean"
+}
