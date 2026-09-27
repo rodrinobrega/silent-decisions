@@ -39,17 +39,24 @@ export function contrariesOf(b) {
   return list;
 }
 
+// Which contraries the trace asks about. "primary" (default since run 003): only the extractor's own
+// contrary_then. In run 002 the extra ones cost 2.2x the calls and every contradiction they raised was
+// spurious; the real one (same-account transfer) came from the primary contrary, and the failing
+// reverse probe confirmed it. "all" keeps the run 002 behaviour.
+export const CONTRARY_MODES = ['primary', 'all'];
+export const contrariesFor = (b, mode = 'primary') => (mode === 'all' ? contrariesOf(b) : contrariesOf(b).slice(0, 1));
+
 // Request id for a pair. Contrary 0 keeps the original id shape so older fixtures and traces still read.
 export const pairId = (b, s, k, order) => (k === 0 ? `pair|${b}|${s}|${order}` : `pair|${b}|${s}|c${k}|${order}`);
 
-export function buildRequests(statements, behaviours) {
+export function buildRequests(statements, behaviours, { contraries: mode = 'primary' } = {}) {
   const reqs = [];
   for (const s of statements.filter((x) => x.source === 'plan')) {
     reqs.push({ id: `type|${s.id}`, task: 'type', statement: s.text, labels: TYPE_LABELS });
   }
   for (const b of behaviours) {
     const a = normalizeWs(b.then);
-    const contraries = contrariesOf(b);
+    const contraries = contrariesFor(b, mode);
     if (!contraries.length) continue;
     for (const s of statements) {
       const base = { task: 'decides', statement: s.text, given: normalizeWs(b.given), when: normalizeWs(b.when), labels: ['a', 'b', 'neither'] };
@@ -86,7 +93,7 @@ export function callClassifier(cmd, requests, timeoutSec) {
  * outcome and the lower of the two confidences clears the threshold. Labels that move with
  * the position, or answers below threshold, count as "neither" (default to unsourced).
  */
-export function assemble(statements, behaviours, answers, threshold) {
+export function assemble(statements, behaviours, answers, threshold, { contraries: mode = 'primary' } = {}) {
   const types = statements.filter((s) => s.source === 'plan').map((s) => {
     const a = answers.get(`type|${s.id}`);
     return { id: s.id, type: TYPE_LABELS.includes(a && a.label) ? a.label : 'behavioural' };
@@ -99,7 +106,7 @@ export function assemble(statements, behaviours, answers, threshold) {
   for (const b of behaviours) {
     const supporting = [];
     const contradicting = [];
-    const contraries = contrariesOf(b);
+    const contraries = contrariesFor(b, mode);
     if (!contraries.length) {
       forward.push({ behaviour_id: b.id, verdict: 'unsourced', quotes: [], reasoning: 'no contrary outcome supplied by the extractor; pair could not be formed', contrary: { then: '' }, cluster: b.cluster || 'unclustered' });
       continue;
@@ -180,6 +187,8 @@ export function tracePairwise(args) {
   if (!cmd) fail('no classifier. Set SD_CLASSIFIER_CMD or pass --classifier "<command>". See references/classifier-protocol.md');
   const threshold = Number(args.threshold || process.env.SD_CLASSIFIER_THRESHOLD || 0.7);
   const loo = Boolean(args.loo);
+  const mode = String(args.contraries || process.env.SD_CONTRARIES || 'primary');
+  if (!CONTRARY_MODES.includes(mode)) fail(`--contraries must be one of ${CONTRARY_MODES.join(', ')}`);
 
   const stPath = loo ? path.join(runDir, 'loo', 'plan.statements.redacted.json') : path.join(runDir, 'plan.statements.json');
   const bhPath = loo ? path.join(runDir, 'loo', 'behaviours.subset.json') : path.join(runDir, 'behaviours.verified.json');
@@ -187,16 +196,16 @@ export function tracePairwise(args) {
   const statements = readJson(stPath);
   const behaviours = readJson(bhPath).behaviours || [];
 
-  const requests = buildRequests(statements, behaviours);
+  const requests = buildRequests(statements, behaviours, { contraries: mode });
   const maxPairs = Number(args['max-pairs'] || 20000);
   if (requests.length > maxPairs) fail(`${requests.length} classifier calls exceed --max-pairs ${maxPairs}. Narrow the plan, use --base, or raise the limit.`);
   if (args['dry-run']) {
-    process.stdout.write(JSON.stringify({ classifier: cmd, requests: requests.length, threshold, sample: requests.slice(0, 2) }, null, 2) + '\n');
+    process.stdout.write(JSON.stringify({ classifier: cmd, requests: requests.length, threshold, contraries: mode, sample: requests.slice(0, 2) }, null, 2) + '\n');
     return;
   }
   const answers = callClassifier(cmd, requests, Number(args.timeout || 1800));
-  const trace = assemble(statements, behaviours, answers, threshold);
-  trace.classifier = { command: cmd, threshold, requests: requests.length, answered: answers.size };
+  const trace = assemble(statements, behaviours, answers, threshold, { contraries: mode });
+  trace.classifier = { command: cmd, threshold, contraries: mode, requests: requests.length, answered: answers.size };
   const outPath = loo ? path.join(runDir, 'loo', 'trace.json') : path.join(runDir, 'trace.json');
   writeJson(outPath, trace);
   const n = (v) => trace.forward.filter((f) => f.verdict === v).length;

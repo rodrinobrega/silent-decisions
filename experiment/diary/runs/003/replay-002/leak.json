@@ -1,0 +1,63 @@
+{
+  "status": "suspect",
+  "review": "transcript shows no access outside the room and no mention of the plan: the overlap is phrasing, not a leak",
+  "shingle_size": 6,
+  "overlapping_phrases": [
+    "a transfer to the same account"
+  ],
+  "nonce_seen": false,
+  "extractor_reported_nonce": [],
+  "audit": {
+    "source": "transcript",
+    "found": true,
+    "sessions": [
+      "7f8b78d8-72f4-4521-9fd7-b3b47c5ae551.jsonl"
+    ],
+    "calls": 5,
+    "by_tool": {
+      "Bash": 3,
+      "Read": 1,
+      "Write": 1
+    },
+    "plan_mentions": 0,
+    "outside_room": [],
+    "denied": 1,
+    "tool_calls": [
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"cd /private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-YbQ9EU; find . -type f | grep -v node_modules | head -100; cat census.json; ls out; cat census.uncovered.json 2>/dev/null\",\"description\":\"List files and census\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\":\"/private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-YbQ9EU/cleanroom/src/ledger.ts\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"cd /private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-YbQ9EU; grep -rao 'SDN-[0-9a-fA-F]*' . ; sed -n '1p;12p;40p;55p' cleanroom/src/ledger.ts | od -c | head -20\",\"description\":\"Search for nonces and inspect whitespace lines\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Write",
+        "input": "{\"file_path\":\"/private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-YbQ9EU/out/behaviours.json\",\"content\":\"{\\n  \\\"nonce_seen\\\": [],\\n  \\\"behaviours\\\": [\\n    {\\n      \\\"id\\\": \\\"B-001\\\",\\n      \\\"title\\\": \\\"Opening a new account starts it at a balance of 0 with no entries\\\",\\n      \\\"given",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"node -e \\\"const j=require('/private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-YbQ9EU/out/behaviours.json');console.log(j.behaviours.length, [...new Set(j.behaviours.flatMap(b=>b.covers))].sort().join(','))\\\"\",\"description\":\"Validate JSON and coverage\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": true
+      }
+    ]
+  }
+}

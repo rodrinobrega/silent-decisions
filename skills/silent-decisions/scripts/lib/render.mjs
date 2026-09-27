@@ -32,7 +32,7 @@ export function render(args) {
 
   // A run is only as good as its controls. Say so at the top.
   const problems = [];
-  if (leak && leak.status !== 'clean') problems.push(`leak check: **${leak.status}**`);
+  if (leak && leak.status !== 'clean') problems.push(`leak check: **${leak.status}**${leak.review ? ` (${leak.review})` : ''}`);
   if (!leak) problems.push('leak check not run');
   if (loo && loo.status === 'failed') problems.push('leave-one-out control **failed**: the tracer cited text that had been removed');
   if (loo && loo.status === 'review') problems.push(`leave-one-out: ${loo.resourced} behaviour(s) stayed sourced from another passage, check them below`);
@@ -59,7 +59,13 @@ export function render(args) {
   L.push(`| Trace | ${checked.forward.filter((f) => f.verdict === 'stated').length} stated · ${entailed.length} entailed · ${silent.length} unsourced · ${checked.forward.filter((f) => f.tracer_verdict && f.tracer_verdict !== f.verdict).length} downgraded by rules |`);
   if (probes) L.push(`| Reverse probes | ${probes.results.length} run · ${dropped.length} dropped · ${missed.length} realised but missed by the extractor |`);
   L.push(`| Leave-one-out | ${loo ? `${loo.status}${loo.hidden ? ` (${loo.hidden.length} statement(s) hidden: ${loo.flipped ?? 0} flipped, ${loo.resourced ?? 0} re-sourced, ${loo.cited_hidden ?? 0} cited hidden text)` : ''}` : 'not run'} |`);
-  L.push(`| Leak check | ${leak ? `${leak.status}${leak.audit ? ` · extractor made ${leak.audit.calls} tool call(s), ${leak.audit.denied} denied` : ' · no audit log (hook not installed)'}` : 'not run'} |`);
+  const auditText = (a) => {
+    if (!a) return ' · no audit log (hook not installed)';
+    if (a.source !== 'transcript') return ` · extractor made ${a.calls} tool call(s), ${a.denied} denied`;
+    if (!a.found) return ' · no audit log, transcript not found';
+    return ` · transcript: ${a.calls} tool call(s), ${a.outside_room.length} outside the room, ${a.plan_mentions} plan mention(s), ${a.denied} denied`;
+  };
+  L.push(`| Leak check | ${leak ? `${leak.status}${auditText(leak.audit)}` : 'not run'} |`);
   L.push('');
   if (problems.length) { L.push('Open issues with this run:', ''); problems.forEach((p) => L.push(`- ${p}`)); L.push(''); }
 

@@ -13,7 +13,7 @@ import { fail, loadRun } from './util.mjs';
 const DEFAULT_CMD = `claude -p${process.env.ANTHROPIC_API_KEY ? ' --bare' : ''} --allowedTools Read,Glob,Grep,Write --permission-mode acceptEdits`;
 
 export function extractStrict(args) {
-  const { meta } = loadRun(args);
+  const { meta, runDir } = loadRun(args);
   const here = path.dirname(fileURLToPath(import.meta.url));
   const promptPath = path.resolve(here, '../../references/extractor-prompt.md');
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'sd-room-'));
@@ -25,6 +25,9 @@ export function extractStrict(args) {
     process.stdout.write(JSON.stringify({ cwd: tmp, cmd, prompt_file: promptPath }, null, 2) + '\n');
     return;
   }
+  // Where the session ran, so `sd leak-check` can find its transcript afterwards (the room copy is deleted).
+  // Written to the run directory, which the extractor never sees.
+  fs.writeFileSync(path.join(runDir, 'extractor.session.json'), JSON.stringify({ cwd: fs.realpathSync(tmp), cwd_as_created: tmp, cmd, started: new Date().toISOString() }, null, 2) + '\n');
   const res = spawnSync(cmd, { cwd: tmp, shell: true, input: prompt, encoding: 'utf8', maxBuffer: 1 << 26, timeout: Number(args.timeout || 1800) * 1000 });
   fs.writeFileSync(path.join(meta.room_root, 'extractor.log'), `$ ${cmd}\n--- stdout\n${res.stdout || ''}\n--- stderr\n${res.stderr || ''}\n`);
   if (res.status !== 0) {

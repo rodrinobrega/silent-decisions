@@ -11,7 +11,7 @@ const HELP = `silent-decisions: find what the code decided that the plan did not
         Run the blind extractor as a separate headless session (strict mode).
   sd run            Execute extracted scenarios, each with its perturbed twin (and against --base).
   sd census         Check that every census item is covered by a verified scenario or waived.
-  sd trace-pairwise [--loo] [--threshold 0.7] [--dry-run]
+  sd trace-pairwise [--loo] [--threshold 0.7] [--contraries primary|all] [--dry-run]
         Trace with a decision-only classifier (SD_CLASSIFIER_CMD), one (statement, behaviour) pair per call,
         instead of the LLM tracer + adversary. Writes trace.json (or loo/trace.json with --loo).
   sd trace-census [--threshold 0.7]
