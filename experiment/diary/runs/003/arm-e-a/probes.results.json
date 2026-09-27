@@ -1,0 +1,55 @@
+{
+  "base": null,
+  "results": [
+    {
+      "statement_id": "P-003",
+      "probe_id": "PR-P-003",
+      "outcome": "realised_missed_by_extractor",
+      "main": "passed",
+      "twin": "failed"
+    },
+    {
+      "statement_id": "P-004",
+      "probe_id": "PR-P-004",
+      "outcome": "realised_missed_by_extractor",
+      "main": "passed",
+      "twin": "failed"
+    },
+    {
+      "statement_id": "P-005",
+      "probe_id": "PR-P-005",
+      "outcome": "realised_missed_by_extractor",
+      "main": "passed",
+      "twin": "failed"
+    },
+    {
+      "statement_id": "P-006",
+      "probe_id": "PR-P-006",
+      "outcome": "realised_missed_by_extractor",
+      "main": "passed",
+      "twin": "failed"
+    },
+    {
+      "statement_id": "P-007",
+      "probe_id": "PR-P-007",
+      "outcome": "dropped",
+      "main": "failed",
+      "twin": "passed",
+      "message": "AssertionError: expected true to be false // Object.is equality\n    at /Users/rodrigonobrega/Workspace/silent-decisions/examples/ledger/.silent-decisions/runs/20260927T134803-260b20/probe-tests/PR-P-007.test.ts:9:14\n    at file:///Users/rodrigonobrega/Workspace/silent-decisions/examples/ledger/node_modules/@vitest/runner/dist/chunk-hooks.js:155:11\n    at file:///Users/rodrigonobrega/Workspace/silent-decisions/examples/ledger/node_modules/@vitest/runner/dist/chunk-hooks.js:752:26\n    at file:///Users/rodrigonobrega/Workspace/silent-decisions/examples/ledger/node_modules/@vitest/runner/dist/chun"
+    },
+    {
+      "statement_id": "P-008",
+      "probe_id": "PR-P-008",
+      "outcome": "realised_missed_by_extractor",
+      "main": "passed",
+      "twin": "failed"
+    },
+    {
+      "statement_id": "P-009",
+      "probe_id": "PR-P-009",
+      "outcome": "realised_missed_by_extractor",
+      "main": "passed",
+      "twin": "failed"
+    }
+  ]
+}

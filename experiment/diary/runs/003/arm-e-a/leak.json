@@ -1,0 +1,95 @@
+{
+  "status": "clean",
+  "shingle_size": 6,
+  "overlapping_phrases": [],
+  "nonce_seen": false,
+  "extractor_reported_nonce": [],
+  "audit": {
+    "source": "transcript",
+    "found": true,
+    "sessions": [
+      "e485abaa-04ea-4423-b365-87444369d3a4.jsonl"
+    ],
+    "calls": 10,
+    "by_tool": {
+      "Bash": 7,
+      "Read": 1,
+      "Write": 2
+    },
+    "plan_mentions": 0,
+    "outside_room": [],
+    "denied": 1,
+    "tool_calls": [
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"cd /var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-gPhyfP && find . -type f | grep -v node_modules | head -100 && cat census.json && ls out 2>/dev/null\",\"description\":\"List files and show census\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\":\"/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-gPhyfP/cleanroom/src/ledger.ts\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"cd /var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-gPhyfP && grep -rao 'SDN-[0-9a-fA-F]*' . ; sed -n '1p;12p;40p;55p' cleanroom/src/ledger.ts | od -c | head -20\",\"description\":\"Search for nonces and inspect blank lines\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"mkdir -p /var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-gPhyfP/out && cat > /var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-gPhyfP/out/gen.py <<'EOF'\\nimport json\\nI = \\\"import { Ledger } from '@sut/src/ledger';\\\"\\nF = [\\\"src/ledger.ts\\\"]\\nB = []\\ndef b(title, given, w",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"echo ok\",\"description\":\"Noop check\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Write",
+        "input": "{\"file_path\":\"/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-gPhyfP/out/gen.py\",\"content\":\"import json\\nI = \\\"import { Ledger } from '@sut/src/ledger';\\\"\\nF = [\\\"src/ledger.ts\\\"]\\nB = []\\ndef b(title, given, when, then, contrary, alts, obs, lits, covers, aa, a, t):\\n    B.append(dict(id=\\\"",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"python3 /var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-gPhyfP/out/gen.py && rm /var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-gPhyfP/out/gen.py\",\"description\":\"Generate behaviours.json and remove script\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": true
+      },
+      {
+        "tool": "Write",
+        "input": "{\"file_path\":\"/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-gPhyfP/out/behaviours.json\",\"content\":\"{\\n  \\\"nonce_seen\\\": [],\\n  \\\"behaviours\\\": [\\n    {\\n      \\\"id\\\": \\\"B-001\\\",\\n      \\\"title\\\": \\\"A deposit into a new account credits it and records a deposit entry\\\",\\n      \\\"given\\\": \\\"",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"rm /var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-gPhyfP/out/gen.py\",\"description\":\"Remove unused generator script\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"jq '.behaviours | length' /var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-gPhyfP/out/behaviours.json\",\"description\":\"Validate JSON and count scenarios\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      }
+    ]
+  }
+}

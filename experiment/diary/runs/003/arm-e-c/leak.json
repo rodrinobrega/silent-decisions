@@ -1,0 +1,95 @@
+{
+  "status": "clean",
+  "shingle_size": 6,
+  "overlapping_phrases": [],
+  "nonce_seen": false,
+  "extractor_reported_nonce": [],
+  "audit": {
+    "source": "transcript",
+    "found": true,
+    "sessions": [
+      "3168c838-bced-4ff8-a488-e88e0026f775.jsonl"
+    ],
+    "calls": 10,
+    "by_tool": {
+      "Bash": 7,
+      "Read": 1,
+      "Write": 2
+    },
+    "plan_mentions": 0,
+    "outside_room": [],
+    "denied": 2,
+    "tool_calls": [
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"find . -type f | grep -v node_modules | head -50 && cat census.json && ls out 2>/dev/null\",\"description\":\"List files and show census\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\":\"/private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-Zol100/cleanroom/src/ledger.ts\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"grep -rao 'SDN-[0-9a-fA-F]*' . ; sed -n '1p;12p;40p;55p' cleanroom/src/ledger.ts | od -c | head -20\",\"description\":\"Search for nonces and inspect whitespace lines\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"mkdir -p /private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-Zol100/out && cat > /private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-Zol100/out/gen.cjs <<'EOF'\\nconst IMP = \\\"import { Ledger } from '@sut/src/ledger';\\\";\\nconst F = [\\\"src/ledger.ts\\\"];\\nconst b =",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"echo ok\",\"description\":\"Sanity check shell\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Write",
+        "input": "{\"file_path\":\"/private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-Zol100/out/gen.cjs\",\"content\":\"const IMP = \\\"import { Ledger } from '@sut/src/ledger';\\\";\\nconst F = [\\\"src/ledger.ts\\\"];\\nconst b = [];\\nfunction add(o){ b.push({ id: 'B-' + String(b.length+1).padStart(3,'0'), files: F, ",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"cd /private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-Zol100/out && node gen.cjs && rm gen.cjs && ls\",\"description\":\"Run generator and remove it\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": true
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"node /private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-Zol100/out/gen.cjs\",\"description\":\"Run generator script\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": true
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"rm /private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-Zol100/out/gen.cjs\",\"description\":\"Remove unused generator script\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Write",
+        "input": "{\"file_path\":\"/private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-Zol100/out/behaviours.json\",\"content\":\"{\\n  \\\"nonce_seen\\\": [],\\n  \\\"behaviours\\\": [\\n    {\\n      \\\"id\\\": \\\"B-001\\\",\\n      \\\"title\\\": \\\"Balance of an account never opened or used is 0\\\",\\n      \\\"given\\\": \\\"a new Ledger",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      }
+    ]
+  }
+}

@@ -1,9 +1,9 @@
 {
-  "wrote": ".silent-decisions/runs/20260927T130316-1614eb/trace.checked.json",
-  "stated": 16,
+  "wrote": ".silent-decisions/runs/20260927T135933-2beea3/trace.checked.json",
+  "stated": 17,
   "entailed": 0,
-  "unsourced": 24,
-  "downgraded_by_rules": 0,
+  "unsourced": 28,
+  "downgraded_by_rules": 1,
   "candidate_unrealised": [],
   "contradicted": [
     "P-003",

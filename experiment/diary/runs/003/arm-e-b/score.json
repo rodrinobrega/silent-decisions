@@ -1,0 +1,317 @@
+{
+  "arm": "e",
+  "case": "ledger",
+  "truth_version": 2,
+  "run": "20260927T135539-ab5007",
+  "scored_at": "2026-09-27T13:59:23.142Z",
+  "cost": "224s wall",
+  "silent_decisions": {
+    "truth": 10,
+    "found": 8,
+    "flagged": 25,
+    "flagged_without_lines": 2,
+    "precision": 0.92,
+    "recall": 0.8,
+    "per_item": [
+      {
+        "id": "T1",
+        "label": "no overdrafts (balance may not go below 0)",
+        "hits": [
+          "B-017 Withdrawing more than the balance is refused as insufficient-funds",
+          "B-019 The funds check uses the amount after rounding to cents",
+          "B-020 Withdrawing from a never-opened account is refused and opens it empty",
+          "B-027 The funds check is applied before the daily-limit check",
+          "B-028 A refused withdrawal's txnId can be reused later to succeed",
+          "B-032 Transferring more than the sender holds is refused as insufficient-funds",
+          "B-033 Transferring the whole balance is allowed and records out/in entries",
+          "B-034 Transfers are not subject to the 5000 daily withdrawal limit",
+          "B-037 A refused transfer still opens the receiving account with no entries",
+          "B-038 A transfer to the same account leaves the balance unchanged but records two entries"
+        ]
+      },
+      {
+        "id": "T2",
+        "label": "daily withdrawal cap of 5000",
+        "hits": [
+          "B-021 A single withdrawal of exactly 5000 is within the daily limit",
+          "B-022 A single withdrawal of 5000.01 exceeds the daily limit",
+          "B-023 Withdrawals accumulate towards the 5000 daily limit",
+          "B-024 Accumulated withdrawals reaching exactly 5000 are allowed",
+          "B-025 A refused withdrawal does not use up any of the daily limit",
+          "B-026 The daily limit is tracked separately per account",
+          "B-027 The funds check is applied before the daily-limit check",
+          "B-035 Transfers do not use up the daily withdrawal limit"
+        ]
+      },
+      {
+        "id": "T3",
+        "label": "amounts rounded half-up to cents",
+        "hits": [
+          "B-009 Deposit amounts are rounded to cents, with a half cent rounding up",
+          "B-010 Deposit fractions below half a cent are dropped",
+          "B-019 The funds check uses the amount after rounding to cents",
+          "B-036 Transfer amounts are rounded to cents, half a cent rounding up"
+        ]
+      },
+      {
+        "id": "T4",
+        "label": "repeated txn id with a different payload is acknowledged and ignored",
+        "hits": [
+          "B-016 A withdrawal reusing a seen txnId reports success without checking funds",
+          "B-028 A refused withdrawal's txnId can be reused later to succeed"
+        ]
+      },
+      {
+        "id": "T5",
+        "label": "unknown account reads as balance 0 instead of an error",
+        "hits": [
+          "B-003 Balance of an unknown account reads as 0"
+        ]
+      },
+      {
+        "id": "T7",
+        "label": "open() on an existing account is a silent no-op (not an error, not a reset)",
+        "hits": [
+          "B-001 Depositing into a never-opened account opens it and credits the amount",
+          "B-020 Withdrawing from a never-opened account is refused and opens it empty",
+          "B-033 Transferring the whole balance is allowed and records out/in entries",
+          "B-037 A refused transfer still opens the receiving account with no entries"
+        ]
+      },
+      {
+        "id": "T8",
+        "label": "amount is validated before rounding: a positive amount below half a cent is accepted and recorded as 0",
+        "hits": []
+      },
+      {
+        "id": "T9",
+        "label": "insufficient funds is checked before the daily limit",
+        "hits": [
+          "B-017 Withdrawing more than the balance is refused as insufficient-funds",
+          "B-019 The funds check uses the amount after rounding to cents",
+          "B-020 Withdrawing from a never-opened account is refused and opens it empty",
+          "B-021 A single withdrawal of exactly 5000 is within the daily limit",
+          "B-022 A single withdrawal of 5000.01 exceeds the daily limit",
+          "B-023 Withdrawals accumulate towards the 5000 daily limit",
+          "B-024 Accumulated withdrawals reaching exactly 5000 are allowed",
+          "B-025 A refused withdrawal does not use up any of the daily limit",
+          "B-026 The daily limit is tracked separately per account",
+          "B-027 The funds check is applied before the daily-limit check",
+          "B-028 A refused withdrawal's txnId can be reused later to succeed",
+          "B-035 Transfers do not use up the daily withdrawal limit"
+        ]
+      },
+      {
+        "id": "T10",
+        "label": "transfers do not count toward the daily withdrawal limit",
+        "hits": [
+          "B-032 Transferring more than the sender holds is refused as insufficient-funds",
+          "B-033 Transferring the whole balance is allowed and records out/in entries",
+          "B-034 Transfers are not subject to the 5000 daily withdrawal limit",
+          "B-037 A refused transfer still opens the receiving account with no entries",
+          "B-038 A transfer to the same account leaves the balance unchanged but records two entries"
+        ]
+      },
+      {
+        "id": "T11",
+        "label": "a rejected operation consumes neither its txnId nor daily-limit allowance",
+        "hits": []
+      }
+    ]
+  },
+  "negative_controls": {
+    "total": 2,
+    "false_positives": 1,
+    "per_item": [
+      {
+        "id": "N1",
+        "label": "non-positive amounts rejected (plan P-005)",
+        "hits": [
+          "B-001 Depositing into a never-opened account opens it and credits the amount"
+        ]
+      },
+      {
+        "id": "N2",
+        "label": "history entry per accepted operation (plan P-008)",
+        "hits": []
+      }
+    ]
+  },
+  "dropped_requirements": {
+    "truth": 1,
+    "found": 1,
+    "flagged": 1,
+    "precision": 1,
+    "recall": 1
+  },
+  "normalised": {
+    "flagged": [
+      {
+        "label": "B-001 Depositing into a never-opened account opens it and credits the amount",
+        "lines": [
+          24,
+          39
+        ]
+      },
+      {
+        "label": "B-003 Balance of an unknown account reads as 0",
+        "lines": [
+          31
+        ]
+      },
+      {
+        "label": "B-004 Entries of an unknown account are an empty list",
+        "lines": []
+      },
+      {
+        "label": "B-005 Entries returned are a copy; changing them does not change the ledger",
+        "lines": []
+      },
+      {
+        "label": "B-009 Deposit amounts are rounded to cents, with a half cent rounding up",
+        "lines": [
+          14,
+          14
+        ]
+      },
+      {
+        "label": "B-010 Deposit fractions below half a cent are dropped",
+        "lines": [
+          14,
+          14
+        ]
+      },
+      {
+        "label": "B-016 A withdrawal reusing a seen txnId reports success without checking funds",
+        "lines": [
+          52
+        ]
+      },
+      {
+        "label": "B-017 Withdrawing more than the balance is refused as insufficient-funds",
+        "lines": [
+          56
+        ]
+      },
+      {
+        "label": "B-019 The funds check uses the amount after rounding to cents",
+        "lines": [
+          14,
+          14,
+          56
+        ]
+      },
+      {
+        "label": "B-020 Withdrawing from a never-opened account is refused and opens it empty",
+        "lines": [
+          56,
+          24
+        ]
+      },
+      {
+        "label": "B-021 A single withdrawal of exactly 5000 is within the daily limit",
+        "lines": [
+          10,
+          57,
+          58
+        ]
+      },
+      {
+        "label": "B-022 A single withdrawal of 5000.01 exceeds the daily limit",
+        "lines": [
+          10,
+          58
+        ]
+      },
+      {
+        "label": "B-023 Withdrawals accumulate towards the 5000 daily limit",
+        "lines": [
+          57,
+          58
+        ]
+      },
+      {
+        "label": "B-024 Accumulated withdrawals reaching exactly 5000 are allowed",
+        "lines": [
+          58
+        ]
+      },
+      {
+        "label": "B-025 A refused withdrawal does not use up any of the daily limit",
+        "lines": [
+          58
+        ]
+      },
+      {
+        "label": "B-026 The daily limit is tracked separately per account",
+        "lines": [
+          57,
+          58
+        ]
+      },
+      {
+        "label": "B-027 The funds check is applied before the daily-limit check",
+        "lines": [
+          56,
+          58
+        ]
+      },
+      {
+        "label": "B-028 A refused withdrawal's txnId can be reused later to succeed",
+        "lines": [
+          52,
+          56
+        ]
+      },
+      {
+        "label": "B-032 Transferring more than the sender holds is refused as insufficient-funds",
+        "lines": [
+          72
+        ]
+      },
+      {
+        "label": "B-033 Transferring the whole balance is allowed and records out/in entries",
+        "lines": [
+          72,
+          24
+        ]
+      },
+      {
+        "label": "B-034 Transfers are not subject to the 5000 daily withdrawal limit",
+        "lines": [
+          72
+        ]
+      },
+      {
+        "label": "B-035 Transfers do not use up the daily withdrawal limit",
+        "lines": [
+          57,
+          58
+        ]
+      },
+      {
+        "label": "B-036 Transfer amounts are rounded to cents, half a cent rounding up",
+        "lines": [
+          14,
+          14
+        ]
+      },
+      {
+        "label": "B-037 A refused transfer still opens the receiving account with no entries",
+        "lines": [
+          72,
+          24
+        ]
+      },
+      {
+        "label": "B-038 A transfer to the same account leaves the balance unchanged but records two entries",
+        "lines": [
+          72
+        ]
+      }
+    ],
+    "dropped": [
+      "P-007"
+    ]
+  }
+}

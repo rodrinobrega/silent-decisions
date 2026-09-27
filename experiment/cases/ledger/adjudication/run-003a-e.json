@@ -1,0 +1,41 @@
+{
+  "case": "ledger",
+  "truth_version": 2,
+  "arm": "e",
+  "adjudicator": "Claude (Opus 5.5, local session), 2026-09-27. NOT blind to the arm; re-check before publishing.",
+  "legend": "value = truth id the flagged item is the same decision as; 'valid' = a real silent decision the truth file does not list (neither TP nor FP); 'invalid' = not a real silent decision (FP).",
+  "run": "003a",
+  "items": {
+    "B-001": "T5",
+    "B-002": "T5",
+    "B-003": "T7",
+    "B-009": "T3",
+    "B-010": "T3",
+    "B-011": "T8",
+    "B-013": "T1",
+    "B-014": "T1",
+    "B-015": "T5",
+    "B-019": "T4",
+    "B-020": "T11",
+    "B-021": "T2",
+    "B-022": "T2",
+    "B-023": "T2",
+    "B-024": "T11",
+    "B-025": "T2",
+    "B-026": "T9",
+    "B-027": "T10",
+    "B-028": "T8",
+    "B-029": "T5",
+    "B-030": "T1",
+    "B-031": "T1",
+    "B-035": "T6",
+    "B-036": "T3",
+    "B-037": "valid"
+  },
+  "notes": [
+    "Precedents kept from runs 001-002: operations on a never-opened account that open it implicitly -> T5; rounding before the funds/limit check -> T8; the flagged same-account transfer -> T6 (also reported as dropped via the failing P-007 probe).",
+    "B-001 and B-029: deposit/transfer to a never-opened account succeed; their contrary is refusal because the account was never opened, so they are the implicit-open decision (T5), not plain realisations of P-003/P-006.",
+    "T7 found (B-003) because P-010 is typed structural and can no longer source it.",
+    "B-037 (entries() returns a copy) valid, as in runs 001-002."
+  ]
+}

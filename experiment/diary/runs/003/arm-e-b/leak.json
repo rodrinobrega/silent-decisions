@@ -1,0 +1,63 @@
+{
+  "status": "suspect",
+  "review": "transcript shows no access outside the room and no mention of the plan: the overlap is phrasing, not a leak",
+  "shingle_size": 6,
+  "overlapping_phrases": [
+    "a transfer to the same account"
+  ],
+  "nonce_seen": false,
+  "extractor_reported_nonce": [],
+  "audit": {
+    "source": "transcript",
+    "found": true,
+    "sessions": [
+      "0ab0d3d4-aa35-4ed6-a440-e965c2b1c092.jsonl"
+    ],
+    "calls": 5,
+    "by_tool": {
+      "Bash": 3,
+      "Read": 1,
+      "Write": 1
+    },
+    "plan_mentions": 0,
+    "outside_room": [],
+    "denied": 1,
+    "tool_calls": [
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"cd /var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-0VrDRc; find . -type f | grep -v node_modules | head -100; cat census.json; ls out\",\"description\":\"List files and show census\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\":\"/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-0VrDRc/cleanroom/src/ledger.ts\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"cd /var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-0VrDRc; grep -rao 'SDN-[0-9a-fA-F]*' . ; sed -n '1p;12p;40p;55p' cleanroom/src/ledger.ts | cat -A | head\",\"description\":\"Search for nonces and inspect whitespace lines\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Write",
+        "input": "{\"file_path\":\"/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-0VrDRc/out/behaviours.json\",\"content\":\"{\\n  \\\"nonce_seen\\\": [],\\n  \\\"behaviours\\\": [\\n    {\\n      \\\"id\\\": \\\"B-001\\\",\\n      \\\"title\\\": \\\"Depositing into a never-opened account opens it and credits the amount\\\",\\n      \\\"given\\\":",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"python3 -c \\\"import json;d=json.load(open('/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-0VrDRc/out/behaviours.json'));print(len(d['behaviours']))\\\"\",\"description\":\"Validate JSON output\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": true
+      }
+    ]
+  }
+}
