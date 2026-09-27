@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "adversary.json (written by the adversary)",
+  "type": "object",
+  "required": [
+    "findings"
+  ],
+  "properties": {
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "behaviour_id",
+          "contrary_then",
+          "contrary_satisfies_quotes",
+          "argument"
+        ],
+        "properties": {
+          "behaviour_id": {
+            "type": "string"
+          },
+          "contrary_then": {
+            "type": "string"
+          },
+          "contrary_satisfies_quotes": {
+            "type": "boolean"
+          },
+          "argument": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

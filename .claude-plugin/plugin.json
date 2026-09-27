@@ -1,0 +1,9 @@
+{
+  "name": "silent-decisions",
+  "displayName": "Silent Decisions",
+  "version": "0.1.2",
+  "description": "After an agent implements a plan: list what the code decided that the plan did not, and what the plan asked for that the code dropped. Blind extraction, execution, two-way trace.",
+  "author": { "name": "Rodrigo Nobrega" },
+  "license": "MIT",
+  "keywords": ["review", "verification", "spec", "plan", "testing", "agents"]
+}

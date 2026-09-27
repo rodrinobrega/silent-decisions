@@ -1,0 +1,4 @@
+node_modules/
+.silent-decisions/
+*.log
+.DS_Store

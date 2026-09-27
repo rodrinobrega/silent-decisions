@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "trace.json (written by the tracer)",
+  "type": "object",
+  "required": [
+    "forward"
+  ],
+  "properties": {
+    "statements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "behavioural",
+              "structural",
+              "process"
+            ]
+          }
+        }
+      }
+    },
+    "forward": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "behaviour_id",
+          "verdict"
+        ],
+        "properties": {
+          "behaviour_id": {
+            "type": "string"
+          },
+          "verdict": {
+            "enum": [
+              "stated",
+              "entailed",
+              "unsourced"
+            ]
+          },
+          "quotes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "text"
+              ],
+              "properties": {
+                "statement_id": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "reasoning": {
+            "type": "string"
+          },
+          "contrary": {
+            "type": "object",
+            "properties": {
+              "then": {
+                "type": "string"
+              }
+            }
+          },
+          "cluster": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "reverse": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "statement_id"
+        ],
+        "properties": {
+          "statement_id": {
+            "type": "string"
+          },
+          "realised_by": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

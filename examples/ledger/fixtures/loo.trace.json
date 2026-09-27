@@ -1,0 +1,7 @@
+{
+  "forward": [
+    { "behaviour_id": "B-001", "verdict": "unsourced", "quotes": [], "reasoning": "Nothing in this plan mentions deposits." },
+    { "behaviour_id": "B-006", "verdict": "unsourced", "quotes": [], "reasoning": "No passage constrains amounts." },
+    { "behaviour_id": "B-007", "verdict": "stated", "quotes": [{ "statement_id": "P-008", "text": "Every accepted operation is recorded in the account history." }], "reasoning": "" }
+  ]
+}

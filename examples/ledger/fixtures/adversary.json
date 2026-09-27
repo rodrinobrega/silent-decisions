@@ -1,0 +1,9 @@
+{
+  "findings": [
+    { "behaviour_id": "B-001", "contrary_then": "the deposit is refused", "contrary_satisfies_quotes": false, "argument": "A refused valid deposit contradicts 'Customers can deposit funds'." },
+    { "behaviour_id": "B-002", "contrary_then": "the withdrawal is accepted and the balance becomes -50", "contrary_satisfies_quotes": true, "argument": "'Customers can withdraw funds from an account' is equally satisfied by a ledger that allows overdrafts. The quote does not say what happens when the balance is too low." },
+    { "behaviour_id": "B-005", "contrary_then": "the second call is rejected because its amount differs from the first call with the same id", "contrary_satisfies_quotes": true, "argument": "Rejecting a mismatched replay is also 'safe'. The plan says retries are safe, not whether a same-id call with a different payload is a retry." },
+    { "behaviour_id": "B-006", "contrary_then": "a zero amount is accepted as a no-op", "contrary_satisfies_quotes": false, "argument": "Zero is not a positive number, so accepting it violates the quote." },
+    { "behaviour_id": "B-007", "contrary_then": "the amount leaves 'a' but does not arrive in 'b'", "contrary_satisfies_quotes": false, "argument": "That is not a transfer between two accounts." }
+  ]
+}

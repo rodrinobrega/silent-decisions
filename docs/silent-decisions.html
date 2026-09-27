@@ -1,0 +1,260 @@
+<title>Silent Decisions</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  :root {
+    --bg: #F4F6F5; --bg-2: #EAEEEC; --ink: #1B2224; --ink-2: #5C6B70; --line: #CBD3D1;
+    --accent: #0F6E68; --accent-soft: #D9ECEA; --flag: #B4540A; --flag-soft: #F6E3D3; --ok: #2F6B3A; --ok-soft: #DDEBDD;
+    --code-bg: #E7ECEA;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14181A; --bg-2: #1D2326; --ink: #E6EBEA; --ink-2: #9AA8AC; --line: #313A3E;
+      --accent: #5FC1B8; --accent-soft: #163634; --flag: #E5904F; --flag-soft: #3B2A1B; --ok: #7FC08C; --ok-soft: #1E3324;
+      --code-bg: #1F2629;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14181A; --bg-2: #1D2326; --ink: #E6EBEA; --ink-2: #9AA8AC; --line: #313A3E;
+    --accent: #5FC1B8; --accent-soft: #163634; --flag: #E5904F; --flag-soft: #3B2A1B; --ok: #7FC08C; --ok-soft: #1E3324;
+    --code-bg: #1F2629;
+  }
+  body { background: var(--bg); color: var(--ink); font-family: "Source Sans 3", "Segoe UI", system-ui, sans-serif; font-size: 17px; line-height: 1.55; margin: 0; padding-block: 0 64px; padding-inline: 20px; }
+  main { max-width: 74ch; margin: 0 auto; }
+  h1, h2, h3 { font-family: "Newsreader", Georgia, "Times New Roman", serif; font-weight: 600; line-height: 1.15; text-wrap: balance; margin: 0; }
+  h1 { font-size: 3rem; font-weight: 400; margin-top: 56px; }
+  h2 { font-size: 1.9rem; margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line); }
+  h3 { font-size: 1.25rem; margin-top: 32px; }
+  p { margin: 14px 0; max-width: 68ch; }
+  .lede { font-size: 1.25rem; color: var(--ink-2); font-family: "Newsreader", Georgia, serif; font-style: italic; max-width: 60ch; }
+  .eyebrow { font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-top: 48px; }
+  a { color: var(--accent); }
+  code, pre { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .86em; }
+  code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px; }
+  pre { background: var(--code-bg); padding: 14px 16px; border-radius: 4px; overflow-x: auto; line-height: 1.5; margin: 14px 0; }
+  pre code { background: none; padding: 0; }
+  .scenario { border-left: 3px solid var(--accent); padding: 10px 16px; margin: 16px 0; background: var(--bg-2); font-family: "JetBrains Mono", monospace; font-size: .9rem; line-height: 1.6; }
+  .scenario b { color: var(--accent); font-weight: 600; }
+  .scenario.contrary { border-color: var(--flag); }
+  .scenario.contrary b { color: var(--flag); }
+  .tag { display: inline-block; font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; padding: 2px 8px; border-radius: 3px; vertical-align: middle; }
+  .tag.flag { background: var(--flag-soft); color: var(--flag); }
+  .tag.ok { background: var(--ok-soft); color: var(--ok); }
+  .tag.acc { background: var(--accent-soft); color: var(--accent); }
+  .tablewrap { overflow-x: auto; margin: 20px -20px; padding: 0 20px; }
+  table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: .95rem; }
+  th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  th { font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); font-weight: 600; }
+  td.num { font-variant-numeric: tabular-nums; text-align: right; }
+  .arm { border: 1px solid var(--line); border-radius: 4px; padding: 18px 20px; margin: 18px 0; background: var(--bg); }
+  .arm h3 { margin-top: 0; display: flex; gap: 12px; align-items: baseline; }
+  .arm .letter { font-family: "JetBrains Mono", monospace; font-size: .9rem; color: var(--ink-2); }
+  .arm dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 12px 0 0; font-size: .95rem; }
+  .arm dt { color: var(--ink-2); }
+  .arm dd { margin: 0; }
+  .card { border: 1px solid var(--line); border-radius: 4px; overflow: hidden; margin: 18px 0; }
+  .card .head { padding: 10px 16px; background: var(--flag-soft); color: var(--flag); font-weight: 600; font-size: .9rem; }
+  .card .body { padding: 14px 16px; }
+  .card table { min-width: 0; font-size: .95rem; }
+  .card td:first-child { width: 11em; color: var(--ink-2); }
+  .pipeline { counter-reset: step; list-style: none; padding: 0; margin: 20px 0; }
+  .pipeline li { counter-increment: step; display: grid; grid-template-columns: 2.6rem 1fr; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .pipeline li::before { content: counter(step); font-family: "Newsreader", serif; font-size: 1.7rem; color: var(--accent); line-height: 1; }
+  .pipeline li strong { display: block; margin-bottom: 4px; }
+  .note { background: var(--accent-soft); border-radius: 4px; padding: 12px 16px; margin: 16px 0; font-size: .95rem; }
+  .warn { background: var(--flag-soft); border-radius: 4px; padding: 12px 16px; margin: 16px 0; font-size: .95rem; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) { .two { grid-template-columns: 1fr; } h1 { font-size: 2.3rem; } .arm dl { grid-template-columns: 1fr; } }
+  .toc { columns: 2; column-gap: 32px; font-size: .95rem; margin: 20px 0 0; padding-left: 1.2em; }
+  @media (max-width: 640px) { .toc { columns: 1; } }
+  .toc li { margin: 3px 0; }
+  hr.thin { border: 0; border-top: 1px solid var(--line); margin: 32px 0; }
+  .small { font-size: .9rem; color: var(--ink-2); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+
+<main>
+  <p class="eyebrow">Trace what was built</p>
+  <h1>Silent Decisions</h1>
+  <p class="lede">An agent implemented your plan. Somewhere in the code it decided things the plan never said. Six ways to find them, one worked example, and an experiment to tell them apart.</p>
+
+  <p>The plan said <em>customers can withdraw funds from an account</em>. The code says:</p>
+<pre><code>if (this.balance(account) - value &lt; 0) return { ok: false, reason: 'insufficient-funds' };</code></pre>
+  <p>Nobody decided that overdrafts are forbidden. The implementer resolved an ambiguity the plan left open, the generated tests were written from the same reading, and the suite is green. If the business wanted overdrafts down to a limit, this ships and becomes an incident. That is a <strong>silent decision</strong>: a behaviour observable at the system boundary that the plan neither states nor entails. This page is about finding them before deploy.</p>
+
+  <ol class="toc">
+    <li><a href="#problem">Why tests don't catch this</a></li>
+    <li><a href="#pipeline">The pipeline, step by step</a></li>
+    <li><a href="#example">One decision through the whole method</a></li>
+    <li><a href="#approaches">Six approaches compared</a></li>
+    <li><a href="#trace">Tracing: LLM or classifier</a></li>
+    <li><a href="#controls">How a run checks itself</a></li>
+    <li><a href="#experiment">The experiment</a></li>
+    <li><a href="#limits">What it cannot do</a></li>
+    <li><a href="#prior">Prior work</a></li>
+  </ol>
+
+  <h2 id="problem">Why tests don't catch this</h2>
+  <p>Agents execute plans well. The defects that survive to production are mostly semantic: the plan was ambiguous, the agent settled the ambiguity silently, and it settled it the wrong way. An agent will produce entirely correct code for <em>either</em> overdraft policy. And since its tests come from the same plan, they encode the same interpretation. Everything downstream of the plan sits on the intention side of the gap, so nothing downstream of the plan can see across it.</p>
+  <p>The move that follows is simple to state: <strong>the checkable artifact must be derived from the code, not from the plan.</strong> A specification tells you what you intended; the problem is the distance between that and what got built, so the description has to be extracted from the built thing, and then checked against the plan. The question becomes "where did this come from?" rather than "what is missing?". The first is matching between two concrete lists. The second is recall over an unbounded space, and it is the step no method has made reliable.</p>
+
+  <h2 id="pipeline">The pipeline, step by step</h2>
+  <ol class="pipeline">
+    <li><span><strong>Prepare (scripts only).</strong> Segment the plan into numbered sentences. Build a <em>clean room</em>: a copy of the source with every comment stripped and tests, docs and the plan left out, because agent-written code carries the plan in its comments. Take a <em>census</em>: an AST walk that lists every place decisions concentrate (literals, comparisons, rejection paths, defaults, rounding, ordering, time handling). Mint a random nonce that exists in the orchestrating conversation and nowhere in the room.</span></li>
+    <li><span><strong>Extract, blind.</strong> A model that has never seen the plan reads the clean room and writes what the code does as concrete Given/When/Then scenarios with real numbers, each with an executable test, a <em>perturbed twin</em> asserting the opposite outcome, and that opposite outcome in plain language. Every census item must be covered by a scenario or waived with a reason.</span></li>
+    <li><span><strong>Verify by execution.</strong> Run every scenario and its twin. Main passes and twin fails: <span class="tag ok">verified</span>. Both pass: the test cannot tell outcomes apart, <span class="tag flag">vacuous</span>. Main fails: the extractor misread the code, <span class="tag flag">refuted</span>. Only verified scenarios continue. On a change to existing code, run against the base commit too and keep only what the change introduced.</span></li>
+    <li><span><strong>Trace, both directions.</strong> For each verified behaviour, does a plan sentence <em>require</em> it? Sourced only if the contrary would violate the sentence (the flip test). For each plan sentence, does any behaviour realise it? Sentences nothing realises get a <em>reverse probe</em>: a test written from the sentence and run against the code. Two ways to do the tracing are compared below.</span></li>
+    <li><span><strong>Control the run.</strong> Hide a few plan sentences that were the sole source of some behaviour and trace again; those behaviours must come back unsourced. Check the extractor's output for plan phrasing and for the nonce. A failed control voids the run.</span></li>
+    <li><span><strong>Review the delta.</strong> The human reads only unsourced behaviours and confirmed dropped requirements, each as a two-option card: what the code does against the concrete alternative. Above a cap, the verdict is "plan not ready" and the output is the list of open areas.</span></li>
+    <li><span><strong>Record.</strong> Approved decisions go into an append-only ledger and become human-signed regression tests; rejected ones become failing acceptance tests for the implementer. The next run can quote the ledger. Over time the signed scenarios <em>are</em> the verification contract, accreted from adjudicated deltas rather than derived up front.</span></li>
+  </ol>
+
+  <h2 id="example">One decision through the whole method</h2>
+  <p>The example project is a small in-memory ledger: deposit, withdraw, transfer, with a client-supplied transaction id. Its plan is seven sentences. The implementation has five planted silent decisions and one dropped requirement. Here is the overdraft one.</p>
+
+  <h3>What the blind extractor wrote</h3>
+  <div class="scenario"><b>Given</b> an account with balance 100<br><b>When</b> 150 is withdrawn<br><b>Then</b> the withdrawal is rejected with reason 'insufficient-funds' and the balance stays 100</div>
+  <div class="scenario contrary"><b>Contrary</b> the withdrawal is accepted and the balance becomes -50</div>
+  <p>Plus a Vitest test for the Then and one for the contrary. Note the numbers. <em>"An accepted debit cannot violate the permitted balance floor"</em> would be true whether or not overdrafts are allowed; it absorbs the decision. A scenario cannot: you have to write 100 and 150, and then the code either does that or it doesn't.</p>
+
+  <h3>What execution said</h3>
+  <p>Main test passed. Twin test failed. <span class="tag ok">verified</span>. This is now a fact about the code, not a claim about intent.</p>
+
+  <h3>What the trace said</h3>
+  <p>The nearest plan sentence is <em>"Customers can withdraw funds from an account."</em> Does it require the rejection? Apply the flip test: would a ledger that <em>accepted</em> the withdrawal and went to −50 violate that sentence? No. Customers can still withdraw. The sentence does not discriminate between the two outcomes, so the behaviour is <span class="tag flag">unsourced</span>, however relevant the sentence looks. Compare the amount check: <em>"An amount must be a positive number, otherwise the operation is rejected"</em> is violated by a system that accepts zero, so the zero-rejection behaviour is <span class="tag ok">stated</span>.</p>
+
+  <h3>What the reviewer sees</h3>
+  <div class="card">
+    <div class="head">B-002 · A withdrawal larger than the balance is rejected · cluster: overdraft policy</div>
+    <div class="body">
+      <table>
+        <tr><td>A. What the code does</td><td>the withdrawal is rejected with reason 'insufficient-funds' and the balance stays 100</td></tr>
+        <tr><td>B. The alternative</td><td>the withdrawal is accepted and the balance becomes −50</td></tr>
+        <tr><td>Nearest plan text</td><td>“Customers can withdraw funds from an account.” (P-004)</td></tr>
+        <tr><td>Why it doesn't settle it</td><td>Equally satisfied by a ledger that allows overdrafts; it says nothing about what happens when the balance is too low.</td></tr>
+        <tr><td>Where</td><td>src/ledger.ts · observed at: return value and balance()</td></tr>
+      </table>
+      <p class="small" style="margin:12px 0 0">☐ A is right → <code>sd ledger --behaviour B-002 --decision approve</code> &nbsp; ☐ B or something else → <code>--decision reject --expected "…"</code></p>
+    </div>
+  </div>
+  <p>The test for a good card is whether the person who owns the rule can look at it and say <em>"no, we allow that down to −500"</em>. If they can only nod, the card is too vague or too technical. Two options make nodding harder.</p>
+  <p>The full sample delta for this project has five such cards (overdraft, a 5,000 daily cap, half-up rounding, replayed ids with different amounts, unknown accounts reading as zero) and one dropped requirement (the plan says a transfer to the same account is rejected; the code lets it through, and a probe proves it).</p>
+
+  <h2 id="approaches">Six approaches compared</h2>
+  <p>The method above is one of six ways to attack the same question. They differ in what the judging model gets to see, whether anything is executed, and what the reviewer ends up reading. Each is an arm of the experiment, and each isolates one thing.</p>
+
+  <div class="tablewrap">
+  <table>
+    <tr><th>Arm</th><th>What runs</th><th>Model sees</th><th>Executes?</th><th>Reviewer reads</th><th>Isolates</th></tr>
+    <tr><td><b>a</b> Self-report</td><td>The implementer lists its own unspecified decisions</td><td>Plan + code + its own reasoning</td><td>No</td><td>A list</td><td>The cheapest baseline</td></tr>
+    <tr><td><b>b</b> Sighted reviewer</td><td>One pass: read plan, read code, list decisions</td><td>Plan + code</td><td>No</td><td>A list</td><td>A single reviewer, AssumptionMiner-style</td></tr>
+    <tr><td><b>c</b> Sighted extractor</td><td>Full pipeline, extractor has read the plan</td><td>Extractor: plan + code</td><td>Yes</td><td>Cards</td><td>What blindness is worth</td></tr>
+    <tr><td><b>d</b> LLM tracer</td><td>Full pipeline, blind extractor, LLM tracer + adversary</td><td>Extractor: code only. Tracer: plan + behaviours</td><td>Yes</td><td>Cards</td><td>The method as first designed</td></tr>
+    <tr><td><b>e</b> Pairwise classifier</td><td>Full pipeline, blind extractor, decision-only classifier</td><td>Extractor: code only. Classifier: one sentence + one scenario per call</td><td>Yes</td><td>Cards</td><td>The method with a tracer that cannot write</td></tr>
+    <tr><td><b>f</b> Census × plan</td><td>Each AST decision point against each plan sentence, through the classifier</td><td>One code snippet + one sentence per call</td><td>No</td><td>Flagged code lines</td><td>What extraction and execution are worth</td></tr>
+  </table>
+  </div>
+
+  <p>The same overdraft decision, seen through each arm:</p>
+
+  <div class="arm"><h3><span class="letter">a</span>Implementer self-report</h3>
+    <p>Prompt after implementation: <em>"list every decision you made that the plan did not specify."</em> For the overdraft the honest answer is one line: "I rejected withdrawals that would take the balance below zero; the plan didn't say." Whether the implementer produces that line, or twenty, or the five that matter, is the whole question. Cost: one prompt.</p>
+    <dl><dt>Expected failure</dt><dd>The implementer does not know which of its defaults were decisions. Rounding to cents felt like hygiene, not policy. Recall on the quiet ones.</dd><dt>Expected strength</dt><dd>Precision on the ones it does name, because it made them.</dd></dl>
+  </div>
+
+  <div class="arm"><h3><span class="letter">b</span>Sighted reviewer</h3>
+    <p>A fresh model reads the plan, then the code, and lists decisions the plan does not explicitly make. It will find the overdraft check; it is the first thing in <code>withdraw()</code>. The risk is the opposite direction: having read <em>"customers can withdraw funds"</em> first, it reads the rejection as implementing that sentence and moves on.</p>
+    <dl><dt>Expected failure</dt><dd>Narrative over-matching. The plan is a story of intent and the code is read as conforming to it. Nothing is verified; a claim about what the code does can simply be wrong.</dd><dt>Expected strength</dt><dd>Cheap, one pass, no infrastructure. This is roughly what shipping plan-check tools do.</dd></dl>
+  </div>
+
+  <div class="arm"><h3><span class="letter">c</span>Pipeline with a sighted extractor</h3>
+    <p>Identical to d except the extractor is shown the plan before it reads the code. Same scenarios, same execution, same trace. If c and d score the same, blindness is theatre and the method's central hypothesis is wrong. If the sighted extractor writes <em>"withdrawals respect the account's limits"</em> where the blind one wrote 100 and 150, the difference shows up as a drop in concreteness and, downstream, in the delta.</p>
+    <dl><dt>Measures</dt><dd>The contamination effect, in isolation. This arm exists to be beaten by d.</dd></dl>
+  </div>
+
+  <div class="arm"><h3><span class="letter">d</span>Pipeline with an LLM tracer and adversary</h3>
+    <p>The blind extractor writes B-002 as above. A tracer with the plan and the verified behaviours must quote the exact sentence that sources each one, mark it <code>stated</code>, <code>entailed</code> or <code>unsourced</code>, and default to unsourced. An adversary then takes every claimed citation, constructs the contrary, and argues that the quoted words allow it. For B-002 the adversary wins: <em>"the quote does not say what happens when the balance is too low."</em> Verdict flips to unsourced.</p>
+    <dl><dt>Expected failure</dt><dd>Agreeableness. Constraints (verbatim quotes checked mechanically, three-valued verdicts, adversary, leave-one-out) exist entirely to fight it. Also: expensive, three model roles.</dd><dt>Expected strength</dt><dd>Multi-sentence reasoning (<code>entailed</code>), and a human-readable argument on each card.</dd></dl>
+  </div>
+
+  <div class="arm"><h3><span class="letter">e</span>Pipeline with a pairwise classifier</h3>
+    <p>Same blind extraction and execution. The trace is a decision-only model, one call per (plan sentence, scenario) pair, asked one question: does this sentence <em>require</em> outcome A (what the code does), outcome B (the contrary the extractor wrote), or neither? Asked twice with A and B swapped; an answer that moves with the position is discarded. For B-002 × P-004 the answer is <em>neither</em>, twice, and the behaviour is unsourced without any adversary. The only model that reads the plan never sees more than one sentence of it, and cannot write.</p>
+    <dl><dt>Expected failure</dt><dd>Per-pair accuracy on subtle entailment; no multi-sentence verdicts; no prose argument on the card.</dd><dt>Expected strength</dt><dd>No narrative to be swayed by, no quote to fabricate, cannot cite hidden text, exhaustive over every pair, every raw decision kept for audit. Fast and cheap.</dd></dl>
+  </div>
+
+  <div class="arm"><h3><span class="letter">f</span>Census × plan, no extraction</h3>
+    <p>Skip the extractor and the execution. Take the census (the AST list of decision points) and ask the classifier, for each item and each plan sentence, "does this sentence explicitly decide this choice?" Census item C-010, <code>this.balance(account) - value &lt; 0</code>, against P-004: probably <em>no</em>, so the line is flagged. Cheapest possible version of the idea, and the reviewer gets flagged code lines, not scenarios.</p>
+    <dl><dt>Expected failure</dt><dd>No contrary, so the flip test is gone and the question collapses to "is this related?". Nothing is verified. The reverse direction (dropped requirements) has nothing to run. The reviewer is back to reading code.</dd><dt>Measures</dt><dd>Whether extraction and execution earn their cost. If f comes within a few points of e, they don't, and that is the finding.</dd></dl>
+  </div>
+
+  <h2 id="trace">Tracing: LLM or classifier</h2>
+  <p>Arms d and e share everything except the tracer, so the comparison is clean. What the classifier actually receives, for the overdraft pair, on the OpenRouter route to Jev:</p>
+<pre><code>POST https://openrouter.ai/api/v1/systemone
+{
+  "model": "jev-1.13",
+  "state": {
+    "plan_sentence": "Customers can withdraw funds from an account.",
+    "situation": { "given": "an account with balance 100", "when": "150 is withdrawn" },
+    "outcome_a": "the withdrawal is rejected with reason 'insufficient-funds' and the balance stays 100",
+    "outcome_b": "the withdrawal is accepted and the balance becomes -50"
+  },
+  "questions": {
+    "q": { "type": "choice",
+      "instructions": "Read plan_sentence literally, as a contract. Which outcome does it REQUIRE in this situation?",
+      "criteria": {
+        "a": "a system producing outcome_b would violate the sentence",
+        "b": "a system producing outcome_a would violate the sentence",
+        "neither": "a system producing either outcome would satisfy the sentence, or the sentence is not about this situation" } }
+  }
+}
+→ { "answers": { "q": { "type": "choice", "choice": "neither", "confidence": 0.8, "probabilities": { … } } } }</code></pre>
+  <p>The second call swaps <code>outcome_a</code> and <code>outcome_b</code>. A third, a yes/no question, asks whether the scenario is an <em>instance</em> of the sentence at all, because "customers can withdraw funds" does not decide the overdraft policy but a withdrawal scenario does realise it; that answer feeds the reverse direction only. Three small calls per pair, every pair, no context shared between calls.</p>
+  <div class="two">
+    <div class="note"><strong>What the classifier removes.</strong> The tracer's narrative. An agent given the whole plan reads it as intent and finds something "about" each behaviour. A model that sees one sentence has no story. The flip test is not a later check; it is the question.</div>
+    <div class="warn"><strong>What it gives up.</strong> Verdicts that need two sentences together. The written argument on the card. And, until measured, accuracy: decision models are new and their published figures are on other tasks.</div>
+  </div>
+  <p>Both modes produce the same trace file, so the rest of the pipeline (quote checks, leave-one-out, rendering, ledger) is identical. Where the two disagree on a pair, the classifier's raw decision and the tracer's quote are both on disk.</p>
+
+  <h2 id="controls">How a run checks itself</h2>
+  <p>The failure that would silently break this method is over-matching: a tracer that sources everything empties the only bucket that matters, and a clean run looks identical to a broken one. So every run carries instruments.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Check</th><th>How</th><th>Catches</th></tr>
+    <tr><td>Perturbed twin</td><td>Every scenario also runs with its contrary asserted; the contrary must fail</td><td>Tests that pass whatever the code does</td></tr>
+    <tr><td>Census coverage</td><td>Every AST decision point is covered by a verified scenario or waived with a reason</td><td>Decisions the extractor never described</td></tr>
+    <tr><td>Quote verification</td><td>Every cited sentence must exist verbatim in the plan</td><td>Fabricated citations (LLM mode; impossible in classifier mode)</td></tr>
+    <tr><td>Flip test</td><td>Sourced only if the contrary would violate the sentence</td><td>Relevant-but-irrelevant quotes</td></tr>
+    <tr><td>Leave-one-out</td><td>Hide sole-source sentences, re-trace; dependents must flip to unsourced</td><td>Over-matching, measured on this run</td></tr>
+    <tr><td>Nonce + leak check</td><td>A random string known to the orchestrator; extractor output is searched for it and for plan phrasing</td><td>A contaminated extraction</td></tr>
+    <tr><td>Audit log</td><td>A hook confines the extractor to its room and logs every file it touched</td><td>Blindness as a claim rather than evidence</td></tr>
+    <tr><td>Reverse probes</td><td>A test written from an apparently unrealised sentence, run against the code</td><td>"Dropped" requirements the extractor merely missed</td></tr>
+  </table></div>
+
+  <h2 id="experiment">The experiment</h2>
+  <p>All six arms run on the same plan and code and are scored against the same ground truth by the same dumb rule: a planted silent decision is <em>found</em> if an arm flags anything on its source lines. Precision and recall on that, plus false positives on <em>negative controls</em> (decisions the plan does make; an arm that flags everything scores perfect recall), plus dropped requirements by sentence id, plus cost.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Arm</th><th>Silent decisions: precision</th><th>recall</th><th>Negative-control FPs</th><th>Dropped: recall</th><th>Cost</th></tr>
+    <tr><td>a. self-report</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td>—</td></tr>
+    <tr><td>b. sighted reviewer</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td>—</td></tr>
+    <tr><td>c. sighted extractor</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td>—</td></tr>
+    <tr><td>d. LLM tracer</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td>—</td></tr>
+    <tr><td>e. pairwise classifier</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td>—</td></tr>
+    <tr><td>f. census × plan</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td>—</td></tr>
+  </table></div>
+  <p class="small">Not run yet. The table is the shape the results will take; the scripts that produce it are in the repository (<code>experiment/run.sh ledger</code>, <code>experiment/table.mjs</code>). Numbers from the hand-written demo fixtures are deliberately not shown here, because they would measure the fixtures.</p>
+  <p>Three things the numbers must be accompanied by before they mean anything. At least two cases whose planted decisions the author did not write (a real repo, a merged feature, its ticket as the plan, the truth annotated by someone blind to the pipeline). Three runs per arm, mean and range, since every arm involves a non-deterministic model. And the controls next to every score: extraction fidelity, census coverage, leave-one-out status, leak status. An arm with a failed control is void whatever it scored. The per-item miss table is the interesting part, and it gets published.</p>
+  <p>Two results would be embarrassing and are worth as much as a win: if arm a comes within a few points of d and e, a one-line prompt does the job; if f comes within a few points of e, extraction and execution are not earning their cost.</p>
+
+  <h2 id="limits">What it cannot do</h2>
+  <p><strong>Joint silence.</strong> If neither the plan nor the code mentions authorization, rate limits or audit, nothing surfaces. Extraction describes what is there; tracing finds what one side has and the other lacks. Absent from both is the residual omission problem, and the only defence is a domain question bank that came from neither.</p>
+  <p><strong>Recall is bounded below, not guaranteed.</strong> The census covers the syntactic shapes where decisions concentrate; decisions spread across modules can escape it. Reverse probes estimate recall only on the plan side.</p>
+  <p><strong>Same model, same priors.</strong> The blind extractor has not read the plan, but it shares training with the implementer and will find the same default unremarkable. Blindness controls contamination, not judgement. Independently written versions fail together; Knight and Leveson showed it in 1986 and a 2026 rerun with coding agents found the same common-mode failure across agent systems, models and languages.</p>
+  <p><strong>Meaning, not mechanics.</strong> <em>Which</em> policy applies to a duplicate request is in scope. Whether that policy holds under concurrency is not; that needs property-based and concurrency testing.</p>
+  <p><strong>Provenance, not validity.</strong> A behaviour can trace cleanly to the plan, and the plan can be wrong.</p>
+
+  <h2 id="prior">Prior work</h2>
+  <p>The closest published neighbour is AssumptionMiner (Wu, July 2026), which extracts implicit assumptions from LLM-generated code as structured records with alternatives for a developer to accept or revise. Its extractor sees the prompt and the code together, nothing is executed, it works at function level, and there is no reverse direction; by its own account decision-level extraction is far from solved. It is arm b, more or less, and its annotated benchmark is a ready evaluation set. Shipping tools (Traycer's verification pass, Qodo's ticket compliance, Augment Intent's Verify persona) check code against a plan with the plan in view; they ask <em>does the code satisfy the plan</em>, where this asks <em>what did the code decide that the plan did not</em>.</p>
+  <p>Sampling several implementations to expose ambiguity is established at function level (ClarifyGPT, SpecFix, BeSpec). Older roots: characterization tests (Feathers), specification mining (Daikon), requirements-to-code traceability recovery, TiCoder's approve-or-reject-a-test loop, Clover and round-trip correctness, mutation-guided test generation at Meta.</p>
+  <p>What we have not found elsewhere: blind extraction as a contamination control; execution-verified behaviour as the thing traced; a bidirectional trace with a flip test, run as isolated pairwise decisions with the contrary supplied by the blind side; a per-run control on the tracer; delta size as a pre-deploy measure of plan quality; adjudicated deltas accumulating into the contract. "Not found" after an afternoon's search, not "does not exist".</p>
+
+  <hr class="thin">
+  <p class="small">Working draft, September 2026. The method, the skill (<code>silent-decisions</code>, a Claude Code plugin with a portable core) and the experiment harness are one repository. Everything on this page about model behaviour is a hypothesis until the experiment section has numbers in it.</p>
+</main>

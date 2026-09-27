@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "probes.json (written by the probe writer)",
+  "type": "object",
+  "required": [
+    "probes"
+  ],
+  "properties": {
+    "probes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "statement_id",
+          "test"
+        ],
+        "properties": {
+          "statement_id": {
+            "type": "string"
+          },
+          "scenario": {
+            "type": "string"
+          },
+          "test": {
+            "type": "object",
+            "required": [
+              "arrange_act",
+              "assert",
+              "twin_assert"
+            ],
+            "properties": {
+              "imports": {
+                "type": "string"
+              },
+              "arrange_act": {
+                "type": "string"
+              },
+              "assert": {
+                "type": "string"
+              },
+              "twin_assert": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "skipped": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "statement_id": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

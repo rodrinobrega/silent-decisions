@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "behaviours.json (written by the extractor)",
+  "type": "object",
+  "required": [
+    "behaviours"
+  ],
+  "properties": {
+    "nonce_seen": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "behaviours": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "given",
+          "when",
+          "then",
+          "test",
+          "contrary_then"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^B-\\d+$"
+          },
+          "title": {
+            "type": "string"
+          },
+          "given": {
+            "type": "string"
+          },
+          "when": {
+            "type": "string"
+          },
+          "then": {
+            "type": "string"
+          },
+          "observed_at": {
+            "type": "string"
+          },
+          "literals": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "covers": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^C-\\d+$"
+            }
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "test": {
+            "type": "object",
+            "required": [
+              "arrange_act",
+              "assert",
+              "twin_assert"
+            ],
+            "properties": {
+              "imports": {
+                "type": "string"
+              },
+              "arrange_act": {
+                "type": "string"
+              },
+              "assert": {
+                "type": "string"
+              },
+              "twin_assert": {
+                "type": "string"
+              }
+            }
+          },
+          "contrary_then": {
+            "type": "string",
+            "description": "Plain-language outcome checked by test.twin_assert"
+          }
+        }
+      }
+    },
+    "immaterial": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "census_id",
+          "reason"
+        ],
+        "properties": {
+          "census_id": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 8
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "description": "Confines the silent-decisions blind extractor to its room and logs every tool call it makes. Other agents and the main conversation are not affected.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/skills/silent-decisions/scripts/hook-confine.mjs\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

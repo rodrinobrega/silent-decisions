@@ -1,0 +1,168 @@
+{
+  "arm": "f",
+  "case": "ledger",
+  "run": "20260927T122512-d2874e",
+  "scored_at": "2026-09-27T12:25:18.768Z",
+  "cost": "6s wall",
+  "silent_decisions": {
+    "truth": 5,
+    "found": 5,
+    "flagged": 12,
+    "flagged_without_lines": 0,
+    "precision": 0.917,
+    "recall": 1,
+    "per_item": [
+      {
+        "id": "T1",
+        "label": "no overdrafts (balance may not go below 0)",
+        "hits": [
+          "C-010 this.balance(account) - value < 0",
+          "C-015 this.balance(from) - value < 0"
+        ]
+      },
+      {
+        "id": "T2",
+        "label": "daily withdrawal cap of 5000",
+        "hits": [
+          "C-001 DAILY_WITHDRAWAL_LIMIT = 5000",
+          "C-011 this.withdrawnToday.get(account) ?? 0",
+          "C-012 used + value > DAILY_WITHDRAWAL_LIMIT"
+        ]
+      },
+      {
+        "id": "T3",
+        "label": "amounts rounded half-up to cents",
+        "hits": [
+          "C-002 Math.round(amount * 100)",
+          "C-003 Math.round(amount * 100) / 100"
+        ]
+      },
+      {
+        "id": "T4",
+        "label": "repeated txn id with a different payload is acknowledged and ignored",
+        "hits": [
+          "C-007 this.seen.has(txnId)",
+          "C-009 this.seen.has(txnId)",
+          "C-014 this.seen.has(txnId)"
+        ]
+      },
+      {
+        "id": "T5",
+        "label": "unknown account reads as balance 0 instead of an error",
+        "hits": [
+          "C-005 this.balances.get(account) ?? 0"
+        ]
+      }
+    ]
+  },
+  "negative_controls": {
+    "total": 2,
+    "false_positives": 0,
+    "per_item": [
+      {
+        "id": "N1",
+        "label": "non-positive amounts rejected (plan P-005)",
+        "hits": []
+      },
+      {
+        "id": "N2",
+        "label": "history entry per accepted operation (plan P-008)",
+        "hits": []
+      }
+    ]
+  },
+  "dropped_requirements": {
+    "truth": 1,
+    "found": 1,
+    "flagged": 9,
+    "precision": 0.111,
+    "recall": 1
+  },
+  "normalised": {
+    "flagged": [
+      {
+        "label": "C-001 DAILY_WITHDRAWAL_LIMIT = 5000",
+        "lines": [
+          10
+        ]
+      },
+      {
+        "label": "C-002 Math.round(amount * 100)",
+        "lines": [
+          14
+        ]
+      },
+      {
+        "label": "C-003 Math.round(amount * 100) / 100",
+        "lines": [
+          14
+        ]
+      },
+      {
+        "label": "C-004 !this.balances.has(account)",
+        "lines": [
+          24
+        ]
+      },
+      {
+        "label": "C-005 this.balances.get(account) ?? 0",
+        "lines": [
+          31
+        ]
+      },
+      {
+        "label": "C-007 this.seen.has(txnId)",
+        "lines": [
+          41
+        ]
+      },
+      {
+        "label": "C-009 this.seen.has(txnId)",
+        "lines": [
+          52
+        ]
+      },
+      {
+        "label": "C-010 this.balance(account) - value < 0",
+        "lines": [
+          56
+        ]
+      },
+      {
+        "label": "C-011 this.withdrawnToday.get(account) ?? 0",
+        "lines": [
+          57
+        ]
+      },
+      {
+        "label": "C-012 used + value > DAILY_WITHDRAWAL_LIMIT",
+        "lines": [
+          58
+        ]
+      },
+      {
+        "label": "C-014 this.seen.has(txnId)",
+        "lines": [
+          68
+        ]
+      },
+      {
+        "label": "C-015 this.balance(from) - value < 0",
+        "lines": [
+          72
+        ]
+      }
+    ],
+    "dropped": [
+      "P-001",
+      "P-002",
+      "P-003",
+      "P-004",
+      "P-006",
+      "P-007",
+      "P-008",
+      "P-009",
+      "P-010"
+    ]
+  }
+}

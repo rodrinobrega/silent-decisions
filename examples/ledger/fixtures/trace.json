@@ -1,0 +1,22 @@
+{
+  "statements": [
+    { "id": "P-001", "type": "structural" }, { "id": "P-002", "type": "structural" },
+    { "id": "P-003", "type": "behavioural" }, { "id": "P-004", "type": "behavioural" },
+    { "id": "P-005", "type": "behavioural" }, { "id": "P-006", "type": "behavioural" },
+    { "id": "P-007", "type": "behavioural" }, { "id": "P-008", "type": "behavioural" },
+    { "id": "P-009", "type": "behavioural" }, { "id": "P-010", "type": "process" }
+  ],
+  "forward": [
+    { "behaviour_id": "B-001", "verdict": "stated", "quotes": [{ "statement_id": "P-003", "text": "Customers can deposit funds into an account." }], "reasoning": "", "contrary": { "then": "the deposit is refused" }, "cluster": "deposits" },
+    { "behaviour_id": "B-002", "verdict": "stated", "quotes": [{ "statement_id": "P-004", "text": "Customers can withdraw funds from an account." }], "reasoning": "Withdrawing implies having the funds.", "contrary": { "then": "the withdrawal is accepted and the balance becomes -50" }, "cluster": "overdraft policy" },
+    { "behaviour_id": "B-003", "verdict": "unsourced", "quotes": [], "reasoning": "No passage mentions a withdrawal limit.", "contrary": { "then": "the withdrawal is accepted; there is no limit" }, "cluster": "withdrawal limits" },
+    { "behaviour_id": "B-004", "verdict": "unsourced", "quotes": [], "reasoning": "The plan never mentions precision or rounding.", "contrary": { "then": "the balance is 10.005 (no rounding), or 10.00 (banker's rounding or truncation)" }, "cluster": "money precision" },
+    { "behaviour_id": "B-005", "verdict": "entailed", "quotes": [{ "statement_id": "P-009", "text": "Each operation carries a client-supplied transaction id so that retries are safe." }, { "statement_id": "P-008", "text": "Every accepted operation is recorded in the account history." }], "reasoning": "Safe retries means a repeated id must not apply twice; the history records only accepted operations.", "contrary": { "then": "the second call is rejected because the payload differs from the first" }, "cluster": "retries" },
+    { "behaviour_id": "B-006", "verdict": "stated", "quotes": [{ "statement_id": "P-005", "text": "An amount must be a positive number, otherwise the operation is rejected." }], "reasoning": "", "contrary": { "then": "a zero amount is accepted as a no-op" }, "cluster": "validation" },
+    { "behaviour_id": "B-007", "verdict": "stated", "quotes": [{ "statement_id": "P-006", "text": "Customers can transfer funds between two accounts" }], "reasoning": "", "contrary": { "then": "the amount leaves 'a' but does not arrive in 'b'" }, "cluster": "transfers" },
+    { "behaviour_id": "B-008", "verdict": "stated", "quotes": [{ "statement_id": "P-003", "text": "unknown accounts report a zero balance" }], "reasoning": "", "contrary": { "then": "reading an unknown account raises an error" }, "cluster": "unknown accounts" }
+  ],
+  "reverse": [
+    { "statement_id": "P-008", "realised_by": ["B-007"] }
+  ]
+}

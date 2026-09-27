@@ -1,0 +1,6 @@
+{
+  "sd-extractor": "name: sd-extractor\ndescription: Blind behaviour extractor for silent-decisions. Reads a stripped copy of the source and writes executable scenarios describing what the code does. Used only through the sd-extract skill.\ntools: Read, Glob, Grep, Write\nomitClaudeMd: true",
+  "sd-tracer": "name: sd-tracer\ndescription: Traces verified behaviours back to a plan for silent-decisions. Quotes the plan verbatim or marks the behaviour unsourced. Give it the path of a plan, a statements file and a behaviours file, and the path to write its output to.\ntools: Read, Write",
+  "sd-adversary": "name: sd-adversary\ndescription: Adversarial reviewer for silent-decisions. For each behaviour a tracer marked as sourced, tries to show that the opposite behaviour would satisfy the quoted plan text equally well. Give it the paths of the behaviours file and the tracer output, and the path to write to.\ntools: Read, Write",
+  "sd-probe-writer": "name: sd-probe-writer\ndescription: Writes reverse probes for silent-decisions. For plan statements that no extracted behaviour seems to realise, writes a small executable test of what the statement requires. Give it the statements file, the list of statement ids to probe, the project source path, and the path to write to.\ntools: Read, Glob, Grep, Write"
+}

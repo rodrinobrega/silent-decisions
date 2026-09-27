@@ -1,0 +1,87 @@
+{
+  "type|P-001": {
+    "label": "structural",
+    "confidence": 0.9
+  },
+  "type|P-002": {
+    "label": "structural",
+    "confidence": 0.95
+  },
+  "type|P-010": {
+    "label": "process",
+    "confidence": 0.9
+  },
+  "pair|B-001|P-003": {
+    "label": "code",
+    "confidence": 0.92
+  },
+  "pair|B-002|P-004": {
+    "label": "neither",
+    "confidence": 0.8
+  },
+  "pair|B-005|P-009": {
+    "label": "neither",
+    "confidence": 0.7
+  },
+  "pair|B-006|P-005": {
+    "label": "code",
+    "confidence": 0.95
+  },
+  "pair|B-007|P-006": {
+    "label": "code",
+    "confidence": 0.9
+  },
+  "pair|B-007|P-008": {
+    "label": "code",
+    "confidence": 0.85
+  },
+  "pair|B-008|P-003": {
+    "label": "code",
+    "confidence": 0.55
+  },
+  "pair|B-004|P-002": {
+    "label": "code",
+    "confidence": 0.9,
+    "flaky": true
+  },
+  "realises|B-002|P-004": {
+    "label": "yes",
+    "confidence": 0.9
+  },
+  "realises|B-005|P-009": {
+    "label": "yes",
+    "confidence": 0.85
+  },
+  "realises|B-001|P-003": {
+    "label": "yes",
+    "confidence": 0.95
+  },
+  "census|C-006|P-005": {
+    "label": "yes",
+    "confidence": 0.95
+  },
+  "census|C-008|P-005": {
+    "label": "yes",
+    "confidence": 0.95
+  },
+  "census|C-013|P-005": {
+    "label": "yes",
+    "confidence": 0.95
+  },
+  "census|C-007|P-009": {
+    "label": "yes",
+    "confidence": 0.8
+  },
+  "census|C-009|P-009": {
+    "label": "yes",
+    "confidence": 0.8
+  },
+  "census|C-014|P-009": {
+    "label": "yes",
+    "confidence": 0.8
+  },
+  "census|C-010|P-004": {
+    "label": "yes",
+    "confidence": 0.75
+  }
+}

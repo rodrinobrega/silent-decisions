@@ -1,0 +1,9 @@
+{
+  "probes": [
+    { "statement_id": "P-007",
+      "test": { "imports": "import { Ledger } from '@sut/src/ledger';",
+        "arrange_act": "const l = new Ledger(); l.deposit('a', 100, 't1'); const r = l.transfer('a', 'a', 10, 't2');",
+        "assert": "expect(r.ok).toBe(false);",
+        "twin_assert": "expect(r.ok).toBe(true);" } }
+  ]
+}

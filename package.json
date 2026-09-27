@@ -1,0 +1,16 @@
+{
+  "name": "silent-decisions",
+  "version": "0.1.2",
+  "description": "Find what AI-written code decided that the plan did not: blind behaviour extraction, execution, and a two-way trace back to the plan.",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "bin": { "sd": "skills/silent-decisions/scripts/sd.mjs" },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "sync": "node tools/sync-extractor.mjs",
+    "example:install": "cd examples/ledger && npm install --no-audit --no-fund"
+  },
+  "engines": { "node": ">=18" },
+  "dependencies": { "typescript": "^5.6.0" }
+}
