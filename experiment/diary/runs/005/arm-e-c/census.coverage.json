@@ -1,0 +1,15 @@
+{
+  "total": 35,
+  "covered": 34,
+  "waived": 1,
+  "uncovered": 0,
+  "basis": "declared",
+  "uncovered_items": [],
+  "waived_items": [
+    {
+      "census_id": "C-035",
+      "reason": "Private cents() default of 0 is unreachable at the boundary: every public caller (withdraw, transfer, split, applyInterest) calls open() on the account first, so the balance is always set; the observable zero-balance default is C-010, covered by B-001."
+    }
+  ],
+  "unknown_refs": []
+}

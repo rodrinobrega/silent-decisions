@@ -1,0 +1,39 @@
+{
+  "case": "ledger-rounding",
+  "truth_version": 1,
+  "run": "005",
+  "arm": "f",
+  "adjudicator": "Claude (Opus 5.5, local session), 2026-09-28. NOT blind to the arm, AND the author of the case and its truth file; re-check before publishing.",
+  "legend": "see run-004a-e.json",
+  "items": {
+    "C-001": "T2",
+    "C-004": "T15",
+    "C-007": "invalid",
+    "C-008": "T14",
+    "C-009": "T7",
+    "C-010": "T5",
+    "C-012": "T4",
+    "C-013": "T23",
+    "C-014": "T4",
+    "C-017": "T4",
+    "C-018": "T16",
+    "C-019": "T2",
+    "C-020": "T2",
+    "C-022": "T4",
+    "C-023": "T1",
+    "C-025": "T22",
+    "C-026": "T4",
+    "C-027": "T1",
+    "C-028": "T20",
+    "C-030": "T23",
+    "C-031": "T4",
+    "C-035": "T5",
+    "C-029": "T20"
+  },
+  "notes": [
+    "As run-004-f.json except: C-033 (interest truncation, T18) is now matched to P-010 and not flagged; C-029 (split remainder, T20) is now flagged. Classifier variance between runs.",
+    "C-028 (floor share) is where the split remainder arises: T20.",
+    "C-015 (foreign amount rounds to 0 -> amount-too-small, T21) and C-034 (zero interest, T19) were matched to P-005 at 0.81/0.82, so arm f misses the planted rule T21. Arm f uses the 0.7 threshold; the 0.86 sourcing threshold applies to arm e only.",
+    "Arm f cannot express interaction items (T9, T10, T11, T13, T17, T24) or ordering/absence (T8, T12, T19, T21 via absence)."
+  ]
+}

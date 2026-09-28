@@ -1,0 +1,145 @@
+{
+  "probes": [
+    {
+      "statement_id": "P-003",
+      "scenario": "Given an empty account 'a' When 100 is deposited Then the deposit is accepted and the balance is 100",
+      "test": {
+        "imports": "import { Ledger } from '@sut/src/ledger';",
+        "arrange_act": "const ledger = new Ledger();\nledger.open('a');\nconst r = ledger.deposit('a', 100, 't1');",
+        "assert": "expect(r.ok).toBe(true);\nexpect(ledger.balance('a')).toBe(100);",
+        "twin_assert": "expect(r.ok && ledger.balance('a') === 100).toBe(false);"
+      }
+    },
+    {
+      "statement_id": "P-004",
+      "scenario": "Given account 'a' with balance 200 When 50 is withdrawn Then the withdrawal is accepted and the balance drops by at least 50",
+      "test": {
+        "imports": "import { Ledger } from '@sut/src/ledger';",
+        "arrange_act": "const ledger = new Ledger();\nledger.deposit('a', 200, 't1');\nconst r = ledger.withdraw('a', 50, 't2');",
+        "assert": "expect(r.ok).toBe(true);\nexpect(ledger.balance('a')).toBeLessThanOrEqual(150);",
+        "twin_assert": "expect(r.ok && ledger.balance('a') <= 150).toBe(false);"
+      }
+    },
+    {
+      "statement_id": "P-005",
+      "scenario": "Given account 'a' with balance 100 When a deposit of -10 is attempted Then it is rejected and the balance stays 100",
+      "test": {
+        "imports": "import { Ledger } from '@sut/src/ledger';",
+        "arrange_act": "const ledger = new Ledger();\nledger.deposit('a', 100, 't1');\nconst r = ledger.deposit('a', -10, 't2');",
+        "assert": "expect(r.ok).toBe(false);\nexpect(ledger.balance('a')).toBe(100);",
+        "twin_assert": "expect(r.ok).toBe(true);"
+      }
+    },
+    {
+      "statement_id": "P-006",
+      "scenario": "Given 'a' with 100 and empty 'b' When 30 is transferred from 'a' to 'b' Then 'a' has 70 and 'b' has 30",
+      "test": {
+        "imports": "import { Ledger } from '@sut/src/ledger';",
+        "arrange_act": "const ledger = new Ledger();\nledger.deposit('a', 100, 't1');\nledger.open('b');\nconst r = ledger.transfer('a', 'b', 30, 't2');",
+        "assert": "expect(r.ok).toBe(true);\nexpect(ledger.balance('a')).toBe(70);\nexpect(ledger.balance('b')).toBe(30);",
+        "twin_assert": "expect(r.ok && ledger.balance('a') === 70 && ledger.balance('b') === 30).toBe(false);"
+      }
+    },
+    {
+      "statement_id": "P-007",
+      "scenario": "Given 'a' with 100 When 30 is transferred from 'a' to 'a' Then the transfer is rejected",
+      "test": {
+        "imports": "import { Ledger } from '@sut/src/ledger';",
+        "arrange_act": "const ledger = new Ledger();\nledger.deposit('a', 100, 't1');\nconst r = ledger.transfer('a', 'a', 30, 't2');",
+        "assert": "expect(r.ok).toBe(false);",
+        "twin_assert": "expect(r.ok).toBe(true);"
+      }
+    },
+    {
+      "statement_id": "P-008",
+      "scenario": "Given 'a' When 100 is deposited (t1) and 10 withdrawn (t2) Then the history of 'a' contains entries for t1 and t2",
+      "test": {
+        "imports": "import { Ledger } from '@sut/src/ledger';",
+        "arrange_act": "const ledger = new Ledger();\nledger.deposit('a', 100, 't1');\nledger.withdraw('a', 10, 't2');\nconst ids = ledger.entries('a').map((e) => e.txnId);",
+        "assert": "expect(ids).toContain('t1');\nexpect(ids).toContain('t2');",
+        "twin_assert": "expect(ids.includes('t1') && ids.includes('t2')).toBe(false);"
+      }
+    },
+    {
+      "statement_id": "P-009",
+      "scenario": "Given 'a' When a deposit of 100 with txn id t1 is submitted twice Then the balance is 100",
+      "test": {
+        "imports": "import { Ledger } from '@sut/src/ledger';",
+        "arrange_act": "const ledger = new Ledger();\nledger.deposit('a', 100, 't1');\nledger.deposit('a', 100, 't1');",
+        "assert": "expect(ledger.balance('a')).toBe(100);",
+        "twin_assert": "expect(ledger.balance('a')).toBe(200);"
+      }
+    },
+    {
+      "statement_id": "P-010",
+      "scenario": "Given 'a' When 0.1 and then 0.2 are deposited Then the balance is exactly 0.3",
+      "test": {
+        "imports": "import { Ledger } from '@sut/src/ledger';",
+        "arrange_act": "const ledger = new Ledger();\nledger.deposit('a', 0.1, 't1');\nledger.deposit('a', 0.2, 't2');",
+        "assert": "expect(ledger.balance('a')).toBe(0.3);",
+        "twin_assert": "expect(ledger.balance('a')).not.toBe(0.3);"
+      }
+    },
+    {
+      "statement_id": "P-011",
+      "scenario": "Given 'a' When 0.125 is deposited Then the balance is 0.13 (half rounded away from zero)",
+      "test": {
+        "imports": "import { Ledger } from '@sut/src/ledger';",
+        "arrange_act": "const ledger = new Ledger();\nledger.deposit('a', 0.125, 't1');",
+        "assert": "expect(ledger.balance('a')).toBe(0.13);",
+        "twin_assert": "expect(ledger.balance('a')).not.toBe(0.13);"
+      }
+    },
+    {
+      "statement_id": "P-012",
+      "scenario": "Given 'a' with 1000 When 100 is withdrawn Then a fee of 1.00 (1%) is charged and the balance is 899",
+      "test": {
+        "imports": "import { Ledger } from '@sut/src/ledger';",
+        "arrange_act": "const ledger = new Ledger();\nledger.deposit('a', 1000, 't1');\nledger.withdraw('a', 100, 't2');",
+        "assert": "expect(ledger.balance('a')).toBe(899);",
+        "twin_assert": "expect(ledger.balance('a')).not.toBe(899);"
+      }
+    },
+    {
+      "statement_id": "P-013",
+      "scenario": "Given 'a' with 1000 When 100 is withdrawn Then history holds the deposit, a withdrawal entry of 100, and a separate fee entry",
+      "test": {
+        "imports": "import { Ledger } from '@sut/src/ledger';",
+        "arrange_act": "const ledger = new Ledger();\nledger.deposit('a', 1000, 't1');\nledger.withdraw('a', 100, 't2');\nconst entries = ledger.entries('a');",
+        "assert": "expect(entries.length).toBe(3);\nexpect(entries.find((e) => e.kind === 'withdrawal')?.amount).toBe(100);",
+        "twin_assert": "expect(entries.length).toBe(2);"
+      }
+    },
+    {
+      "statement_id": "P-014",
+      "scenario": "Given 'a' When 0.25 foreign units are deposited at rate 0.5 (0.125 converted) Then the balance is 0.12 (half rounded to even)",
+      "test": {
+        "imports": "import { Ledger } from '@sut/src/ledger';",
+        "arrange_act": "const ledger = new Ledger();\nconst r = ledger.depositForeign('a', 0.25, 0.5, 't1');",
+        "assert": "expect(r.ok).toBe(true);\nexpect(ledger.balance('a')).toBe(0.12);",
+        "twin_assert": "expect(ledger.balance('a')).not.toBe(0.12);"
+      }
+    },
+    {
+      "statement_id": "P-015",
+      "scenario": "Given 'a' with 3650 When interest at 10% annual is applied for 10 days Then 10 is credited (3650*0.10*10/365) and the balance is 3660",
+      "test": {
+        "imports": "import { Ledger } from '@sut/src/ledger';",
+        "arrange_act": "const ledger = new Ledger();\nledger.deposit('a', 3650, 't1');\nconst r = ledger.applyInterest('a', 10, 10, 't2');",
+        "assert": "expect(r.ok).toBe(true);\nexpect(ledger.balance('a')).toBe(3660);",
+        "twin_assert": "expect(ledger.balance('a')).not.toBe(3660);"
+      }
+    },
+    {
+      "statement_id": "P-016",
+      "scenario": "Given 'a' with 100 When 90 is split between 'b', 'c', 'd' Then each recipient gets 30 and 'a' has 10",
+      "test": {
+        "imports": "import { Ledger } from '@sut/src/ledger';",
+        "arrange_act": "const ledger = new Ledger();\nledger.deposit('a', 100, 't1');\nconst r = ledger.split('a', ['b', 'c', 'd'], 90, 't2');",
+        "assert": "expect(r.ok).toBe(true);\nexpect(ledger.balance('b')).toBe(30);\nexpect(ledger.balance('c')).toBe(30);\nexpect(ledger.balance('d')).toBe(30);\nexpect(ledger.balance('a')).toBe(10);",
+        "twin_assert": "expect(r.ok && [ledger.balance('b'), ledger.balance('c'), ledger.balance('d')].every((b) => b === 30) && ledger.balance('a') === 10).toBe(false);"
+      }
+    }
+  ],
+  "skipped": []
+}

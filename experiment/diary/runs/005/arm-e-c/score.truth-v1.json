@@ -4,7 +4,7 @@
   "truth_version": 1,
   "run": "20260928T064636-ec03cf",
   "scored_at": "2026-09-28T06:54:30.823Z",
-  "cost": "386s wall",
+  "cost": null,
   "silent_decisions": {
     "truth": 22,
     "found": 19,

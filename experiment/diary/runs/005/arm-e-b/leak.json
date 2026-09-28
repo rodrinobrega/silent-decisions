@@ -1,0 +1,60 @@
+{
+  "status": "clean",
+  "shingle_size": 6,
+  "overlapping_phrases": [],
+  "nonce_seen": false,
+  "extractor_reported_nonce": [],
+  "audit": {
+    "source": "transcript",
+    "found": true,
+    "sessions": [
+      "541c4f45-fd78-4aa2-be38-d8586b6e962f.jsonl"
+    ],
+    "calls": 5,
+    "by_tool": {
+      "Bash": 3,
+      "Read": 1,
+      "Write": 1
+    },
+    "plan_mentions": 0,
+    "outside_room": [],
+    "denied": 1,
+    "tool_calls": [
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"cd /private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-3v3Ufx; find . -type f | grep -v node_modules | head -100; cat census.json; ls out; cat census.uncovered.json 2>/dev/null\",\"description\":\"List files and show census\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\":\"/private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-3v3Ufx/cleanroom/src/ledger.ts\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"mkdir -p /private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-3v3Ufx/out && cat > /private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-3v3Ufx/out/gen.cjs <<'EOF'\\nconst I = \\\"import { Ledger } from '@sut/src/ledger';\\\";\\nconst F = [\\\"src/ledger.ts\\\"];\\nconst B = [",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"node -e \\\"console.log(100*1.1, 10*0.0005*100, 10.005*100, 100.99*100, 4974.5, 0.001*100)\\\"\",\"description\":\"Check floating-point values\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": true
+      },
+      {
+        "tool": "Write",
+        "input": "{\"file_path\":\"/private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-3v3Ufx/out/behaviours.json\",\"content\":\"{\\n  \\\"nonce_seen\\\": [],\\n  \\\"behaviours\\\": [\\n    {\\n      \\\"id\\\": \\\"B-001\\\",\\n      \\\"title\\\": \\\"Deposit credits the exact amount, cents kept\\\",\\n      \\\"given\\\": \\\"a new Ledger\\\",",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      }
+    ]
+  }
+}

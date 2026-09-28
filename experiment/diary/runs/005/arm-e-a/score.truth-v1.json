@@ -1,74 +1,77 @@
 {
-  "arm": "f",
+  "arm": "e",
   "case": "ledger-rounding",
   "truth_version": 1,
-  "run": "20260928T065306-59b047",
-  "scored_at": "2026-09-28T06:54:30.871Z",
-  "cost": "5s wall",
+  "run": "20260928T063223-74cfc3",
+  "scored_at": "2026-09-28T06:54:30.718Z",
+  "cost": null,
   "silent_decisions": {
     "truth": 22,
-    "found": 15,
-    "flagged": 23,
+    "found": 19,
+    "flagged": 20,
     "flagged_without_lines": 0,
-    "precision": 0.913,
-    "recall": 0.682,
+    "precision": 0.95,
+    "recall": 0.864,
     "per_item": [
       {
         "id": "T1",
         "label": "no overdrafts: withdrawal, transfer and split may not take the balance below 0",
         "hits": [
-          "C-018 this.cents(account) - (cents + fee) < 0",
-          "C-023 this.cents(from) - cents < 0",
-          "C-027 this.cents(from) - cents < 0"
+          "B-016 Withdrawal must be covered including its fee",
+          "B-017 A withdrawal that takes the balance exactly to 0 is allowed",
+          "B-020 Insufficient funds is reported before the daily limit",
+          "B-028 Split larger than the payer's balance is refused",
+          "B-029 Split hands leftover cents one each to the first-listed recipients"
         ]
       },
       {
         "id": "T2",
         "label": "daily withdrawal cap of 5000 per account",
         "hits": [
-          "C-001 DAILY_WITHDRAWAL_LIMIT = 5000",
-          "C-019 this.withdrawnToday.get(account) ?? 0",
-          "C-020 used + cents > DAILY_WITHDRAWAL_LIMIT * 100"
+          "B-018 Withdrawals total at most 5000 per account; the fee does not count toward it",
+          "B-019 A single withdrawal of 5000.01 is refused as daily-limit",
+          "B-020 Insufficient funds is reported before the daily limit",
+          "B-021 A refused withdrawal does not use up the daily limit"
         ]
       },
       {
         "id": "T4",
         "label": "a repeated txnId with a different payload (other account, other operation, other amount) is acknowledged and ignored",
         "hits": [
-          "C-012 this.seen.has(txnId)",
-          "C-014 this.seen.has(txnId)",
-          "C-017 this.seen.has(txnId)",
-          "C-022 this.seen.has(txnId)",
-          "C-026 this.seen.has(txnId)",
-          "C-031 this.seen.has(txnId)"
+          "B-009 Foreign deposit with an already used txnId is acknowledged without crediting"
         ]
       },
       {
         "id": "T5",
         "label": "an unknown account reads as balance 0 / empty history, and operations on a never-opened account open it implicitly",
         "hits": [
-          "C-010 this.balances.get(account) ?? 0",
-          "C-035 this.balances.get(account) ?? 0"
+          "B-001 An account never used reads as balance 0 with no entries"
         ]
       },
       {
         "id": "T7",
         "label": "open() on an existing account is a silent no-op",
         "hits": [
-          "C-009 !this.balances.has(account)"
+          "B-002 Opening an existing account again keeps its balance"
         ]
       },
       {
         "id": "T8",
         "label": "amount validated before rounding: a positive amount below half a cent is accepted and recorded as 0 (a 0-cent withdrawal still pays the minimum fee)",
-        "hits": []
+        "hits": [
+          "B-025 Split of 0 is rejected as invalid-amount, even with no recipients"
+        ]
       },
       {
         "id": "T9",
         "label": "insufficient funds (including the fee) is checked before the daily limit",
         "hits": [
-          "C-018 this.cents(account) - (cents + fee) < 0",
-          "C-020 used + cents > DAILY_WITHDRAWAL_LIMIT * 100"
+          "B-016 Withdrawal must be covered including its fee",
+          "B-017 A withdrawal that takes the balance exactly to 0 is allowed",
+          "B-018 Withdrawals total at most 5000 per account; the fee does not count toward it",
+          "B-019 A single withdrawal of 5000.01 is refused as daily-limit",
+          "B-020 Insufficient funds is reported before the daily limit",
+          "B-021 A refused withdrawal does not use up the daily limit"
         ]
       },
       {
@@ -90,95 +93,104 @@
         "id": "T13",
         "label": "amount validation happens before the duplicate-txnId check",
         "hits": [
-          "C-012 this.seen.has(txnId)",
-          "C-017 this.seen.has(txnId)",
-          "C-022 this.seen.has(txnId)",
-          "C-026 this.seen.has(txnId)"
+          "B-025 Split of 0 is rejected as invalid-amount, even with no recipients"
         ]
       },
       {
         "id": "T14",
         "label": "the withdrawal fee is rounded UP to the cent (1% of 100.01 = 1.0001 -> 1.01)",
         "hits": [
-          "C-008 Math.ceil((cents * FEE_PERCENT) / 100 - 1e-9)"
+          "B-015 Withdrawal fee rounds a part-cent up to the next cent"
         ]
       },
       {
         "id": "T15",
         "label": "the withdrawal fee is capped at 25.00",
         "hits": [
-          "C-004 MAX_FEE_CENTS = 2500"
+          "B-014 Withdrawal fee is capped at 25"
         ]
       },
       {
         "id": "T16",
         "label": "the funds check includes the fee: a withdrawal of the whole balance is rejected",
         "hits": [
-          "C-018 this.cents(account) - (cents + fee) < 0"
+          "B-016 Withdrawal must be covered including its fee",
+          "B-017 A withdrawal that takes the balance exactly to 0 is allowed",
+          "B-020 Insufficient funds is reported before the daily limit"
         ]
       },
       {
         "id": "T17",
         "label": "the daily limit counts the withdrawn amount without the fee",
         "hits": [
-          "C-020 used + cents > DAILY_WITHDRAWAL_LIMIT * 100"
+          "B-018 Withdrawals total at most 5000 per account; the fee does not count toward it",
+          "B-019 A single withdrawal of 5000.01 is refused as daily-limit",
+          "B-020 Insufficient funds is reported before the daily limit",
+          "B-021 A refused withdrawal does not use up the daily limit"
         ]
       },
       {
         "id": "T18",
         "label": "interest is rounded DOWN (truncated) to the cent",
-        "hits": []
+        "hits": [
+          "B-031 Interest is rounded down to the cent"
+        ]
       },
       {
         "id": "T19",
         "label": "interest that rounds to 0 cents is not credited: the call returns ok, no entry is recorded and the txnId is not consumed",
-        "hits": []
+        "hits": [
+          "B-034 Interest that comes to 0 returns ok, records nothing, and leaves the txnId reusable"
+        ]
       },
       {
         "id": "T20",
         "label": "a split's leftover cents go one each to the first recipients in list order",
         "hits": [
-          "C-029 i < remainder"
+          "B-029 Split hands leftover cents one each to the first-listed recipients"
         ]
       },
       {
         "id": "T21",
         "label": "PLANTED NEW UNSOURCED RULE: a foreign deposit that converts to less than half a cent is rejected with 'amount-too-small' (unlike a plain sub-half-cent deposit, which is accepted as 0)",
-        "hits": []
+        "hits": [
+          "B-008 Foreign deposit worth less than half a cent is rejected as amount-too-small; half a cent becomes 0.01"
+        ]
       },
       {
         "id": "T22",
         "label": "a split with no recipients is rejected with 'no-recipients'",
         "hits": [
-          "C-025 recipients.length === 0"
+          "B-026 Split with no recipients is rejected, even when its txnId was already used"
         ]
       },
       {
         "id": "T23",
         "label": "a non-positive interest rate or day count, or a non-positive exchange rate, is rejected as 'invalid-amount'",
         "hits": [
-          "C-013 !(amount > 0) || !(rate > 0)",
-          "C-030 !(annualRatePercent > 0) || !(days > 0)"
+          "B-007 Foreign deposit with rate 0 or amount 0 is rejected as invalid-amount"
         ]
       },
       {
         "id": "T24",
         "label": "transfers and split payments are not charged a fee",
         "hits": [
-          "C-023 this.cents(from) - cents < 0",
-          "C-027 this.cents(from) - cents < 0"
+          "B-028 Split larger than the payer's balance is refused",
+          "B-029 Split hands leftover cents one each to the first-listed recipients"
         ]
       }
     ]
   },
   "negative_controls": {
     "total": 8,
-    "false_positives": 2,
+    "false_positives": 5,
     "per_item": [
       {
         "id": "N1",
         "label": "non-positive amounts rejected (P-005)",
-        "hits": []
+        "hits": [
+          "B-025 Split of 0 is rejected as invalid-amount, even with no recipients"
+        ]
       },
       {
         "id": "N2",
@@ -188,7 +200,9 @@
       {
         "id": "N3",
         "label": "amounts rounded to the nearest cent, halves away from zero (P-011)",
-        "hits": []
+        "hits": [
+          "B-008 Foreign deposit worth less than half a cent is rejected as amount-too-small; half a cent becomes 0.01"
+        ]
       },
       {
         "id": "N4",
@@ -198,13 +212,15 @@
       {
         "id": "N5",
         "label": "interest computed with a 365-day year on the current balance (P-015)",
-        "hits": []
+        "hits": [
+          "B-030 Interest uses a 365-day year: 10% for 365 days on 1000 gives 100"
+        ]
       },
       {
         "id": "N6",
         "label": "a split divides the amount evenly (P-016)",
         "hits": [
-          "C-028 Math.floor(cents / recipients.length)"
+          "B-029 Split hands leftover cents one each to the first-listed recipients"
         ]
       },
       {
@@ -216,8 +232,7 @@
         "id": "N8",
         "label": "balances kept in whole cents (P-010)",
         "hits": [
-          "C-007 cents / 100",
-          "C-035 this.balances.get(account) ?? 0"
+          "B-001 An account never used reads as balance 0 with no entries"
         ]
       }
     ]
@@ -225,165 +240,147 @@
   "dropped_requirements": {
     "truth": 3,
     "found": 3,
-    "flagged": 13,
-    "precision": 0.231,
+    "flagged": 3,
+    "precision": 1,
     "recall": 1
   },
   "normalised": {
     "flagged": [
       {
-        "label": "C-001 DAILY_WITHDRAWAL_LIMIT = 5000",
+        "label": "B-001 An account never used reads as balance 0 with no entries",
         "lines": [
-          9
+          42,
+          126
         ]
       },
       {
-        "label": "C-004 MAX_FEE_CENTS = 2500",
-        "lines": [
-          12
-        ]
-      },
-      {
-        "label": "C-007 cents / 100",
-        "lines": [
-          20
-        ]
-      },
-      {
-        "label": "C-008 Math.ceil((cents * FEE_PERCENT) / 100 - 1e-9)",
-        "lines": [
-          24
-        ]
-      },
-      {
-        "label": "C-009 !this.balances.has(account)",
+        "label": "B-002 Opening an existing account again keeps its balance",
         "lines": [
           35
         ]
       },
       {
-        "label": "C-010 this.balances.get(account) ?? 0",
-        "lines": [
-          42
-        ]
-      },
-      {
-        "label": "C-012 this.seen.has(txnId)",
-        "lines": [
-          51
-        ]
-      },
-      {
-        "label": "C-013 !(amount > 0) || !(rate > 0)",
+        "label": "B-007 Foreign deposit with rate 0 or amount 0 is rejected as invalid-amount",
         "lines": [
           59
         ]
       },
       {
-        "label": "C-014 this.seen.has(txnId)",
+        "label": "B-008 Foreign deposit worth less than half a cent is rejected as amount-too-small; half a cent becomes 0.01",
+        "lines": [
+          62,
+          16
+        ]
+      },
+      {
+        "label": "B-009 Foreign deposit with an already used txnId is acknowledged without crediting",
         "lines": [
           60
         ]
       },
       {
-        "label": "C-017 this.seen.has(txnId)",
+        "label": "B-014 Withdrawal fee is capped at 25",
         "lines": [
-          71
+          12
         ]
       },
       {
-        "label": "C-018 this.cents(account) - (cents + fee) < 0",
+        "label": "B-015 Withdrawal fee rounds a part-cent up to the next cent",
+        "lines": [
+          24
+        ]
+      },
+      {
+        "label": "B-016 Withdrawal must be covered including its fee",
         "lines": [
           75
         ]
       },
       {
-        "label": "C-019 this.withdrawnToday.get(account) ?? 0",
+        "label": "B-017 A withdrawal that takes the balance exactly to 0 is allowed",
         "lines": [
-          76
+          75
         ]
       },
       {
-        "label": "C-020 used + cents > DAILY_WITHDRAWAL_LIMIT * 100",
+        "label": "B-018 Withdrawals total at most 5000 per account; the fee does not count toward it",
+        "lines": [
+          9,
+          76,
+          77
+        ]
+      },
+      {
+        "label": "B-019 A single withdrawal of 5000.01 is refused as daily-limit",
+        "lines": [
+          9,
+          76,
+          77
+        ]
+      },
+      {
+        "label": "B-020 Insufficient funds is reported before the daily limit",
+        "lines": [
+          75,
+          77
+        ]
+      },
+      {
+        "label": "B-021 A refused withdrawal does not use up the daily limit",
         "lines": [
           77
         ]
       },
       {
-        "label": "C-022 this.seen.has(txnId)",
+        "label": "B-025 Split of 0 is rejected as invalid-amount, even with no recipients",
         "lines": [
-          86
+          98
         ]
       },
       {
-        "label": "C-023 this.cents(from) - cents < 0",
-        "lines": [
-          90
-        ]
-      },
-      {
-        "label": "C-025 recipients.length === 0",
+        "label": "B-026 Split with no recipients is rejected, even when its txnId was already used",
         "lines": [
           99
         ]
       },
       {
-        "label": "C-026 this.seen.has(txnId)",
-        "lines": [
-          100
-        ]
-      },
-      {
-        "label": "C-027 this.cents(from) - cents < 0",
+        "label": "B-028 Split larger than the payer's balance is refused",
         "lines": [
           104
         ]
       },
       {
-        "label": "C-028 Math.floor(cents / recipients.length)",
+        "label": "B-029 Split hands leftover cents one each to the first-listed recipients",
         "lines": [
-          105
+          105,
+          108,
+          104
         ]
       },
       {
-        "label": "C-029 i < remainder",
+        "label": "B-030 Interest uses a 365-day year: 10% for 365 days on 1000 gives 100",
         "lines": [
-          108
+          13,
+          117
         ]
       },
       {
-        "label": "C-030 !(annualRatePercent > 0) || !(days > 0)",
+        "label": "B-031 Interest is rounded down to the cent",
         "lines": [
-          114
+          118
         ]
       },
       {
-        "label": "C-031 this.seen.has(txnId)",
+        "label": "B-034 Interest that comes to 0 returns ok, records nothing, and leaves the txnId reusable",
         "lines": [
-          115
-        ]
-      },
-      {
-        "label": "C-035 this.balances.get(account) ?? 0",
-        "lines": [
-          126
+          119
         ]
       }
     ],
     "dropped": [
-      "P-001",
-      "P-002",
-      "P-003",
-      "P-004",
-      "P-006",
       "P-007",
-      "P-008",
-      "P-009",
-      "P-011",
       "P-013",
-      "P-014",
-      "P-016",
-      "P-017"
+      "P-014"
     ]
   },
   "decision_level": {
@@ -391,37 +388,39 @@
     "truth_version": 1,
     "found": [
       "T1",
+      "T11",
       "T14",
       "T15",
       "T16",
+      "T17",
+      "T18",
+      "T19",
       "T2",
       "T20",
+      "T21",
       "T22",
       "T23",
       "T4",
       "T5",
-      "T7"
+      "T7",
+      "T9"
     ],
     "missed": [
       "T8",
-      "T9",
       "T10",
-      "T11",
       "T12",
       "T13",
-      "T17",
-      "T18",
-      "T19",
-      "T21",
       "T24"
     ],
-    "recall": 0.5,
-    "recall_without_post_hoc": 0.5,
-    "precision": 0.957,
-    "valid_unlisted": [],
+    "recall": 0.773,
+    "recall_without_post_hoc": 0.773,
+    "precision": 0.947,
+    "valid_unlisted": [
+      "B-025"
+    ],
     "misbucketed": [],
     "false_positives": [
-      "C-007"
+      "B-030"
     ],
     "unadjudicated": []
   }

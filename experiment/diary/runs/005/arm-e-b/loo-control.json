@@ -1,0 +1,86 @@
+{
+  "status": "passed",
+  "hidden": [
+    "P-005",
+    "P-009",
+    "P-011"
+  ],
+  "collateral": [],
+  "behaviours": [
+    "B-004",
+    "B-005",
+    "B-007",
+    "B-026",
+    "B-031",
+    "B-038",
+    "B-039",
+    "B-043",
+    "B-006",
+    "B-023",
+    "B-027",
+    "B-040",
+    "B-002",
+    "B-003"
+  ],
+  "flipped": 14,
+  "resourced": 0,
+  "cited_hidden": 0,
+  "rows": [
+    {
+      "behaviour_id": "B-004",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-005",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-007",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-026",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-031",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-038",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-039",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-043",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-006",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-023",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-027",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-040",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-002",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-003",
+      "outcome": "flipped"
+    }
+  ]
+}

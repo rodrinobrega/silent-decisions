@@ -1,0 +1,918 @@
+{
+  "behaviours": [
+    {
+      "id": "B-001",
+      "title": "Deposit credits the exact amount, cents kept",
+      "given": "a new Ledger",
+      "when": "100.5 is deposited to account A with txnId d1",
+      "then": "the result is ok and balance(A) is 100.5",
+      "contrary_then": "balance(A) is 100 (the cents are dropped)",
+      "contrary_alternatives": [
+        "the deposit is rejected and balance(A) stays 0",
+        "balance(A) is 101 (rounded to whole units)"
+      ],
+      "observed_at": "readable state",
+      "literals": [
+        "100.5"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-002",
+      "title": "Amounts are rounded half-up to the nearest cent",
+      "given": "a new Ledger",
+      "when": "10.005 is deposited to A",
+      "then": "balance(A) is 10.01",
+      "contrary_then": "balance(A) is 10 (the half cent is dropped)",
+      "contrary_alternatives": [
+        "the deposit is rejected because it has more than two decimals",
+        "balance(A) is 10.005 (no rounding)"
+      ],
+      "observed_at": "readable state",
+      "literals": [
+        "10.005",
+        "10.01"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-003",
+      "title": "A deposit that rounds to zero cents is accepted and recorded as 0",
+      "given": "a new Ledger",
+      "when": "0.004 is deposited to A with txnId d1",
+      "then": "the result is ok, balance(A) is 0 and entries(A) holds one deposit entry with amount 0",
+      "contrary_then": "the deposit is rejected with reason amount-too-small",
+      "contrary_alternatives": [
+        "the deposit is accepted but no entry is recorded",
+        "the deposit is rounded up and balance(A) becomes 0.01"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "0.004",
+        "0"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-004",
+      "title": "A deposit of 0 is rejected",
+      "given": "a new Ledger",
+      "when": "0 is deposited to A",
+      "then": "the result is { ok: false, reason: 'invalid-amount' } and balance(A) stays 0",
+      "contrary_then": "the deposit is accepted (ok) as a no-op",
+      "contrary_alternatives": [
+        "the deposit is rejected with a different reason such as amount-too-small"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "0"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-005",
+      "title": "A negative deposit is rejected",
+      "given": "a new Ledger",
+      "when": "-50 is deposited to A",
+      "then": "the result is { ok: false, reason: 'invalid-amount' } and balance(A) stays 0",
+      "contrary_then": "the deposit goes through and balance(A) becomes -50",
+      "contrary_alternatives": [
+        "the sign is ignored and balance(A) becomes 50"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "-50"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-006",
+      "title": "Repeating a deposit txnId is ignored but reported ok",
+      "given": "a Ledger where 100 was deposited to A with txnId d1",
+      "when": "100 is deposited to A with txnId d1 again",
+      "then": "the result is ok, balance(A) stays 100 and A has only one entry",
+      "contrary_then": "the deposit is applied again and balance(A) becomes 200",
+      "contrary_alternatives": [
+        "the repeat is rejected with a duplicate reason and balance(A) stays 100"
+      ],
+      "observed_at": "readable state",
+      "literals": [
+        "100",
+        "200"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-007",
+      "title": "Amount validation happens before duplicate detection",
+      "given": "a Ledger where 100 was deposited to A with txnId d1",
+      "when": "-5 is deposited to A with txnId d1",
+      "then": "the result is { ok: false, reason: 'invalid-amount' }",
+      "contrary_then": "the call is reported ok because d1 was already seen",
+      "contrary_alternatives": [
+        "the call is rejected with a duplicate-transaction reason"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "-5"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-008",
+      "title": "A txnId used by a deposit makes a later withdrawal with the same txnId a no-op",
+      "given": "a Ledger where 100 was deposited to A with txnId x",
+      "when": "10 is withdrawn from A with txnId x",
+      "then": "the result is ok and balance(A) stays 100",
+      "contrary_then": "the withdrawal goes through and balance(A) becomes 89.5",
+      "contrary_alternatives": [
+        "the withdrawal is rejected as a duplicate transaction and balance(A) stays 100"
+      ],
+      "observed_at": "readable state",
+      "literals": [
+        "100",
+        "10"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-009",
+      "title": "Opening an existing account does not reset it",
+      "given": "a Ledger where A was opened and 100 deposited",
+      "when": "open(A) is called again",
+      "then": "balance(A) stays 100 and its single entry is kept",
+      "contrary_then": "balance(A) resets to 0 and its entries are cleared",
+      "contrary_alternatives": [
+        "opening an existing account throws an error"
+      ],
+      "observed_at": "readable state",
+      "literals": [
+        "100"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-010",
+      "title": "An unknown account reads as balance 0 with no entries",
+      "given": "a new Ledger",
+      "when": "balance(Z) and entries(Z) are read for never-used account Z",
+      "then": "balance is 0 and entries is an empty list",
+      "contrary_then": "reading an unknown account throws an error",
+      "contrary_alternatives": [
+        "balance returns undefined for unknown accounts"
+      ],
+      "observed_at": "readable state",
+      "literals": [
+        "0"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-011",
+      "title": "Small withdrawals pay the minimum fee of 0.50",
+      "given": "A has balance 100",
+      "when": "10 is withdrawn from A with txnId w1",
+      "then": "the result is ok, balance(A) is 89.5 and the withdrawal entry amount is 10.5 (amount plus fee)",
+      "contrary_then": "the fee is 1% (0.10) and balance(A) becomes 89.9",
+      "contrary_alternatives": [
+        "no fee is charged and balance(A) becomes 90",
+        "the withdrawal is refused as below a minimum amount"
+      ],
+      "observed_at": "readable state",
+      "literals": [
+        "100",
+        "10",
+        "89.5",
+        "10.5",
+        "0.50"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-012",
+      "title": "Withdrawal fee is 1% of the amount",
+      "given": "A has balance 200",
+      "when": "100 is withdrawn from A",
+      "then": "the fee is 1.00 and balance(A) is 99",
+      "contrary_then": "only the minimum fee 0.50 applies and balance(A) becomes 99.5",
+      "contrary_alternatives": [
+        "the fee is 2% and balance(A) becomes 98",
+        "no fee is charged and balance(A) becomes 100"
+      ],
+      "observed_at": "readable state",
+      "literals": [
+        "200",
+        "100",
+        "99"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-013",
+      "title": "Withdrawal fee is rounded up to the next cent",
+      "given": "A has balance 200",
+      "when": "100.01 is withdrawn from A",
+      "then": "the fee is 1.01 and balance(A) is 98.98",
+      "contrary_then": "the fee is rounded down to 1.00 and balance(A) becomes 98.99",
+      "contrary_alternatives": [
+        "the fee is rounded to the nearest cent (1.00) and balance(A) becomes 98.99"
+      ],
+      "observed_at": "readable state",
+      "literals": [
+        "200",
+        "100.01",
+        "1.01",
+        "98.98"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-014",
+      "title": "Withdrawal fee is capped at 25",
+      "given": "A has balance 5000",
+      "when": "3000 is withdrawn from A",
+      "then": "the fee is 25 and balance(A) is 1975",
+      "contrary_then": "the uncapped 1% fee of 30 applies and balance(A) becomes 1970",
+      "contrary_alternatives": [
+        "the withdrawal is rejected for exceeding a single-withdrawal limit and balance(A) stays 5000"
+      ],
+      "observed_at": "readable state",
+      "literals": [
+        "5000",
+        "3000",
+        "25",
+        "1975"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-015",
+      "title": "A withdrawal that uses the whole balance including fee is allowed",
+      "given": "A has balance 101",
+      "when": "100 is withdrawn from A (100 plus fee 1 = 101)",
+      "then": "the result is ok and balance(A) is 0",
+      "contrary_then": "the withdrawal is rejected with 'insufficient-funds'",
+      "contrary_alternatives": [
+        "the withdrawal goes through but must leave a minimum balance, so it is refused"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "101",
+        "100",
+        "0"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-016",
+      "title": "A withdrawal whose amount plus fee exceeds the balance by one cent is rejected",
+      "given": "A has balance 100.99",
+      "when": "100 is withdrawn from A (needs 101 with fee)",
+      "then": "the result is { ok: false, reason: 'insufficient-funds' } and balance(A) stays 100.99",
+      "contrary_then": "the withdrawal goes through and balance(A) becomes -0.01",
+      "contrary_alternatives": [
+        "the funds check ignores the fee, so the withdrawal goes through and balance(A) becomes -0.01",
+        "the fee is reduced to what is left and balance(A) becomes 0"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "100.99",
+        "100",
+        "101"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-017",
+      "title": "Withdrawals are limited to 5000 in total; the next cent is refused",
+      "given": "A has balance 10000 and has already withdrawn 5000 with txnId w1 (balance now 4975)",
+      "when": "0.01 is withdrawn from A with txnId w2",
+      "then": "the result is { ok: false, reason: 'daily-limit' } and balance(A) stays 4975",
+      "contrary_then": "the withdrawal goes through (ok) and balance(A) becomes 4974.49",
+      "contrary_alternatives": [
+        "the limit is 10000 so the withdrawal goes through"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "10000",
+        "5000",
+        "4975",
+        "0.01"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-018",
+      "title": "A single withdrawal above 5000 is refused",
+      "given": "A has balance 10000",
+      "when": "5000.01 is withdrawn from A",
+      "then": "the result is { ok: false, reason: 'daily-limit' } and balance(A) stays 10000",
+      "contrary_then": "the withdrawal goes through (ok) and balance(A) becomes 4974.99",
+      "contrary_alternatives": [
+        "the withdrawal is capped at 5000 and processed"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "10000",
+        "5000.01"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-019",
+      "title": "Fees do not count toward the 5000 withdrawal limit, and reaching exactly 5000 is allowed",
+      "given": "A has balance 10000 and withdrew 4990 (fee 25) with txnId w1",
+      "when": "10 is withdrawn from A with txnId w2, bringing the total withdrawn to exactly 5000",
+      "then": "the result is ok and balance(A) is 4974.5",
+      "contrary_then": "fees count toward the limit, so the withdrawal is refused with 'daily-limit'",
+      "contrary_alternatives": [
+        "the limit is exclusive, so reaching exactly 5000 is refused with 'daily-limit'"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "10000",
+        "4990",
+        "10",
+        "5000",
+        "4974.5"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-020",
+      "title": "Insufficient funds is reported before the withdrawal limit",
+      "given": "A has balance 6000 and withdrew 5000 with txnId w1 (balance now 975)",
+      "when": "2000 is withdrawn from A with txnId w2 (over both the balance and the limit)",
+      "then": "the result is { ok: false, reason: 'insufficient-funds' } and balance(A) stays 975",
+      "contrary_then": "the result reason is 'daily-limit'",
+      "contrary_alternatives": [
+        "the withdrawal is accepted and the balance goes negative"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "6000",
+        "5000",
+        "975",
+        "2000"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-021",
+      "title": "A rejected withdrawal does not use up its txnId",
+      "given": "A has balance 5; withdrawing 10 with txnId w1 was rejected; then 100 more was deposited",
+      "when": "10 is withdrawn from A with txnId w1 again",
+      "then": "the result is ok and balance(A) is 94.5",
+      "contrary_then": "the retry is treated as an already-seen transaction: ok but balance(A) stays 105",
+      "contrary_alternatives": [
+        "the retry is rejected as a duplicate transaction and balance(A) stays 105"
+      ],
+      "observed_at": "readable state",
+      "literals": [
+        "5",
+        "10",
+        "100",
+        "94.5"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-022",
+      "title": "A withdrawal of 0 is rejected",
+      "given": "A has balance 100",
+      "when": "0 is withdrawn from A",
+      "then": "the result is { ok: false, reason: 'invalid-amount' } and balance(A) stays 100",
+      "contrary_then": "the withdrawal is accepted (ok) and the minimum fee is charged, leaving 99.5",
+      "contrary_alternatives": [
+        "the withdrawal is accepted as a no-op and balance(A) stays 100"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "0",
+        "100"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-023",
+      "title": "Repeating a withdrawal txnId is ignored",
+      "given": "A has balance 100 and withdrew 10 with txnId w1 (balance 89.5)",
+      "when": "10 is withdrawn from A with txnId w1 again",
+      "then": "the result is ok and balance(A) stays 89.5",
+      "contrary_then": "the second withdrawal is also applied and balance(A) becomes 79",
+      "contrary_alternatives": [
+        "the repeat is rejected as a duplicate and balance(A) stays 89.5"
+      ],
+      "observed_at": "readable state",
+      "literals": [
+        "100",
+        "10",
+        "89.5"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-024",
+      "title": "Transferring the whole balance succeeds with no fee",
+      "given": "A has balance 100 and B is new",
+      "when": "100 is transferred from A to B with txnId t1",
+      "then": "the result is ok; A is 0, B is 100; A has a transfer-out entry of 100 and B a transfer-in entry of 100",
+      "contrary_then": "the transfer is rejected with 'insufficient-funds' because a fee would be due",
+      "contrary_alternatives": [
+        "the transfer goes through but a fee is taken so B receives 99"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "100",
+        "0"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-025",
+      "title": "A transfer one cent above the balance is rejected",
+      "given": "A has balance 100",
+      "when": "100.01 is transferred from A to B",
+      "then": "the result is { ok: false, reason: 'insufficient-funds' }; A stays 100 and B stays 0",
+      "contrary_then": "the transfer goes through (ok) and A becomes -0.01",
+      "contrary_alternatives": [
+        "a partial transfer of 100 is made"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "100",
+        "100.01"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-026",
+      "title": "A transfer of 0 is rejected",
+      "given": "A has balance 100",
+      "when": "0 is transferred from A to B",
+      "then": "the result is { ok: false, reason: 'invalid-amount' }",
+      "contrary_then": "the transfer is accepted (ok) as a no-op",
+      "contrary_alternatives": [
+        "the transfer is rejected with 'insufficient-funds'"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "0"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-027",
+      "title": "Repeating a transfer txnId is ignored",
+      "given": "A has balance 100 and 30 was transferred to B with txnId t1",
+      "when": "30 is transferred from A to B with txnId t1 again",
+      "then": "the result is ok; A stays 70 and B stays 30",
+      "contrary_then": "the transfer is applied twice: A becomes 40 and B 60",
+      "contrary_alternatives": [
+        "the repeat is rejected as a duplicate and balances stay 70 and 30"
+      ],
+      "observed_at": "readable state",
+      "literals": [
+        "100",
+        "30",
+        "70"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-028",
+      "title": "Split gives leftover cents to the first recipients in list order",
+      "given": "A has balance 1",
+      "when": "1.00 is split from A to [B, C, D] with txnId s1",
+      "then": "the result is ok; A is 0; B gets 0.34, C 0.33, D 0.33",
+      "contrary_then": "the leftover cent goes to the last recipient: B 0.33, C 0.33, D 0.34",
+      "contrary_alternatives": [
+        "the leftover cent stays with A (A 0.01, each recipient 0.33)",
+        "the split is rejected because it does not divide evenly"
+      ],
+      "observed_at": "readable state",
+      "literals": [
+        "1",
+        "0.34",
+        "0.33"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-029",
+      "title": "A split smaller than the number of recipients leaves the last recipient with 0",
+      "given": "A has balance 1",
+      "when": "0.02 is split from A to [B, C, D] with txnId s1",
+      "then": "the result is ok; A is 0.98; B gets 0.01, C gets 0.01, D gets 0 but still has a split-in entry of 0",
+      "contrary_then": "the split is rejected as too small to divide",
+      "contrary_alternatives": [
+        "each recipient gets 0 and A keeps the 0.02",
+        "D gets no entry at all"
+      ],
+      "observed_at": "readable state",
+      "literals": [
+        "0.02",
+        "0.01",
+        "0",
+        "0.98"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-030",
+      "title": "A split with no recipients is rejected",
+      "given": "A has balance 100",
+      "when": "10 is split from A to []",
+      "then": "the result is { ok: false, reason: 'no-recipients' } and A stays 100",
+      "contrary_then": "the split is accepted (ok) as a no-op",
+      "contrary_alternatives": [
+        "the amount is debited from A and goes nowhere"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "100",
+        "10"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-031",
+      "title": "Split amount is validated before recipients",
+      "given": "a new Ledger",
+      "when": "0 is split from A to []",
+      "then": "the result is { ok: false, reason: 'invalid-amount' }",
+      "contrary_then": "the result reason is 'no-recipients'",
+      "contrary_alternatives": [
+        "the split is accepted as a no-op"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "0"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-032",
+      "title": "A split above the balance is rejected",
+      "given": "A has balance 100",
+      "when": "100.01 is split from A to [B, C]",
+      "then": "the result is { ok: false, reason: 'insufficient-funds' }; A stays 100 and B stays 0",
+      "contrary_then": "the split goes through (ok) and A becomes -0.01",
+      "contrary_alternatives": [
+        "only the available 100 is split"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "100",
+        "100.01"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-033",
+      "title": "Splitting the whole balance is allowed",
+      "given": "A has balance 100",
+      "when": "100 is split from A to [B, C]",
+      "then": "the result is ok; A is 0, B is 50 and C is 50",
+      "contrary_then": "the split is rejected with 'insufficient-funds'",
+      "contrary_alternatives": [
+        "a fee is taken and each recipient gets less than 50"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "100",
+        "50"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-034",
+      "title": "Repeating a split txnId is ignored",
+      "given": "A has balance 100 and split 10 to [B, C] with txnId s1",
+      "when": "10 is split to [B, C] with txnId s1 again",
+      "then": "the result is ok; A stays 90, B 5 and C 5",
+      "contrary_then": "the split is applied twice: A becomes 80, B 10, C 10",
+      "contrary_alternatives": [
+        "the repeat is rejected as a duplicate and balances are unchanged"
+      ],
+      "observed_at": "readable state",
+      "literals": [
+        "100",
+        "10",
+        "90",
+        "5"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-035",
+      "title": "Interest for 365 days at 5% on 1000 is exactly 50",
+      "given": "A has balance 1000",
+      "when": "applyInterest(A, 5, 365, i1) is called",
+      "then": "the result is ok, balance(A) is 1050 and an interest entry of 50 is recorded",
+      "contrary_then": "a 360-day year is used and balance(A) becomes 1050.69",
+      "contrary_alternatives": [
+        "interest is compounded daily giving about 1051.27",
+        "interest is refused because the balance was not held for a full year"
+      ],
+      "observed_at": "readable state",
+      "literals": [
+        "1000",
+        "5",
+        "365",
+        "1050",
+        "50"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-036",
+      "title": "Interest is rounded down to the cent",
+      "given": "A has balance 1000",
+      "when": "applyInterest(A, 5, 30, i1) is called (exact interest 4.10958…)",
+      "then": "balance(A) is 1004.1",
+      "contrary_then": "interest is rounded to nearest (up) giving 1004.11",
+      "contrary_alternatives": [
+        "a 360-day year is used giving 1004.16"
+      ],
+      "observed_at": "readable state",
+      "literals": [
+        "1000",
+        "5",
+        "30",
+        "1004.1"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-037",
+      "title": "Interest under one cent is a silent no-op and does not use up the txnId",
+      "given": "A has balance 1",
+      "when": "applyInterest(A, 1, 1, i1) is called, then 5 is deposited to A with txnId i1",
+      "then": "the interest call is ok with no entry added, and the later deposit with i1 is applied: balance(A) is 6",
+      "contrary_then": "the interest call consumes i1, so the later deposit is ignored and balance(A) stays 1",
+      "contrary_alternatives": [
+        "the interest call is rejected with 'amount-too-small'",
+        "a minimum of 0.01 interest is credited"
+      ],
+      "observed_at": "readable state",
+      "literals": [
+        "1",
+        "5",
+        "6"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-038",
+      "title": "An interest rate of 0 is rejected",
+      "given": "A has balance 1000",
+      "when": "applyInterest(A, 0, 30, i1) is called",
+      "then": "the result is { ok: false, reason: 'invalid-amount' }",
+      "contrary_then": "the call is accepted (ok) as a no-op",
+      "contrary_alternatives": [
+        "the call is rejected with a different reason such as invalid-rate"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "0",
+        "30"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-039",
+      "title": "Interest over 0 days is rejected",
+      "given": "A has balance 1000",
+      "when": "applyInterest(A, 5, 0, i1) is called",
+      "then": "the result is { ok: false, reason: 'invalid-amount' }",
+      "contrary_then": "the call is accepted (ok) as a no-op",
+      "contrary_alternatives": [
+        "one day of interest is applied"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "0",
+        "5"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-040",
+      "title": "Repeating an interest txnId is ignored",
+      "given": "A has balance 1000 and 5% for 365 days was applied with txnId i1 (balance 1050)",
+      "when": "applyInterest(A, 5, 365, i1) is called again",
+      "then": "the result is ok and balance(A) stays 1050",
+      "contrary_then": "interest is applied again and balance(A) becomes 1102.5",
+      "contrary_alternatives": [
+        "the repeat is rejected as a duplicate"
+      ],
+      "observed_at": "readable state",
+      "literals": [
+        "1050",
+        "1102.5"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-041",
+      "title": "A foreign deposit credits amount times rate as a deposit",
+      "given": "a new Ledger",
+      "when": "depositForeign(A, 100, 1.1, f1) is called",
+      "then": "the result is ok, balance(A) is 110 and the entry is kind 'deposit' with amount 110",
+      "contrary_then": "the rate is applied as a division and balance(A) becomes 90.91",
+      "contrary_alternatives": [
+        "the raw 100 is credited, ignoring the rate",
+        "the deposit is rejected"
+      ],
+      "observed_at": "readable state",
+      "literals": [
+        "100",
+        "1.1",
+        "110"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-042",
+      "title": "A foreign deposit with rate 0 is rejected",
+      "given": "a new Ledger",
+      "when": "depositForeign(A, 100, 0, f1) is called",
+      "then": "the result is { ok: false, reason: 'invalid-amount' }",
+      "contrary_then": "the result reason is 'amount-too-small'",
+      "contrary_alternatives": [
+        "the deposit is accepted with 0 credited"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "0",
+        "100"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-043",
+      "title": "A foreign deposit of amount 0 is rejected",
+      "given": "a new Ledger",
+      "when": "depositForeign(A, 0, 1.5, f1) is called",
+      "then": "the result is { ok: false, reason: 'invalid-amount' }",
+      "contrary_then": "the deposit is accepted (ok) as a no-op",
+      "contrary_alternatives": [
+        "the result reason is 'amount-too-small'"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "0",
+        "1.5"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-044",
+      "title": "A foreign deposit that converts to under half a cent is rejected and records nothing",
+      "given": "a new Ledger",
+      "when": "depositForeign(A, 0.001, 1, f1) is called",
+      "then": "the result is { ok: false, reason: 'amount-too-small' } and entries(A) is empty",
+      "contrary_then": "the deposit is accepted (ok) with 0 credited",
+      "contrary_alternatives": [
+        "the amount is rounded up to 0.01 and credited"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "0.001",
+        "1"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-045",
+      "title": "A foreign deposit converting to exactly half a cent rounds up to 0.01",
+      "given": "a new Ledger",
+      "when": "depositForeign(A, 10, 0.0005, f1) is called (converted value 0.005)",
+      "then": "the result is ok and balance(A) is 0.01",
+      "contrary_then": "the half cent is dropped and the deposit is rejected with 'amount-too-small'",
+      "contrary_alternatives": [
+        "it is accepted but credited as 0"
+      ],
+      "observed_at": "return value",
+      "literals": [
+        "10",
+        "0.0005",
+        "0.01"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    },
+    {
+      "id": "B-046",
+      "title": "Repeating a foreign deposit txnId is ignored, even if the repeat would be too small",
+      "given": "A received depositForeign of 100 at rate 2 with txnId f1 (balance 200)",
+      "when": "depositForeign(A, 100, 2, f1) and then depositForeign(A, 0.001, 1, f1) are called",
+      "then": "both calls return ok and balance(A) stays 200",
+      "contrary_then": "the repeat is applied and balance(A) becomes 400",
+      "contrary_alternatives": [
+        "the tiny repeat is rejected with 'amount-too-small'",
+        "the repeat is rejected as a duplicate"
+      ],
+      "observed_at": "readable state",
+      "literals": [
+        "100",
+        "2",
+        "200",
+        "0.001"
+      ],
+      "files": [
+        "src/ledger.ts"
+      ]
+    }
+  ]
+}

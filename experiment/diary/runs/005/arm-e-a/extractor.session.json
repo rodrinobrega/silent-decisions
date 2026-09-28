@@ -1,0 +1,6 @@
+{
+  "cwd": "/private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-rCDMdM",
+  "cwd_as_created": "/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-rCDMdM",
+  "cmd": "claude -p --setting-sources project --strict-mcp-config --allowedTools Read,Glob,Grep,Write --permission-mode acceptEdits",
+  "started": "2026-09-28T06:32:23.235Z"
+}

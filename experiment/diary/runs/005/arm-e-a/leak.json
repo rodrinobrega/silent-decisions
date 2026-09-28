@@ -1,0 +1,60 @@
+{
+  "status": "clean",
+  "shingle_size": 6,
+  "overlapping_phrases": [],
+  "nonce_seen": false,
+  "extractor_reported_nonce": [],
+  "audit": {
+    "source": "transcript",
+    "found": true,
+    "sessions": [
+      "bfc5c408-ceba-4898-9a3b-562db3060558.jsonl"
+    ],
+    "calls": 5,
+    "by_tool": {
+      "Bash": 3,
+      "Read": 1,
+      "Write": 1
+    },
+    "plan_mentions": 0,
+    "outside_room": [],
+    "denied": 1,
+    "tool_calls": [
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"cd /private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-rCDMdM; find . -type f | grep -v node_modules | head -100; cat census.json; ls out\",\"description\":\"List files and show census\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\":\"/private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-rCDMdM/cleanroom/src/ledger.ts\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"node -e '\\nconst tc=a=>Math.sign(a)*Math.round(Math.abs(a)*100+1e-7);\\nconst fee=c=>Math.min(2500,Math.max(50,Math.ceil(c/100-1e-9)));\\nconsole.log(tc(10.005),tc(10.004),tc(0.001*1),tc(0.005),tc(100*1.5),fee(tc(50.01)),fee(tc(99.5)),fee(tc(99)),fee(1000),fee(300000));\\nconsole.log((10000",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": true
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"mkdir -p /private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-rCDMdM/out; cat > /private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-rCDMdM/out/gen.py <<'EOF'\\nimport json\\nI=\\\"import { Ledger } from '@sut/src/ledger';\\\"\\nF=[\\\"src/ledger.ts\\\"]\\nB=[]\\ndef b(title,g",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Write",
+        "input": "{\"file_path\":\"/private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-rCDMdM/out/behaviours.json\",\"content\":\"{\\n  \\\"nonce_seen\\\": [],\\n  \\\"behaviours\\\": [\\n    {\\n      \\\"id\\\": \\\"B-001\\\",\\n      \\\"title\\\": \\\"An account never used reads as balance 0 with no entries\\\",\\n      \\\"given\\\": \\\"a n",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      }
+    ]
+  }
+}

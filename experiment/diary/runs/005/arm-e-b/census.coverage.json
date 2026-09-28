@@ -1,0 +1,15 @@
+{
+  "total": 35,
+  "covered": 34,
+  "waived": 1,
+  "uncovered": 0,
+  "basis": "declared",
+  "uncovered_items": [],
+  "waived_items": [
+    {
+      "census_id": "C-035",
+      "reason": "The private cents() default of 0 can never be reached: every public operation calls open() before cents(), so the account always exists. Reads of unopened accounts go through balance(), which is C-010 (B-010)."
+    }
+  ],
+  "unknown_refs": []
+}

@@ -1,17 +1,15 @@
 {
-  "wrote": ".silent-decisions/runs/20260927T200421-349175/trace.checked.json",
-  "stated": 19,
+  "wrote": ".silent-decisions/runs/20260928T064636-ec03cf/trace.checked.json",
+  "stated": 11,
   "entailed": 0,
-  "unsourced": 30,
-  "downgraded_by_rules": 0,
-  "candidate_unrealised": [
-    "P-013"
-  ],
+  "unsourced": 38,
+  "downgraded_by_rules": 1,
+  "candidate_unrealised": [],
   "contradicted": [
     "P-004",
     "P-010",
-    "P-011",
-    "P-012"
+    "P-012",
+    "P-013"
   ],
   "probe_scope": "all",
   "probe_targets": [
@@ -28,7 +26,6 @@
     "P-013",
     "P-014",
     "P-015",
-    "P-016",
-    "P-017"
+    "P-016"
   ]
 }

@@ -1,0 +1,34 @@
+{
+  "case": "ledger-rounding",
+  "truth_version": 1,
+  "arm": "e",
+  "adjudicator": "Claude (Opus 5.5, local session), 2026-09-28. NOT blind to the arm, AND the author of the case and its truth file; re-check before publishing.",
+  "legend": "value = truth id the flagged item is the same decision as; 'valid' = a real silent decision the truth file does not list (neither TP nor FP); 'invalid' = not a real silent decision (FP).",
+  "run": "005a",
+  "items": {
+    "B-001": "T5",
+    "B-002": "T7",
+    "B-007": "T23",
+    "B-008": "T21",
+    "B-009": "T4",
+    "B-014": "T15",
+    "B-015": "T14",
+    "B-016": "T16",
+    "B-017": "T1",
+    "B-018": "T17",
+    "B-019": "T2",
+    "B-020": "T9",
+    "B-021": "T11",
+    "B-025": "valid",
+    "B-026": "T22",
+    "B-028": "T1",
+    "B-029": "T20",
+    "B-030": "invalid",
+    "B-031": "T18",
+    "B-034": "T19"
+  },
+  "notes": [
+    "Conventions as run 004: implicit open -> T5; a scenario pinning several decisions is mapped by the decision its title and contrary name; dropped behaviours flagged as silent are recorded under the dropped id; planned rules flagged as silent (1% fee / minimum N4, 365-day year N5, whole cents N3/N8, duplicate txnId P-009, zero/negative amount P-005) are invalid; which rejection wins among several unspecified checks is valid.",
+    "Hidden by sourcing: B-023 (transfer of the whole balance with no fee: T24, T1) by P-010 'Balances are kept in whole cents'; B-012 (fee included in the withdrawal entry: the T25 dropped behaviour) by P-012. T8, T10, T12, T13 not extracted."
+  ]
+}

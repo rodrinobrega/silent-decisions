@@ -1,0 +1,46 @@
+{
+  "status": "clean",
+  "shingle_size": 6,
+  "overlapping_phrases": [],
+  "nonce_seen": false,
+  "extractor_reported_nonce": [],
+  "audit": {
+    "source": "transcript",
+    "found": true,
+    "sessions": [
+      "a5cbbf54-bdec-40b3-affd-52ad0e9ef2a3.jsonl"
+    ],
+    "calls": 3,
+    "by_tool": {
+      "Bash": 1,
+      "Read": 1,
+      "Write": 1
+    },
+    "plan_mentions": 0,
+    "outside_room": [],
+    "denied": 0,
+    "tool_calls": [
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"find . -type f | grep -v node_modules | head -100 && cat census.json && ls out 2>/dev/null; cat census.uncovered.json 2>/dev/null\",\"description\":\"List files and show census\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\":\"/private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-kLy3gm/cleanroom/src/ledger.ts\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Write",
+        "input": "{\"file_path\":\"/private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-kLy3gm/out/behaviours.json\",\"content\":\"{\\n  \\\"nonce_seen\\\": [],\\n  \\\"behaviours\\\": [\\n    {\\n      \\\"id\\\": \\\"B-001\\\",\\n      \\\"title\\\": \\\"Unknown account reads as zero balance and empty history\\\",\\n      \\\"given\\\": \\\"a ne",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      }
+    ]
+  }
+}
