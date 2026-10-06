@@ -18,7 +18,7 @@ The question: **does blind extraction plus execution find silent decisions that 
 - A truth silent decision is **found** if any flagged item's lines overlap its lines. Recall = found / truth. Precision = flagged items overlapping some truth item / flagged.
 - **Negative controls** are decisions the plan does make; flagging one is a false positive worth reporting separately, because an arm that flags everything scores perfect recall.
 - Dropped requirements are scored by statement id.
-- Cost is recorded per arm (wall time now; add tokens and dollars by hand from the CLI output).
+- Cost is recorded per arm: wall time, plus the dollar cost `claude -p` reports for every model session (API-equivalent; not billed on a subscription), logged to `out/<case>/<arm>/cost.jsonl`. Jev classifier calls are not included.
 
 Line-based matching is deliberately dumb so nobody can argue about it. Its weakness: an arm that flags the right decision but cites the wrong line scores a miss. Free-form arms (a, b) are told the score is line-based.
 
@@ -33,7 +33,7 @@ experiment/run.sh ledger ef          # just the classifier arms
 
 Outputs land in `experiment/out/<case>/<arm>/` (delta.md, score.json) and `experiment/results.md`.
 
-`run.sh` drives every model role through `claude -p`, so the whole experiment is reproducible from a shell with no plugin installed (it picks the flags itself: `--setting-sources project --strict-mcp-config` with a subscription login, since `--bare` needs an API key).
+`run.sh` drives every model role through `claude -p`, so the whole experiment is reproducible from a shell with no plugin installed (it picks the flags itself: `--setting-sources project --strict-mcp-config` with a subscription login, since `--bare` needs an API key). Every role goes through `experiment/claude-role.sh`, which pins the model (`SD_MODEL`, default `claude-opus-5-5`) and logs cost; `out/<case>/<arm>/run-env.json` records the Claude Code version, model, launch command and commit.
 
 **What has been run:** arms e and f, five runs on the two cases below (see `diary/`). Arms a–d are written but **have never been executed**, so the comparison against self-report and a sighted reviewer, the one that matters most, is still open.
 

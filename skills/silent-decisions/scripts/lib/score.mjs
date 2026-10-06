@@ -10,7 +10,7 @@ function overlaps(a, b) { for (const x of a) if (b.has(x)) return true; return f
 
 /** Reduce an arm's raw output to {flagged:[{label, lines}], dropped:[statement_id]}. */
 export function normalise(arm, runDir, inputFile) {
-  if (['a', 'b', 'c'].includes(arm)) {
+  if (['a', 'b'].includes(arm)) {
     // Free-form arms produce {decisions:[{description, file, lines}], dropped:[ids]} (see experiment/prompts).
     const j = readJson(inputFile);
     return {
@@ -27,7 +27,7 @@ export function normalise(arm, runDir, inputFile) {
       dropped: t.reverse.filter((r) => r.status === 'untouched').map((r) => r.statement_id),
     };
   }
-  // d and e: behaviour-level. Lines come from the census items each behaviour declared it covers.
+  // c, d and e: behaviour-level (run.sh runs c through the pipeline, with a sighted extractor). Lines come from the census items each behaviour declared it covers.
   const checked = readJson(path.join(runDir, 'trace.checked.json'));
   const beh = new Map(readJson(path.join(runDir, 'behaviours.json')).behaviours.map((b) => [b.id, b]));
   const probes = fs.existsSync(path.join(runDir, 'probes.results.json')) ? readJson(path.join(runDir, 'probes.results.json')).results : [];

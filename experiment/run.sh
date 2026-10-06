@@ -26,17 +26,22 @@ trap restore_notes EXIT
 OUT="$ROOT/experiment/out/$CASE"; mkdir -p "$OUT"
 export SD_CLASSIFIER_CMD="${SD_CLASSIFIER_CMD:-node $ROOT/skills/silent-decisions/scripts/classifiers/jev.mjs}"
 
-# How every model role is launched. `--bare` skips user settings, plugins, hooks and CLAUDE.md (best isolation)
-# but only authenticates with ANTHROPIC_API_KEY. With a subscription login, fall back to `-p` with user
-# settings and MCP servers switched off, if this CLI supports those flags; otherwise plain `-p`.
+# How every model role is launched: through experiment/claude-role.sh, which pins the model ($SD_MODEL,
+# default claude-opus-5-5) and logs cost per session. `--bare` skips user settings, plugins, hooks and
+# CLAUDE.md (best isolation) but only authenticates with ANTHROPIC_API_KEY. With a subscription login, fall
+# back to `-p` with user settings and MCP servers switched off, if this CLI supports those flags; otherwise plain `-p`.
+ROLE="$ROOT/experiment/claude-role.sh"
+export SD_MODEL="${SD_MODEL:-claude-opus-5-5}"
 if [ -z "${SD_CLAUDE_P:-}" ]; then
-  if [ -n "${ANTHROPIC_API_KEY:-}" ]; then SD_CLAUDE_P="claude -p --bare"
-  elif echo "reply with the single word ok" | claude -p --setting-sources project --strict-mcp-config >/dev/null 2>&1; then
-    SD_CLAUDE_P="claude -p --setting-sources project --strict-mcp-config"
-  else SD_CLAUDE_P="claude -p"; echo "warning: running roles with plain 'claude -p' (user CLAUDE.md, plugins and hooks load)" >&2; fi
+  if [ -n "${ANTHROPIC_API_KEY:-}" ]; then SD_CLAUDE_P="$ROLE -p --bare"
+  elif echo "reply with the single word ok" | "$ROLE" -p --setting-sources project --strict-mcp-config >/dev/null 2>&1; then
+    SD_CLAUDE_P="$ROLE -p --setting-sources project --strict-mcp-config"
+  else SD_CLAUDE_P="$ROLE -p"; echo "warning: running roles with plain 'claude -p' (user CLAUDE.md, plugins and hooks load)" >&2; fi
 fi
 export SD_CLAUDE_P
 export SD_EXTRACTOR_CMD="${SD_EXTRACTOR_CMD:-$SD_CLAUDE_P --allowedTools Read,Glob,Grep,Write --permission-mode acceptEdits}"
+CLAUDE_VERSION="$(claude --version 2>/dev/null | head -1)"
+echo "claude code: $CLAUDE_VERSION · model: $SD_MODEL"
 echo "roles run as: $SD_CLAUDE_P"
 cd "$PROJ"
 
@@ -52,15 +57,18 @@ role() { # role <role-name> <task text> : fresh session with a role prompt (trac
 
 fresh_run() { rm -f .silent-decisions/current.json; $SD init --plan "$PLAN" --cap 100 >/dev/null; RUN="$(node -p "require('path').resolve(require('./.silent-decisions/current.json').run_dir)")"; ROOM="$(node -p "require('./.silent-decisions/current.json').room_root")"; }
 t0() { date +%s; }
+cost() { node -e 'const fs=require("fs"),l=fs.existsSync(process.argv[2])?fs.readFileSync(process.argv[2],"utf8").split("\n").filter(Boolean).map(JSON.parse):[];console.log(process.argv[1]+"s wall"+(l.length?`, $${l.reduce((a,x)=>a+(x.cost_usd||0),0).toFixed(2)} (${l.length} sessions)`:""))' "$(( $(t0) - start ))" "$SD_COST_LOG"; }
 
 for arm in $(echo "$ARMS" | grep -o .); do
   echo "== arm $arm"; start=$(t0)
+  mkdir -p "$OUT/$arm"; export SD_COST_LOG="$OUT/$arm/cost.jsonl"; : > "$SD_COST_LOG"
+  printf '{"claude_code":"%s","model":"%s","roles":"%s","commit":"%s"}\n' "$CLAUDE_VERSION" "$SD_MODEL" "$SD_CLAUDE_P" "$(git -C "$ROOT" rev-parse HEAD)" > "$OUT/$arm/run-env.json"
   case $arm in
     a|b)
       fresh_run; mkdir -p "$OUT/$arm"
       f=$([ "$arm" = a ] && echo arm-a-self-report.md || echo arm-b-sighted-reviewer.md)
       headless "$ROOT/experiment/prompts/$f" "$OUT/$arm/output.json" "$RUN/plan.statements.json"
-      $SD score --arm "$arm" --truth "$TRUTH" --input "$OUT/$arm/output.json" --out "$OUT/$arm/score.json" --cost "$(( $(t0) - start ))s wall" ;;
+      $SD score --arm "$arm" --truth "$TRUTH" --input "$OUT/$arm/output.json" --out "$OUT/$arm/score.json" --cost "$(cost)" ;;
     c|d|e)
       fresh_run; mkdir -p "$OUT/$arm"
       if [ "$arm" = c ]; then   # sighted extractor: same task, plan visible, run in the room like strict mode
@@ -87,11 +95,11 @@ for arm in $(echo "$ARMS" | grep -o .); do
         role tracer "plan $RUN/loo/plan.redacted.md; statements $RUN/loo/plan.statements.redacted.json; behaviours $RUN/loo/behaviours.subset.json; write $RUN/loo/trace.json"; fi
       $SD loo-score >/dev/null; $SD leak-check >/dev/null; $SD render >/dev/null
       cp "$RUN/delta.md" "$OUT/$arm/delta.md"
-      $SD score --arm "$arm" --truth "$TRUTH" --out "$OUT/$arm/score.json" --cost "$(( $(t0) - start ))s wall" ;;
+      $SD score --arm "$arm" --truth "$TRUTH" --out "$OUT/$arm/score.json" --cost "$(cost)" ;;
     f)
       fresh_run; mkdir -p "$OUT/$arm"
       $SD trace-census >/dev/null; cp "$RUN/census-delta.md" "$OUT/$arm/"
-      $SD score --arm f --truth "$TRUTH" --out "$OUT/$arm/score.json" --cost "$(( $(t0) - start ))s wall" ;;
+      $SD score --arm f --truth "$TRUTH" --out "$OUT/$arm/score.json" --cost "$(cost)" ;;
   esac
   echo "   $(( $(t0) - start ))s"
 done
