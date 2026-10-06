@@ -1,0 +1,49 @@
+{
+  "status": "passed",
+  "hidden": [
+    "P-005"
+  ],
+  "collateral": [],
+  "behaviours": [
+    "B-004",
+    "B-005",
+    "B-006",
+    "B-018",
+    "B-019",
+    "B-037",
+    "B-038"
+  ],
+  "flipped": 7,
+  "resourced": 0,
+  "cited_hidden": 0,
+  "rows": [
+    {
+      "behaviour_id": "B-004",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-005",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-006",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-018",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-019",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-037",
+      "outcome": "flipped"
+    },
+    {
+      "behaviour_id": "B-038",
+      "outcome": "flipped"
+    }
+  ]
+}

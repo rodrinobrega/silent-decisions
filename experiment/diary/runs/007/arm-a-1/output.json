@@ -1,0 +1,26 @@
+{
+  "decisions": [
+    {"description": "Withdrawals are capped at 5000 per account per day, a limit the plan never mentions.", "file": "src/ledger.ts", "lines": [10, 58]},
+    {"description": "The 'daily' withdrawal total is never reset, so it is really a lifetime cap of 5000 per account.", "file": "src/ledger.ts", "lines": [21, 57, 59]},
+    {"description": "The withdrawal limit applies only to withdrawals, so transfers can move any amount out of an account.", "file": "src/ledger.ts", "lines": [72]},
+    {"description": "When a withdrawal would both overdraw and exceed the limit, it is reported as insufficient funds because that check runs first.", "file": "src/ledger.ts", "lines": [56, 58]},
+    {"description": "Amounts are rounded to cents with half-up rounding (Math.round), which runs on floating-point values.", "file": "src/ledger.ts", "lines": [12, 13, 14, 43, 54, 71]},
+    {"description": "Rounding happens after the positivity check, so an amount like 0.001 is accepted, rounds to 0, and records a zero-value entry.", "file": "src/ledger.ts", "lines": [39, 43, 51, 54, 67, 71]},
+    {"description": "Balances are stored as floating-point numbers instead of integer cents, so totals can drift.", "file": "src/ledger.ts", "lines": [18, 44, 60, 73, 74]},
+    {"description": "The positivity check rejects NaN but accepts Infinity and amounts with any number of decimal places.", "file": "src/ledger.ts", "lines": [39, 51, 67]},
+    {"description": "Overdrafts are not allowed, but a withdrawal or transfer may take the balance down to exactly zero.", "file": "src/ledger.ts", "lines": [55, 56, 72]},
+    {"description": "A repeated transaction id returns success and does nothing, without checking that the account, amount or operation type match the original.", "file": "src/ledger.ts", "lines": [40, 41, 52, 68]},
+    {"description": "A retry gets a plain ok, the same reply as a new operation, so the caller cannot tell it was a duplicate.", "file": "src/ledger.ts", "lines": [41, 52, 68]},
+    {"description": "Transaction ids share one global namespace across all accounts and operation types, and they are kept forever.", "file": "src/ledger.ts", "lines": [20]},
+    {"description": "Rejected operations do not mark their transaction id as used, so the same id can later succeed with different data.", "file": "src/ledger.ts", "lines": [46, 56, 58, 62, 72, 77]},
+    {"description": "The amount is validated before the duplicate check, so a retry of an accepted id with a bad amount is rejected instead of acknowledged.", "file": "src/ledger.ts", "lines": [39, 41, 51, 52, 67, 68]},
+    {"description": "Deposits, withdrawals and transfers silently create any account that does not exist, and there is no check for valid account ids.", "file": "src/ledger.ts", "lines": [42, 53, 69, 70]},
+    {"description": "A rejected withdrawal or transfer still creates the accounts it named.", "file": "src/ledger.ts", "lines": [53, 69, 70]},
+    {"description": "Unknown accounts report a balance of 0 and an empty history rather than an error.", "file": "src/ledger.ts", "lines": [31, 35]},
+    {"description": "Transaction ids are not validated, so empty or blank ids are accepted.", "file": "src/ledger.ts", "lines": [38, 50, 66]},
+    {"description": "A transfer writes the same transaction id into both accounts' histories, with no counterparty, timestamp or resulting balance on either entry.", "file": "src/ledger.ts", "lines": [4, 5, 6, 7, 8, 75, 76]},
+    {"description": "Rejection reasons are the fixed strings 'invalid-amount', 'insufficient-funds' and 'daily-limit'.", "file": "src/ledger.ts", "lines": [39, 51, 56, 58, 67, 72]},
+    {"description": "A transfer to the same account is accepted, leaves the balance unchanged and records two history entries.", "file": "src/ledger.ts", "lines": [66, 69, 70, 73, 74, 75, 76]}
+  ],
+  "dropped": ["P-007"]
+}

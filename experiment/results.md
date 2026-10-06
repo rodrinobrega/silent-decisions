@@ -4,10 +4,10 @@
 
 | Arm | Truth ver. | Silent (lines): precision | recall | flagged | Neg. FP | Dropped: precision | recall | Decision-level: recall (w/o post-hoc) | precision | Cost |
 |---|---|---|---|---|---|---|---|---|---|---|
-| a. implementer self-report | | not run | | | | | | | | |
-| b. sighted reviewer (one pass) | | not run | | | | | | | | |
-| c. pipeline, sighted extractor | | not run | | | | | | | | |
-| d. pipeline, LLM tracer + adversary | | not run | | | | | | | | |
+| a. implementer self-report | v2 | 0.5 | 0.9 | 24 | 2/2 | 1 | 1 | not adjudicated |  | 33s wall, $0.18 (1 sessions) |
+| b. sighted reviewer (one pass) | v2 | 0.65 | 1 | 20 | 2/2 | 1 | 1 | not adjudicated |  | 31s wall, $0.17 (1 sessions) |
+| c. pipeline, sighted extractor | v2 | 0.857 | 0.8 | 35 | 1/2 | 1 | 1 | not adjudicated |  | 340s wall, $1.92 (5 sessions) |
+| d. pipeline, LLM tracer + adversary | v2 | 0.821 | 0.8 | 39 | 1/2 | 1 | 1 | not adjudicated |  | 371s wall, $1.92 (5 sessions) |
 | e. pipeline, pairwise classifier | v2 | 0.964 | 0.8 | 28 | 1/2 | 1 | 1 | 1 (1) | 1 | 451s wall |
 | f. census × plan classifier (no extraction) | v2 | 1 | 0.8 | 12 | 0/2 | 0.111 | 1 | 0.6 (1) | 1 | 6s wall |
 

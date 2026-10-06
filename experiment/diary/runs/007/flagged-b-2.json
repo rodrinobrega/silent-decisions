@@ -1,0 +1,242 @@
+[
+  {
+    "n": 1,
+    "kind": "code decision the plan does not make",
+    "description": "Withdrawals are capped by a hard-coded daily limit of 5000 per account.",
+    "file": "src/ledger.ts",
+    "lines": [
+      10,
+      57,
+      58,
+      59
+    ]
+  },
+  {
+    "n": 2,
+    "kind": "code decision the plan does not make",
+    "description": "The 'daily' withdrawal total is never reset, so the limit is effectively a lifetime cap per Ledger instance.",
+    "file": "src/ledger.ts",
+    "lines": [
+      21,
+      57,
+      59
+    ]
+  },
+  {
+    "n": 3,
+    "kind": "code decision the plan does not make",
+    "description": "Transfers out of an account are not counted against the daily withdrawal limit.",
+    "file": "src/ledger.ts",
+    "lines": [
+      66,
+      71,
+      72,
+      73
+    ]
+  },
+  {
+    "n": 4,
+    "kind": "code decision the plan does not make",
+    "description": "All amounts are rounded to two decimal places (cents) using Math.round, i.e. half rounds up toward positive infinity, on binary floating-point values.",
+    "file": "src/ledger.ts",
+    "lines": [
+      12,
+      13,
+      14,
+      43,
+      54,
+      71
+    ]
+  },
+  {
+    "n": 5,
+    "kind": "code decision the plan does not make",
+    "description": "Positivity is checked before rounding, so a tiny positive amount such as 0.001 is accepted and recorded as a zero-value operation.",
+    "file": "src/ledger.ts",
+    "lines": [
+      39,
+      43,
+      51,
+      54,
+      67,
+      71
+    ]
+  },
+  {
+    "n": 6,
+    "kind": "code decision the plan does not make",
+    "description": "Amount validation uses !(amount > 0), which rejects NaN but accepts Infinity.",
+    "file": "src/ledger.ts",
+    "lines": [
+      39,
+      51,
+      67
+    ]
+  },
+  {
+    "n": 7,
+    "kind": "code decision the plan does not make",
+    "description": "Balances are stored and summed as floating-point numbers rather than integer cents.",
+    "file": "src/ledger.ts",
+    "lines": [
+      18,
+      44,
+      60,
+      73,
+      74
+    ]
+  },
+  {
+    "n": 8,
+    "kind": "code decision the plan does not make",
+    "description": "Overdrafts are forbidden: a withdrawal or transfer that would make the balance negative is rejected with 'insufficient-funds'.",
+    "file": "src/ledger.ts",
+    "lines": [
+      55,
+      56,
+      72
+    ]
+  },
+  {
+    "n": 9,
+    "kind": "code decision the plan does not make",
+    "description": "A repeated transaction id is acknowledged with ok:true and ignored, without checking that the account, amount or operation type match the original.",
+    "file": "src/ledger.ts",
+    "lines": [
+      40,
+      41,
+      52,
+      68
+    ]
+  },
+  {
+    "n": 10,
+    "kind": "code decision the plan does not make",
+    "description": "Transaction ids are deduplicated in one global set shared across all accounts and operation kinds, kept forever with no expiry.",
+    "file": "src/ledger.ts",
+    "lines": [
+      20,
+      46,
+      62,
+      77
+    ]
+  },
+  {
+    "n": 11,
+    "kind": "code decision the plan does not make",
+    "description": "Amount validation runs before the duplicate check, so a retry with an invalid amount is rejected even if the id was already processed.",
+    "file": "src/ledger.ts",
+    "lines": [
+      39,
+      41,
+      51,
+      52,
+      67,
+      68
+    ]
+  },
+  {
+    "n": 12,
+    "kind": "code decision the plan does not make",
+    "description": "Rejected operations do not record their transaction id, so the same id can later be reused and succeed.",
+    "file": "src/ledger.ts",
+    "lines": [
+      56,
+      58,
+      72
+    ]
+  },
+  {
+    "n": 13,
+    "kind": "code decision the plan does not make",
+    "description": "Accounts are created implicitly with a zero balance on first use by any operation, including operations that are then rejected.",
+    "file": "src/ledger.ts",
+    "lines": [
+      23,
+      24,
+      25,
+      26,
+      42,
+      53,
+      69,
+      70
+    ]
+  },
+  {
+    "n": 14,
+    "kind": "code decision the plan does not make",
+    "description": "Querying the balance or history of an unknown account returns 0 or an empty list rather than an error.",
+    "file": "src/ledger.ts",
+    "lines": [
+      31,
+      35
+    ]
+  },
+  {
+    "n": 15,
+    "kind": "code decision the plan does not make",
+    "description": "Failures are reported as a result object with a reason string rather than by throwing.",
+    "file": "src/ledger.ts",
+    "lines": [
+      2,
+      39,
+      56,
+      58,
+      72
+    ]
+  },
+  {
+    "n": 16,
+    "kind": "code decision the plan does not make",
+    "description": "A transfer is recorded as two history entries, transfer-out on the source and transfer-in on the destination, sharing the same transaction id.",
+    "file": "src/ledger.ts",
+    "lines": [
+      6,
+      75,
+      76
+    ]
+  },
+  {
+    "n": 17,
+    "kind": "code decision the plan does not make",
+    "description": "History entries hold only txnId, kind and amount, with no timestamp, counterparty or resulting balance.",
+    "file": "src/ledger.ts",
+    "lines": [
+      4,
+      5,
+      6,
+      7,
+      8
+    ]
+  },
+  {
+    "n": 18,
+    "kind": "code decision the plan does not make",
+    "description": "Transaction ids and account ids are not validated, so empty or arbitrary strings are accepted.",
+    "file": "src/ledger.ts",
+    "lines": [
+      38,
+      50,
+      66
+    ]
+  },
+  {
+    "n": 19,
+    "kind": "code decision the plan does not make",
+    "description": "Withdrawal checks insufficient funds before the daily limit, which determines which reason is reported when both apply.",
+    "file": "src/ledger.ts",
+    "lines": [
+      56,
+      58
+    ]
+  },
+  {
+    "n": 20,
+    "kind": "plan statement the code does not implement",
+    "plan_text": "A transfer to the same account is rejected.",
+    "plan_lines": [
+      13,
+      13
+    ]
+  }
+]

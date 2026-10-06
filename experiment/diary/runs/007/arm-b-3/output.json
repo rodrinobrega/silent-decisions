@@ -1,0 +1,22 @@
+{"decisions":[
+{"description":"Withdrawals are capped at a daily limit of 5000 per account, a value the plan never mentions.","file":"src/ledger.ts","lines":[10,57,58,59]},
+{"description":"The 'daily' withdrawal total is never reset, so the cap is effectively a lifetime limit per ledger instance.","file":"src/ledger.ts","lines":[21,57,59]},
+{"description":"Only withdrawals count toward the daily limit; outgoing transfers are not limited.","file":"src/ledger.ts","lines":[66,72,73]},
+{"description":"Amounts are rounded to two decimal places (cents) using Math.round, i.e. half-up toward positive infinity, with floating-point error.","file":"src/ledger.ts","lines":[12,13,14,43,54,71]},
+{"description":"The positive-amount check runs before rounding, so a tiny positive amount such as 0.004 is accepted and recorded as a zero-value operation.","file":"src/ledger.ts","lines":[39,43,51,54,67,71]},
+{"description":"Balances are stored as floating-point numbers and sums are not re-rounded, so cent errors can accumulate.","file":"src/ledger.ts","lines":[18,44,60,73,74]},
+{"description":"Overdrafts are forbidden: a withdrawal or transfer that would make the balance negative is rejected with 'insufficient-funds'.","file":"src/ledger.ts","lines":[55,56,72]},
+{"description":"When a withdrawal both exceeds the balance and the daily limit, insufficient funds is reported first.","file":"src/ledger.ts","lines":[56,58]},
+{"description":"A repeated transaction id is acknowledged as success and ignored, without checking that the account, amount or operation type match the original.","file":"src/ledger.ts","lines":[40,41,52,68]},
+{"description":"Transaction ids share one global namespace across all accounts and operation types.","file":"src/ledger.ts","lines":[20]},
+{"description":"Only accepted operations mark their transaction id as seen, so retrying a rejected id can later succeed as a new operation.","file":"src/ledger.ts","lines":[46,56,58,62,72,77]},
+{"description":"Amount validation happens before the duplicate check, so a retry with an invalid amount is rejected rather than acknowledged.","file":"src/ledger.ts","lines":[39,41,51,52,67,68]},
+{"description":"Infinity passes the positive-amount check and is accepted, while NaN is rejected.","file":"src/ledger.ts","lines":[39,51,67]},
+{"description":"Accounts are created implicitly with a zero balance on first use by any operation, including withdrawals and transfers that are then rejected.","file":"src/ledger.ts","lines":[42,53,69,70]},
+{"description":"An explicit public open() method exists and is a no-op for an existing account.","file":"src/ledger.ts","lines":[23,24,25,26,27,28]},
+{"description":"Querying the balance of an unknown account returns 0 instead of an error.","file":"src/ledger.ts","lines":[31]},
+{"description":"Querying the history of an unknown account returns an empty list instead of an error.","file":"src/ledger.ts","lines":[35]},
+{"description":"Account ids and transaction ids are not validated, so empty or arbitrary strings are accepted.","file":"src/ledger.ts","lines":[38,50,66]},
+{"description":"Rejections are returned as {ok:false, reason} values with fixed reason strings rather than thrown errors.","file":"src/ledger.ts","lines":[2,39,51,56,58,67,72]},
+{"description":"A transfer is recorded as two history entries, transfer-out and transfer-in, sharing the same transaction id and a positive amount.","file":"src/ledger.ts","lines":[6,75,76]}
+],"dropped":["P-007"]}

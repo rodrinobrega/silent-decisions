@@ -1,0 +1,581 @@
+[
+  {
+    "n": 1,
+    "kind": "code decision the plan does not make",
+    "title": "Balance of an account never seen is 0",
+    "given": "a new Ledger with no accounts",
+    "when": "balance('ghost') is read",
+    "then": "it returns 0",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      31
+    ]
+  },
+  {
+    "n": 2,
+    "kind": "code decision the plan does not make",
+    "title": "Entries of an account never seen is an empty list",
+    "given": "a new Ledger with no accounts",
+    "when": "entries('ghost') is read",
+    "then": "it returns an empty list []",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": []
+  },
+  {
+    "n": 3,
+    "kind": "code decision the plan does not make",
+    "title": "Opening an existing account again keeps its balance and history",
+    "given": "account 'a' has received a deposit of 50 with txnId 'd1'",
+    "when": "open('a') is called again",
+    "then": "balance('a') is still 50 and entries('a') still holds the one deposit entry",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      24
+    ]
+  },
+  {
+    "n": 4,
+    "kind": "code decision the plan does not make",
+    "title": "Opening a new account gives balance 0 and an empty history",
+    "given": "a new Ledger",
+    "when": "open('a') is called",
+    "then": "balance('a') is 0 and entries('a') is []",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      24
+    ]
+  },
+  {
+    "n": 5,
+    "kind": "code decision the plan does not make",
+    "title": "Deposit into an unopened account opens it and credits it",
+    "given": "a new Ledger where account 'a' was never opened",
+    "when": "deposit('a', 100, 'd1') is called",
+    "then": "it returns { ok: true }, balance('a') is 100 and entries('a') is [{ txnId: 'd1', kind: 'deposit', amount: 100 }]",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      39,
+      41
+    ]
+  },
+  {
+    "n": 6,
+    "kind": "code decision the plan does not make",
+    "title": "Deposit of 0 is rejected as invalid-amount",
+    "given": "a new Ledger",
+    "when": "deposit('a', 0, 'd1') is called",
+    "then": "it returns { ok: false, reason: 'invalid-amount' } and balance('a') stays 0 with no entries",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      39
+    ]
+  },
+  {
+    "n": 7,
+    "kind": "code decision the plan does not make",
+    "title": "Deposit of a negative amount is rejected as invalid-amount",
+    "given": "account 'a' holds 100 after deposit 'd1'",
+    "when": "deposit('a', -5, 'd2') is called",
+    "then": "it returns { ok: false, reason: 'invalid-amount' } and balance('a') stays 100",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      39
+    ]
+  },
+  {
+    "n": 8,
+    "kind": "code decision the plan does not make",
+    "title": "Deposit of NaN is rejected as invalid-amount",
+    "given": "a new Ledger",
+    "when": "deposit('a', NaN, 'd1') is called",
+    "then": "it returns { ok: false, reason: 'invalid-amount' } and balance('a') is 0",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      39
+    ]
+  },
+  {
+    "n": 9,
+    "kind": "code decision the plan does not make",
+    "title": "Repeating a deposit with the same txnId reports success but credits only once",
+    "given": "account 'a' received deposit('a', 100, 'd1')",
+    "when": "deposit('a', 100, 'd1') is called again",
+    "then": "it returns { ok: true }, balance('a') stays 100 and entries('a') still has one entry",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      41
+    ]
+  },
+  {
+    "n": 10,
+    "kind": "code decision the plan does not make",
+    "title": "A reused txnId on a different account or with a different amount is silently ignored",
+    "given": "account 'a' received deposit('a', 100, 'd1')",
+    "when": "deposit('b', 70, 'd1') is called",
+    "then": "it returns { ok: true } but balance('b') is 0 and balance('a') stays 100",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      41
+    ]
+  },
+  {
+    "n": 11,
+    "kind": "code decision the plan does not make",
+    "title": "Invalid amount is reported even when the txnId was already used",
+    "given": "account 'a' received deposit('a', 100, 'd1')",
+    "when": "deposit('a', 0, 'd1') is called",
+    "then": "it returns { ok: false, reason: 'invalid-amount' } (amount checked before duplicate)",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      39,
+      41
+    ]
+  },
+  {
+    "n": 12,
+    "kind": "code decision the plan does not make",
+    "title": "Deposit amounts are rounded to 2 decimals (12.346 becomes 12.35)",
+    "given": "a new Ledger",
+    "when": "deposit('a', 12.346, 'd1') is called",
+    "then": "balance('a') is 12.35 and the entry amount is 12.35",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      14,
+      14
+    ]
+  },
+  {
+    "n": 13,
+    "kind": "code decision the plan does not make",
+    "title": "Rounding goes down below the half cent (12.344 becomes 12.34)",
+    "given": "a new Ledger",
+    "when": "deposit('a', 12.344, 'd1') is called",
+    "then": "balance('a') is 12.34",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      14,
+      14
+    ]
+  },
+  {
+    "n": 14,
+    "kind": "code decision the plan does not make",
+    "title": "An exact half cent rounds up (0.125 becomes 0.13)",
+    "given": "a new Ledger",
+    "when": "deposit('a', 0.125, 'd1') is called",
+    "then": "balance('a') is 0.13",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      14,
+      14
+    ]
+  },
+  {
+    "n": 15,
+    "kind": "code decision the plan does not make",
+    "title": "A deposit below half a cent is accepted but rounds to a 0 entry",
+    "given": "a new Ledger",
+    "when": "deposit('a', 0.004, 'd1') is called",
+    "then": "it returns { ok: true }, balance('a') is 0 and entries('a') holds an entry { txnId: 'd1', kind: 'deposit', amount: 0 }",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      14,
+      14,
+      39
+    ]
+  },
+  {
+    "n": 16,
+    "kind": "code decision the plan does not make",
+    "title": "Withdrawing exactly the whole balance is allowed",
+    "given": "account 'a' holds 100",
+    "when": "withdraw('a', 100, 'w1') is called",
+    "then": "it returns { ok: true }, balance('a') is 0 and the last entry is { txnId: 'w1', kind: 'withdrawal', amount: 100 }",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      51,
+      52,
+      56,
+      57,
+      58
+    ]
+  },
+  {
+    "n": 17,
+    "kind": "code decision the plan does not make",
+    "title": "Withdrawing one cent more than the balance is rejected",
+    "given": "account 'a' holds 100",
+    "when": "withdraw('a', 100.01, 'w1') is called",
+    "then": "it returns { ok: false, reason: 'insufficient-funds' } and balance('a') stays 100",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      56
+    ]
+  },
+  {
+    "n": 18,
+    "kind": "code decision the plan does not make",
+    "title": "Withdrawal amount is rounded before checking funds (10.004 from 10 succeeds)",
+    "given": "account 'a' holds 10",
+    "when": "withdraw('a', 10.004, 'w1') is called",
+    "then": "it returns { ok: true } and balance('a') is 0 (amount rounded to 10)",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      14,
+      14,
+      56
+    ]
+  },
+  {
+    "n": 19,
+    "kind": "code decision the plan does not make",
+    "title": "Withdrawing from an account never opened is rejected as insufficient-funds",
+    "given": "a new Ledger",
+    "when": "withdraw('a', 1, 'w1') is called",
+    "then": "it returns { ok: false, reason: 'insufficient-funds' } and balance('a') is 0",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      56,
+      31
+    ]
+  },
+  {
+    "n": 20,
+    "kind": "code decision the plan does not make",
+    "title": "Withdrawal of 0 or a negative amount is rejected as invalid-amount",
+    "given": "account 'a' holds 100",
+    "when": "withdraw('a', 0, 'w1') and withdraw('a', -20, 'w2') are called",
+    "then": "both return { ok: false, reason: 'invalid-amount' } and balance('a') stays 100",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      51
+    ]
+  },
+  {
+    "n": 21,
+    "kind": "code decision the plan does not make",
+    "title": "Repeating a withdrawal with the same txnId reports success but debits once",
+    "given": "account 'a' holds 100 and withdraw('a', 30, 'w1') has succeeded",
+    "when": "withdraw('a', 30, 'w1') is called again",
+    "then": "it returns { ok: true } and balance('a') stays 70",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      52
+    ]
+  },
+  {
+    "n": 22,
+    "kind": "code decision the plan does not make",
+    "title": "txnIds are shared across operation types: a withdrawal reusing a deposit's txnId is ignored",
+    "given": "account 'a' received deposit('a', 100, 't1')",
+    "when": "withdraw('a', 40, 't1') is called",
+    "then": "it returns { ok: true } but balance('a') stays 100 and no withdrawal entry is added",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      52
+    ]
+  },
+  {
+    "n": 23,
+    "kind": "code decision the plan does not make",
+    "title": "A rejected withdrawal does not use up its txnId",
+    "given": "account 'a' holds 50 and withdraw('a', 80, 'w1') was rejected as insufficient-funds",
+    "when": "deposit('a', 50, 'd2') is made and withdraw('a', 80, 'w1') is retried",
+    "then": "the retry returns { ok: true } and balance('a') is 20",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      52,
+      56
+    ]
+  },
+  {
+    "n": 24,
+    "kind": "code decision the plan does not make",
+    "title": "A single withdrawal of exactly 5000 is within the daily limit",
+    "given": "account 'a' holds 6000 and nothing has been withdrawn",
+    "when": "withdraw('a', 5000, 'w1') is called",
+    "then": "it returns { ok: true } and balance('a') is 1000",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      10,
+      57,
+      58
+    ]
+  },
+  {
+    "n": 25,
+    "kind": "code decision the plan does not make",
+    "title": "A single withdrawal of 5000.01 exceeds the daily limit",
+    "given": "account 'a' holds 6000 and nothing has been withdrawn",
+    "when": "withdraw('a', 5000.01, 'w1') is called",
+    "then": "it returns { ok: false, reason: 'daily-limit' } and balance('a') stays 6000",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      10,
+      58
+    ]
+  },
+  {
+    "n": 26,
+    "kind": "code decision the plan does not make",
+    "title": "The daily limit is cumulative across withdrawals: 3000 + 2000 is allowed, a further 0.01 is not",
+    "given": "account 'a' holds 10000 and has withdrawn 3000 ('w1') and 2000 ('w2') successfully",
+    "when": "withdraw('a', 0.01, 'w3') is called",
+    "then": "it returns { ok: false, reason: 'daily-limit' } and balance('a') stays 5000",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      10,
+      57,
+      58
+    ]
+  },
+  {
+    "n": 27,
+    "kind": "code decision the plan does not make",
+    "title": "Funds are checked before the daily limit",
+    "given": "account 'a' holds 100",
+    "when": "withdraw('a', 6000, 'w1') is called (over both balance and daily limit)",
+    "then": "it returns { ok: false, reason: 'insufficient-funds' }",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      56,
+      58
+    ]
+  },
+  {
+    "n": 28,
+    "kind": "code decision the plan does not make",
+    "title": "Daily limit is tracked per account",
+    "given": "accounts 'a' and 'b' each hold 6000 and 'a' has withdrawn 5000",
+    "when": "withdraw('b', 5000, 'w2') is called",
+    "then": "it returns { ok: true } and balance('b') is 1000",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      57,
+      58
+    ]
+  },
+  {
+    "n": 29,
+    "kind": "code decision the plan does not make",
+    "title": "Withdrawal rounding applies to the daily limit (5000.004 counts as 5000)",
+    "given": "account 'a' holds 6000",
+    "when": "withdraw('a', 5000.004, 'w1') is called",
+    "then": "it returns { ok: true } and balance('a') is 1000",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      14,
+      14,
+      58
+    ]
+  },
+  {
+    "n": 30,
+    "kind": "code decision the plan does not make",
+    "title": "A withdrawal refused for daily-limit does not count toward the limit",
+    "given": "account 'a' holds 10000 and withdraw('a', 4000, 'w1') succeeded, then withdraw('a', 1500, 'w2') was refused for daily-limit",
+    "when": "withdraw('a', 1000, 'w3') is called",
+    "then": "it returns { ok: true } and balance('a') is 5000",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      58
+    ]
+  },
+  {
+    "n": 31,
+    "kind": "code decision the plan does not make",
+    "title": "Transfer moves money and records an entry on each side",
+    "given": "account 'a' holds 100",
+    "when": "transfer('a', 'b', 40, 't1') is called",
+    "then": "it returns { ok: true }, balance('a') is 60, balance('b') is 40, 'a' gets { txnId: 't1', kind: 'transfer-out', amount: 40 } and 'b' gets { txnId: 't1', kind: 'transfer-in', amount: 40 }",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      67,
+      68,
+      72
+    ]
+  },
+  {
+    "n": 32,
+    "kind": "code decision the plan does not make",
+    "title": "Transferring exactly the whole balance is allowed",
+    "given": "account 'a' holds 100",
+    "when": "transfer('a', 'b', 100, 't1') is called",
+    "then": "it returns { ok: true }, balance('a') is 0 and balance('b') is 100",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      72
+    ]
+  },
+  {
+    "n": 33,
+    "kind": "code decision the plan does not make",
+    "title": "Transferring one cent more than the balance is rejected, both balances unchanged",
+    "given": "account 'a' holds 100 and 'b' holds 0",
+    "when": "transfer('a', 'b', 100.01, 't1') is called",
+    "then": "it returns { ok: false, reason: 'insufficient-funds' }, balance('a') stays 100, balance('b') stays 0 and 'b' has no entries",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      72
+    ]
+  },
+  {
+    "n": 34,
+    "kind": "code decision the plan does not make",
+    "title": "Transfer of 0 or a negative amount is rejected as invalid-amount",
+    "given": "account 'a' holds 100",
+    "when": "transfer('a', 'b', 0, 't1') and transfer('a', 'b', -10, 't2') are called",
+    "then": "both return { ok: false, reason: 'invalid-amount' } and balances stay 100 and 0",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      67
+    ]
+  },
+  {
+    "n": 35,
+    "kind": "code decision the plan does not make",
+    "title": "Repeating a transfer with the same txnId reports success but moves money once",
+    "given": "account 'a' holds 100 and transfer('a', 'b', 40, 't1') succeeded",
+    "when": "transfer('a', 'b', 40, 't1') is called again",
+    "then": "it returns { ok: true }, balance('a') stays 60 and balance('b') stays 40",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      68
+    ]
+  },
+  {
+    "n": 36,
+    "kind": "code decision the plan does not make",
+    "title": "Transfers do not count toward the daily withdrawal limit",
+    "given": "account 'a' holds 10000 and has withdrawn 5000 today",
+    "when": "transfer('a', 'b', 3000, 't1') is called",
+    "then": "it returns { ok: true }, balance('a') is 2000 and balance('b') is 3000",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      58,
+      72
+    ]
+  },
+  {
+    "n": 37,
+    "kind": "code decision the plan does not make",
+    "title": "Transfer to the same account leaves the balance unchanged but records two entries",
+    "given": "account 'a' holds 100",
+    "when": "transfer('a', 'a', 30, 't1') is called",
+    "then": "it returns { ok: true }, balance('a') stays 100 and entries('a') gains a transfer-out of 30 then a transfer-in of 30",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      72
+    ]
+  },
+  {
+    "n": 38,
+    "kind": "code decision the plan does not make",
+    "title": "Transfer amounts are rounded to 2 decimals",
+    "given": "account 'a' holds 100",
+    "when": "transfer('a', 'b', 10.006, 't1') is called",
+    "then": "balance('b') is 10.01 and the transfer-in entry amount is 10.01",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": [
+      14,
+      14
+    ]
+  },
+  {
+    "n": 39,
+    "kind": "code decision the plan does not make",
+    "title": "entries returns a copy; changing it does not change the ledger",
+    "given": "account 'a' received deposit('a', 100, 'd1')",
+    "when": "the list returned by entries('a') has an item pushed onto it",
+    "then": "entries('a') read again still has length 1",
+    "files": [
+      "src/ledger.ts"
+    ],
+    "lines": []
+  },
+  {
+    "n": 40,
+    "kind": "plan statement the code does not implement",
+    "plan_text": "A transfer to the same account is rejected.",
+    "plan_lines": [
+      13,
+      13
+    ]
+  }
+]

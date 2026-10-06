@@ -1,0 +1,10 @@
+{
+  "total": 15,
+  "covered": 15,
+  "waived": 0,
+  "uncovered": 0,
+  "basis": "declared",
+  "uncovered_items": [],
+  "waived_items": [],
+  "unknown_refs": []
+}

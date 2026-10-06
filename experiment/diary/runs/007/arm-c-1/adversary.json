@@ -1,0 +1,70 @@
+{
+  "findings": [
+    {
+      "behaviour_id": "B-004",
+      "contrary_then": "the zero deposit is accepted with { ok: true }, the balance of 'a' stays 0 and a deposit entry of 0 with txnId 't1' is recorded",
+      "contrary_satisfies_quotes": false,
+      "argument": "\"An amount must be a positive number, otherwise the operation is rejected\": 0 is not positive, so accepting it breaches \"otherwise the operation is rejected\". The quote does not fix the reason string 'invalid-amount', so only the rejection itself is decided."
+    },
+    {
+      "behaviour_id": "B-005",
+      "contrary_then": "the -5 deposit is accepted with { ok: true } and the balance of 'a' becomes 95",
+      "contrary_satisfies_quotes": false,
+      "argument": "-5 is not \"a positive number\", and the words \"otherwise the operation is rejected\" require rejection. Accepting it is a breach."
+    },
+    {
+      "behaviour_id": "B-006",
+      "contrary_then": "the NaN deposit is accepted with { ok: true } and the balance of 'a' becomes NaN",
+      "contrary_satisfies_quotes": false,
+      "argument": "Read literally, NaN is not \"a positive number\" (it is not a number at all, and it is not greater than zero), so \"otherwise the operation is rejected\" applies and acceptance would be a breach."
+    },
+    {
+      "behaviour_id": "B-009",
+      "contrary_then": "the repeated deposit of 100 with txn 't1' is refused with { ok: false, reason: 'duplicate-txn' }; balance stays 100 and history still has one entry",
+      "contrary_satisfies_quotes": true,
+      "argument": "\"Each operation carries a client-supplied transaction id so that retries are safe\" requires only that the id exists and that retries are \"safe\". Refusing the duplicate is just as safe as silently returning ok, so the { ok: true } in the Then (what a retry reports to the client) is not decided by the quote."
+    },
+    {
+      "behaviour_id": "B-017",
+      "contrary_then": "the withdrawal of 40 is rejected with { ok: false, reason: 'over-limit' } because the system caps a single withdrawal at 25; balance stays 100 and no entry is recorded",
+      "contrary_satisfies_quotes": true,
+      "argument": "\"Customers can withdraw funds from an account\" grants a capability, not an unconditional right to any amount. A per-withdrawal cap (or a minimum balance, or a fee that leaves the balance at 59.50) still lets customers withdraw. \"Every accepted operation is recorded\" only applies to accepted operations, so a rejected one breaches nothing. The quotes do not decide that 40 is withdrawn in full and the balance becomes exactly 60."
+    },
+    {
+      "behaviour_id": "B-018",
+      "contrary_then": "the zero withdrawal is accepted with { ok: true }, balance stays 100 and a withdrawal entry of 0 is recorded",
+      "contrary_satisfies_quotes": false,
+      "argument": "0 is not \"a positive number\", so \"otherwise the operation is rejected\" requires rejection. Accepting it breaches the quote. Only the reason string is left open."
+    },
+    {
+      "behaviour_id": "B-019",
+      "contrary_then": "the -50 withdrawal is accepted with { ok: true } and the balance of 'a' becomes 150",
+      "contrary_satisfies_quotes": false,
+      "argument": "-50 is not \"a positive number\". The words \"otherwise the operation is rejected\" rule out accepting it."
+    },
+    {
+      "behaviour_id": "B-020",
+      "contrary_then": "the repeated withdrawal of 30 with txn 't2' is refused with { ok: false, reason: 'duplicate-txn' }; balance stays 70",
+      "contrary_satisfies_quotes": true,
+      "argument": "Refusing a duplicate txnId withdraws nothing a second time, so retries stay \"safe\". The quote does not say that a retry must report { ok: true }, so this part of the Then is undecided."
+    },
+    {
+      "behaviour_id": "B-037",
+      "contrary_then": "the zero transfer is accepted with { ok: true }; balances of 'a' (100) and 'b' (0) are unchanged and transfer-out/transfer-in entries of 0 are recorded",
+      "contrary_satisfies_quotes": false,
+      "argument": "0 is not \"a positive number\", so \"otherwise the operation is rejected\" forbids accepting it."
+    },
+    {
+      "behaviour_id": "B-038",
+      "contrary_then": "the -20 transfer is accepted and runs in reverse: 'a' becomes 120 and 'b' becomes 30",
+      "contrary_satisfies_quotes": false,
+      "argument": "-20 is not \"a positive number\". The words \"otherwise the operation is rejected\" forbid accepting it in any direction."
+    },
+    {
+      "behaviour_id": "B-039",
+      "contrary_then": "the repeated transfer of 40 with txn 't2' is refused with { ok: false, reason: 'duplicate-txn' }; 'a' stays 60 and 'b' stays 40",
+      "contrary_satisfies_quotes": true,
+      "argument": "No money moves twice, so retries are still \"safe\". The quote does not say what a retry returns, so the { ok: true } in the Then is not decided by it."
+    }
+  ]
+}

@@ -1,0 +1,364 @@
+{
+  "statements": [
+    { "id": "P-001", "type": "structural" },
+    { "id": "P-002", "type": "structural" },
+    { "id": "P-003", "type": "behavioural" },
+    { "id": "P-004", "type": "behavioural" },
+    { "id": "P-005", "type": "behavioural" },
+    { "id": "P-006", "type": "behavioural" },
+    { "id": "P-007", "type": "behavioural" },
+    { "id": "P-008", "type": "behavioural" },
+    { "id": "P-009", "type": "behavioural" },
+    { "id": "P-010", "type": "process" }
+  ],
+  "forward": [
+    {
+      "behaviour_id": "B-001",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan says nothing about reading accounts that were never opened.",
+      "contrary": { "then": "reading 'ghost' fails with an unknown-account error" },
+      "cluster": "account lifecycle"
+    },
+    {
+      "behaviour_id": "B-002",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has no open operation and doesn't say what reopening does.",
+      "contrary": { "then": "open('a') resets the account to balance 0 with empty history, or fails as already-open" },
+      "cluster": "account lifecycle"
+    },
+    {
+      "behaviour_id": "B-003",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "'Customers can deposit funds into an account' does not decide whether an account that was never opened is created implicitly or rejected.",
+      "contrary": { "then": "the deposit is rejected because 'a' was never opened" },
+      "cluster": "account lifecycle"
+    },
+    {
+      "behaviour_id": "B-004",
+      "verdict": "stated",
+      "quotes": [{ "statement_id": "P-005", "text": "An amount must be a positive number, otherwise the operation is rejected." }],
+      "reasoning": "0 is not positive; accepting it would violate P-005. The reason string 'invalid-amount' is not in the plan.",
+      "contrary": { "then": "the zero deposit is accepted and recorded" },
+      "cluster": "amount validation"
+    },
+    {
+      "behaviour_id": "B-005",
+      "verdict": "stated",
+      "quotes": [{ "statement_id": "P-005", "text": "An amount must be a positive number, otherwise the operation is rejected." }],
+      "reasoning": "A negative amount is not positive.",
+      "contrary": { "then": "the -5 deposit is accepted and the balance becomes 95" },
+      "cluster": "amount validation"
+    },
+    {
+      "behaviour_id": "B-006",
+      "verdict": "stated",
+      "quotes": [{ "statement_id": "P-005", "text": "An amount must be a positive number, otherwise the operation is rejected." }],
+      "reasoning": "NaN is not a positive number.",
+      "contrary": { "then": "the NaN deposit is accepted" },
+      "cluster": "amount validation"
+    },
+    {
+      "behaviour_id": "B-007",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "'so that retries are safe' does not decide whether a rejected call uses up its txnId. Treating the second call as a retry would be just as safe.",
+      "contrary": { "then": "the second call is treated as a retry of 't1' and ignored, so the balance stays 0" },
+      "cluster": "idempotency scope"
+    },
+    {
+      "behaviour_id": "B-008",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "P-005 (reject non-positive amounts) and P-009 (retries are safe) pull in different directions here, and the plan doesn't say which check comes first.",
+      "contrary": { "then": "the call is recognised as a retry of 't1' and returns { ok: true }" },
+      "cluster": "idempotency scope"
+    },
+    {
+      "behaviour_id": "B-009",
+      "verdict": "stated",
+      "quotes": [{ "statement_id": "P-009", "text": "Each operation carries a client-supplied transaction id so that retries are safe." }],
+      "reasoning": "Applying the retry twice (balance 200) would make retries unsafe. The plan doesn't specify what a retry returns (ok:true).",
+      "contrary": { "then": "the retry is applied again and the balance becomes 200" },
+      "cluster": "idempotent retries"
+    },
+    {
+      "behaviour_id": "B-010",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "Rejecting the reused id as a conflict would satisfy 'retries are safe' just as well.",
+      "contrary": { "then": "the call is rejected as a conflicting reuse of 't1'" },
+      "cluster": "idempotency scope"
+    },
+    {
+      "behaviour_id": "B-011",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan doesn't say how far a txnId reaches; per-account ids would also make retries safe.",
+      "contrary": { "then": "txnIds are per account, so 'b' receives 50" },
+      "cluster": "idempotency scope"
+    },
+    {
+      "behaviour_id": "B-012",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan doesn't decide whether txnIds are shared across operation types.",
+      "contrary": { "then": "the withdrawal is applied and the balance becomes 50" },
+      "cluster": "idempotency scope"
+    },
+    {
+      "behaviour_id": "B-013",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has no rounding rule.",
+      "contrary": { "then": "the balance is 0.12 (half-to-even or truncation) or 0.125 (unrounded)" },
+      "cluster": "amount rounding"
+    },
+    {
+      "behaviour_id": "B-014",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has no rounding rule.",
+      "contrary": { "then": "the balance is 0.124" },
+      "cluster": "amount rounding"
+    },
+    {
+      "behaviour_id": "B-015",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "P-005 is only a necessary condition (non-positive means rejected). It doesn't say how an amount that rounds to 0 is handled.",
+      "contrary": { "then": "the deposit is rejected as invalid-amount" },
+      "cluster": "amount rounding"
+    },
+    {
+      "behaviour_id": "B-016",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan doesn't specify how balances are represented or computed.",
+      "contrary": { "then": "the balance reads exactly 0.3" },
+      "cluster": "amount rounding"
+    },
+    {
+      "behaviour_id": "B-017",
+      "verdict": "stated",
+      "quotes": [
+        { "statement_id": "P-004", "text": "Customers can withdraw funds from an account." },
+        { "statement_id": "P-008", "text": "Every accepted operation is recorded in the account history." }
+      ],
+      "reasoning": "If the balance stayed 100, or no history entry was added, the plan would be violated.",
+      "contrary": { "then": "the balance stays 100 and no withdrawal entry is recorded" },
+      "cluster": "withdrawal"
+    },
+    {
+      "behaviour_id": "B-018",
+      "verdict": "stated",
+      "quotes": [{ "statement_id": "P-005", "text": "An amount must be a positive number, otherwise the operation is rejected." }],
+      "reasoning": "0 is not positive.",
+      "contrary": { "then": "the zero withdrawal is accepted" },
+      "cluster": "amount validation"
+    },
+    {
+      "behaviour_id": "B-019",
+      "verdict": "stated",
+      "quotes": [{ "statement_id": "P-005", "text": "An amount must be a positive number, otherwise the operation is rejected." }],
+      "reasoning": "-50 is not positive.",
+      "contrary": { "then": "the negative withdrawal is accepted and the balance becomes 150" },
+      "cluster": "amount validation"
+    },
+    {
+      "behaviour_id": "B-020",
+      "verdict": "stated",
+      "quotes": [{ "statement_id": "P-009", "text": "Each operation carries a client-supplied transaction id so that retries are safe." }],
+      "reasoning": "Withdrawing a second time on a retry would make retries unsafe.",
+      "contrary": { "then": "the retry withdraws again and the balance becomes 40" },
+      "cluster": "idempotent retries"
+    },
+    {
+      "behaviour_id": "B-021",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has no balance or overdraft rule, so it doesn't decide where the boundary sits.",
+      "contrary": { "then": "the withdrawal is rejected and the balance stays 100" },
+      "cluster": "overdraft policy"
+    },
+    {
+      "behaviour_id": "B-022",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "'Customers can withdraw funds' doesn't decide what happens when the balance is too low.",
+      "contrary": { "then": "the withdrawal is accepted and the balance becomes -0.01" },
+      "cluster": "overdraft policy"
+    },
+    {
+      "behaviour_id": "B-023",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan doesn't decide whether a rejected call uses up its txnId.",
+      "contrary": { "then": "'t2' counts as used, so the retry is ignored and the balance stays 200" },
+      "cluster": "idempotency scope"
+    },
+    {
+      "behaviour_id": "B-024",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan doesn't cover unknown accounts or overdraft.",
+      "contrary": { "then": "the withdrawal is rejected as unknown-account, or accepted and the balance becomes -10" },
+      "cluster": "overdraft policy"
+    },
+    {
+      "behaviour_id": "B-025",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has no daily limit at all.",
+      "contrary": { "then": "the reason given is 'daily-limit'" },
+      "cluster": "daily withdrawal limit"
+    },
+    {
+      "behaviour_id": "B-026",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has no daily limit.",
+      "contrary": { "then": "the withdrawal is rejected as daily-limit" },
+      "cluster": "daily withdrawal limit"
+    },
+    {
+      "behaviour_id": "B-027",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has no daily limit, so refusing this withdrawal is an unrequested rule.",
+      "contrary": { "then": "the withdrawal is accepted and the balance becomes 999.99" },
+      "cluster": "daily withdrawal limit"
+    },
+    {
+      "behaviour_id": "B-028",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has no daily limit.",
+      "contrary": { "then": "both withdrawals succeed" },
+      "cluster": "daily withdrawal limit"
+    },
+    {
+      "behaviour_id": "B-029",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has no daily limit.",
+      "contrary": { "then": "the withdrawal is accepted and the balance becomes 999.99" },
+      "cluster": "daily withdrawal limit"
+    },
+    {
+      "behaviour_id": "B-030",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has no daily limit.",
+      "contrary": { "then": "the refused attempt counted, so this withdrawal is refused" },
+      "cluster": "daily withdrawal limit"
+    },
+    {
+      "behaviour_id": "B-031",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has no daily limit.",
+      "contrary": { "then": "the limit is shared across accounts and the withdrawal is refused" },
+      "cluster": "daily withdrawal limit"
+    },
+    {
+      "behaviour_id": "B-032",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has no daily limit. Also, a 'daily' limit that never resets is probably a defect.",
+      "contrary": { "then": "the limit resets on the new day and the withdrawal is accepted" },
+      "cluster": "daily withdrawal limit"
+    },
+    {
+      "behaviour_id": "B-033",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has neither a daily limit nor a rounding rule.",
+      "contrary": { "then": "the withdrawal is refused as daily-limit" },
+      "cluster": "daily withdrawal limit"
+    },
+    {
+      "behaviour_id": "B-034",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has no daily limit.",
+      "contrary": { "then": "the 5000 withdrawal is refused as daily-limit" },
+      "cluster": "daily withdrawal limit"
+    },
+    {
+      "behaviour_id": "B-035",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "In the given state 'b' was never opened. 'Customers can transfer funds between two accounts' doesn't decide whether the destination is created implicitly or the transfer is rejected.",
+      "contrary": { "then": "the transfer is rejected because 'b' does not exist" },
+      "cluster": "account lifecycle"
+    },
+    {
+      "behaviour_id": "B-036",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "This contradicts the plan, which says 'A transfer to the same account is rejected.' (P-007). The system accepts it, so the behaviour isn't sourced: the plan's rule was not implemented.",
+      "contrary": { "then": "the transfer is rejected because source and destination are the same" },
+      "cluster": "same-account transfer"
+    },
+    {
+      "behaviour_id": "B-037",
+      "verdict": "stated",
+      "quotes": [{ "statement_id": "P-005", "text": "An amount must be a positive number, otherwise the operation is rejected." }],
+      "reasoning": "0 is not positive.",
+      "contrary": { "then": "the zero transfer is accepted" },
+      "cluster": "amount validation"
+    },
+    {
+      "behaviour_id": "B-038",
+      "verdict": "stated",
+      "quotes": [{ "statement_id": "P-005", "text": "An amount must be a positive number, otherwise the operation is rejected." }],
+      "reasoning": "-20 is not positive.",
+      "contrary": { "then": "the transfer runs in reverse: 'a' becomes 120 and 'b' becomes 30" },
+      "cluster": "amount validation"
+    },
+    {
+      "behaviour_id": "B-039",
+      "verdict": "stated",
+      "quotes": [{ "statement_id": "P-009", "text": "Each operation carries a client-supplied transaction id so that retries are safe." }],
+      "reasoning": "Transferring a second time on a retry would make retries unsafe.",
+      "contrary": { "then": "the retry transfers again: 'a' becomes 20 and 'b' becomes 80" },
+      "cluster": "idempotent retries"
+    },
+    {
+      "behaviour_id": "B-040",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has no balance or overdraft rule for transfers.",
+      "contrary": { "then": "the transfer is rejected as insufficient-funds" },
+      "cluster": "overdraft policy"
+    },
+    {
+      "behaviour_id": "B-041",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan doesn't decide what happens when the source balance is too low.",
+      "contrary": { "then": "the transfer is accepted: 'a' becomes -0.01 and 'b' becomes 100.01" },
+      "cluster": "overdraft policy"
+    },
+    {
+      "behaviour_id": "B-042",
+      "verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan doesn't say whether history reads are copies or live views.",
+      "contrary": { "then": "the caller's change affects the ledger and the second read is empty" },
+      "cluster": "history access"
+    }
+  ],
+  "reverse": [
+    { "statement_id": "P-003", "realised_by": ["B-003"] },
+    { "statement_id": "P-004", "realised_by": ["B-017"] },
+    { "statement_id": "P-005", "realised_by": ["B-004", "B-005", "B-006", "B-018", "B-019", "B-037", "B-038"] },
+    { "statement_id": "P-006", "realised_by": ["B-035"] },
+    { "statement_id": "P-007", "realised_by": [] },
+    { "statement_id": "P-008", "realised_by": ["B-003", "B-017", "B-035"] },
+    { "statement_id": "P-009", "realised_by": ["B-009", "B-020", "B-039"] }
+  ]
+}

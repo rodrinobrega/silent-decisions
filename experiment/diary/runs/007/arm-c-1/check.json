@@ -1,0 +1,21 @@
+{
+  "wrote": ".silent-decisions/runs/20261006T063811-11a66f/trace.checked.json",
+  "stated": 7,
+  "entailed": 0,
+  "unsourced": 35,
+  "downgraded_by_rules": 4,
+  "candidate_unrealised": [
+    "P-007"
+  ],
+  "contradicted": [],
+  "probe_scope": "all",
+  "probe_targets": [
+    "P-003",
+    "P-004",
+    "P-005",
+    "P-006",
+    "P-007",
+    "P-008",
+    "P-009"
+  ]
+}

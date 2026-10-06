@@ -1,0 +1,67 @@
+{
+  "status": "clean",
+  "shingle_size": 6,
+  "overlapping_phrases": [],
+  "nonce_seen": false,
+  "extractor_reported_nonce": [],
+  "audit": {
+    "source": "transcript",
+    "found": true,
+    "sessions": [
+      "f145892a-ad46-4210-9e7d-471235e8d278.jsonl"
+    ],
+    "calls": 6,
+    "by_tool": {
+      "Bash": 4,
+      "Read": 1,
+      "Write": 1
+    },
+    "plan_mentions": 0,
+    "outside_room": [],
+    "denied": 1,
+    "tool_calls": [
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"cd /var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-N2JDLw && find . -type f | grep -v node_modules | head -100 && cat census.json && ls out 2>/dev/null\",\"description\":\"List files and show census\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\":\"/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-N2JDLw/cleanroom/src/ledger.ts\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"cd /var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-N2JDLw && grep -rao 'SDN-[0-9a-fA-F]*' . ; cat -A cleanroom/src/ledger.ts 2>/dev/null | sed -n '1p;12p;40p;55p' || od -c cleanroom/src/ledger.ts | head; ls -la cleanroom cleanroom/src\",\"description\":\"Search for nonces and hidden",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"cd /var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-N2JDLw && sed -n '1p;12p;40p;55p' cleanroom/src/ledger.ts | od -c | head -30\",\"description\":\"Inspect whitespace-only lines bytes\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Write",
+        "input": "{\"file_path\":\"/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-N2JDLw/out/behaviours.json\",\"content\":\"{\\n  \\\"nonce_seen\\\": [],\\n  \\\"behaviours\\\": [\\n    {\\n      \\\"id\\\": \\\"B-001\\\",\\n      \\\"title\\\": \\\"Balance of an account never seen is 0\\\",\\n      \\\"given\\\": \\\"a new Ledger with no accounts\\",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"python3 -I -c \\\"import json;d=json.load(open('/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-N2JDLw/out/behaviours.json'));c=set(x for b in d['behaviours'] for x in b['covers']);print(len(d['behaviours']),sorted(c))\\\"\",\"description\":\"Validate JSON and list covered census ids\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "findings": [
+    {
+      "behaviour_id": "B-006",
+      "contrary_then": "deposit('a', 0, 'd1') returns { ok: false, reason: 'non-positive-amount' } and entries('a') holds one audit record of the rejected attempt (kind 'rejected', amount 0); balance('a') stays 0",
+      "contrary_satisfies_quotes": true,
+      "argument": "\"otherwise the operation is rejected\" rules out accepting 0, and this contrary does reject it. The quote names no reason code and says nothing about whether a rejected attempt leaves a trace in the history, so both 'invalid-amount' and 'no entries' are choices the plan did not make."
+    },
+    {
+      "behaviour_id": "B-007",
+      "contrary_then": "deposit('a', -5, 'd2') returns { ok: false, reason: 'negative-amount' } and balance('a') stays 100",
+      "contrary_satisfies_quotes": true,
+      "argument": "The words do rule out accepting -5 (as a deposit or as a disguised withdrawal), but \"the operation is rejected\" fixes only the outcome, not the reason a client receives. A different reason code satisfies P-005 just as well, so 'invalid-amount' is not decided."
+    },
+    {
+      "behaviour_id": "B-008",
+      "contrary_then": "deposit('a', NaN, 'd1') returns { ok: false, reason: 'not-a-number' } and balance('a') is 0",
+      "contrary_satisfies_quotes": true,
+      "argument": "NaN is not \"a positive number\", so P-005 requires rejection, and this contrary rejects it. The quote says nothing about the reason, so a separate 'not-a-number' code (a common way to tell malformed input apart from bad values) complies equally."
+    },
+    {
+      "behaviour_id": "B-009",
+      "contrary_then": "the repeated deposit('a', 100, 'd1') returns { ok: false, reason: 'duplicate' }; balance('a') stays 100 with one entry",
+      "contrary_satisfies_quotes": true,
+      "argument": "\"so that retries are safe\" is a purpose clause. At most it forbids double-crediting, and a 'duplicate' rejection does not double-credit. Nothing in the words requires the repeat to report { ok: true }, and the tracer concedes this in its own reasoning."
+    },
+    {
+      "behaviour_id": "B-020",
+      "contrary_then": "withdraw('a', 0, 'w1') returns { ok: false, reason: 'zero-amount' } and withdraw('a', -20, 'w2') returns { ok: false, reason: 'negative-amount' }; balance('a') stays 100",
+      "contrary_satisfies_quotes": true,
+      "argument": "Both calls are rejected, which is all P-005 asks (\"otherwise the operation is rejected\"). The quote does not require one shared reason, or the reason 'invalid-amount', so distinct codes for zero and for negative amounts comply."
+    },
+    {
+      "behaviour_id": "B-021",
+      "contrary_then": "the repeated withdraw('a', 30, 'w1') returns { ok: false, reason: 'duplicate' } and balance('a') stays 70",
+      "contrary_satisfies_quotes": true,
+      "argument": "A retry rejected as a duplicate debits only once, so it is \"safe\" in the only sense the words fix. The quote does not say the repeat must report success, so the { ok: true } response is undecided."
+    },
+    {
+      "behaviour_id": "B-034",
+      "contrary_then": "transfer('a', 'b', 0, 't1') and transfer('a', 'b', -10, 't2') both return { ok: false, reason: 'amount-must-be-positive' }; balances stay 100 and 0",
+      "contrary_satisfies_quotes": true,
+      "argument": "P-005 rules out accepting the backwards -10 transfer, and this contrary does not accept it. The quote is silent on the reason string, so 'invalid-amount' is an unrequested choice."
+    },
+    {
+      "behaviour_id": "B-035",
+      "contrary_then": "the repeated transfer('a', 'b', 40, 't1') returns { ok: false, reason: 'duplicate' }; balance('a') stays 60 and balance('b') stays 40",
+      "contrary_satisfies_quotes": true,
+      "argument": "The money still moves once, so the retry is safe. \"so that retries are safe\" does not say whether the repeat succeeds or is refused, so the { ok: true } response is not decided by the quote."
+    }
+  ]
+}

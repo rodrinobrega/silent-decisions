@@ -1,0 +1,11 @@
+{
+  "status": "suspect",
+  "shingle_size": 6,
+  "overlapping_phrases": [
+    "a transfer to the same account",
+    "transfer to the same account is"
+  ],
+  "nonce_seen": false,
+  "extractor_reported_nonce": [],
+  "audit": null
+}
