@@ -35,7 +35,7 @@
       "outcome": "dropped",
       "main": "failed",
       "twin": "passed",
-      "message": "AssertionError: expected true to be false // Object.is equality\n    at /Users/rodrigonobrega/Workspace/silent-decisions/examples/ledger-rounding/.silent-decisions/runs/20260927T195750-48d9b3/probe-tests/PR-P-007.test.ts:9:14\n    at file:///Users/rodrigonobrega/Workspace/silent-decisions/examples/ledger-rounding/node_modules/@vitest/runner/dist/chunk-hooks.js:155:11\n    at file:///Users/rodrigonobrega/Workspace/silent-decisions/examples/ledger-rounding/node_modules/@vitest/runner/dist/chunk-hooks.js:752:26\n    at file:///Users/rodrigonobrega/Workspace/silent-decisions/examples/ledger-rounding/n"
+      "message": "AssertionError: expected true to be false // Object.is equality\n    at <repo>/examples/ledger-rounding/.silent-decisions/runs/20260927T195750-48d9b3/probe-tests/PR-P-007.test.ts:9:14\n    at file://<repo>/examples/ledger-rounding/node_modules/@vitest/runner/dist/chunk-hooks.js:155:11\n    at file://<repo>/examples/ledger-rounding/node_modules/@vitest/runner/dist/chunk-hooks.js:752:26\n    at file://<repo>/examples/ledger-rounding/n"
     },
     {
       "statement_id": "P-008",
@@ -78,7 +78,7 @@
       "outcome": "dropped",
       "main": "failed",
       "twin": "passed",
-      "message": "AssertionError: expected [ { txnId: 't1', …(2) }, …(1) ] to have a length of 3 but got 2\n    at Proxy.<anonymous> (file:///Users/rodrigonobrega/Workspace/silent-decisions/examples/ledger-rounding/node_modules/@vitest/expect/dist/index.js:1257:20)\n    at Proxy.<anonymous> (file:///Users/rodrigonobrega/Workspace/silent-decisions/examples/ledger-rounding/node_modules/@vitest/expect/dist/index.js:1029:14)\n    at Proxy.methodWrapper (file:///Users/rodrigonobrega/Workspace/silent-decisions/examples/ledger-rounding/node_modules/chai/index.js:1686:25)\n    at /Users/rodrigonobrega/Workspace/silent-deci"
+      "message": "AssertionError: expected [ { txnId: 't1', …(2) }, …(1) ] to have a length of 3 but got 2\n    at Proxy.<anonymous> (file://<repo>/examples/ledger-rounding/node_modules/@vitest/expect/dist/index.js:1257:20)\n    at Proxy.<anonymous> (file://<repo>/examples/ledger-rounding/node_modules/@vitest/expect/dist/index.js:1029:14)\n    at Proxy.methodWrapper (file://<repo>/examples/ledger-rounding/node_modules/chai/index.js:1686:25)\n    at <home>/Workspace/silent-deci"
     },
     {
       "statement_id": "P-014",
@@ -86,7 +86,7 @@
       "outcome": "dropped",
       "main": "failed",
       "twin": "passed",
-      "message": "AssertionError: expected 0.13 to be 0.12 // Object.is equality\n    at /Users/rodrigonobrega/Workspace/silent-decisions/examples/ledger-rounding/.silent-decisions/runs/20260927T195750-48d9b3/probe-tests/PR-P-014.test.ts:9:24\n    at file:///Users/rodrigonobrega/Workspace/silent-decisions/examples/ledger-rounding/node_modules/@vitest/runner/dist/chunk-hooks.js:155:11\n    at file:///Users/rodrigonobrega/Workspace/silent-decisions/examples/ledger-rounding/node_modules/@vitest/runner/dist/chunk-hooks.js:752:26\n    at file:///Users/rodrigonobrega/Workspace/silent-decisions/examples/ledger-rounding/no"
+      "message": "AssertionError: expected 0.13 to be 0.12 // Object.is equality\n    at <repo>/examples/ledger-rounding/.silent-decisions/runs/20260927T195750-48d9b3/probe-tests/PR-P-014.test.ts:9:24\n    at file://<repo>/examples/ledger-rounding/node_modules/@vitest/runner/dist/chunk-hooks.js:155:11\n    at file://<repo>/examples/ledger-rounding/node_modules/@vitest/runner/dist/chunk-hooks.js:752:26\n    at file://<repo>/examples/ledger-rounding/no"
     },
     {
       "statement_id": "P-015",

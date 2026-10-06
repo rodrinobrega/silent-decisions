@@ -452,7 +452,7 @@
     }
   ],
   "classifier": {
-    "command": "node /Users/rodrigonobrega/Workspace/silent-decisions/skills/silent-decisions/scripts/classifiers/jev.mjs",
+    "command": "node <repo>/skills/silent-decisions/scripts/classifiers/jev.mjs",
     "threshold": 0.7,
     "requests": 595,
     "answered": 595

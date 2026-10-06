@@ -2,7 +2,7 @@
 
 *A pre-deploy check for AI-generated code: review the delta between what was asked for and what was built.*
 
-**Status:** working draft v2.3, 27 September 2026 (v2.1 added the pairwise classifier trace; v2.2 probes every behavioural statement, adds a `contradicted` reverse status, bars non-behavioural statements from sourcing, and audits the extractor's transcript; v2.3 raises the confidence needed to source; see the run diary, `experiment/diary/`, runs 001–004). Experimental: first runs on one planted case only, see [Evaluation](#evaluation). v1 (14 September) is archived at `methodology/archive/`. What changed and why is in `reviews/2026-09-21-trace-review-and-inputs.md`; IDs in brackets below point there. The diagram predates v2 and needs redrawing.
+**Status:** working draft v2.3, 27 September 2026. Experimental: five runs on two planted cases written by the author, with only the pipeline (arm e) and the census baseline (arm f) executed; see [Evaluation](#evaluation) and the run diary in `experiment/diary/`.
 
 ---
 
@@ -16,7 +16,6 @@ Every run carries its own control: a few plan statements are hidden from the tra
 
 What reaches the human is only the delta: **silent decisions** the implementer made on its own, and requirements it dropped. Each is shown as a choice between what the code does and a concrete alternative. Approved decisions are recorded in a ledger and become human-signed regression tests. The size of the delta is itself a measurement of the plan.
 
-![Pipeline (v1 diagram, to be redrawn)](./trace-what-was-built.png)
 
 ---
 
@@ -47,9 +46,9 @@ The question this lets you ask is "where did this come from?" rather than "what 
 
 **0. Prepare (deterministic, no model).**
 
-- *Segment the plan* into numbered statements and type each as behavioural, structural ("use Postgres"), or process. Lines under an out-of-scope heading ("Out of scope", "Non-goals") are typed by position, not by the classifier, which in run 004 called "Persistence, authentication, exchange-rate lookup." behavioural. Only behavioural statements enter the reverse trace, and only behavioural statements can source a behaviour: a quote from a structural or process statement is dropped by rule (in runs 001 and 002 the out-of-scope line "Persistence, currencies, authentication." sourced a real silent decision). Structural ones go to ordinary deterministic checks. This fixes the denominator for everything reported later. [TR-09, TR-10]
-- *Build the clean room*: a copy of the source with comments and docstrings stripped, and tests, docs, the plan, and version-control history excluded. Agent-written code carries the plan in its comments; an extractor that reads `// per spec: reject overdrafts` is not blind. [TR-05]
-- *Take the decision-point census*: an AST walk of the domain module that enumerates the places silent decisions concentrate: numeric and string literals, comparisons on domain fields, every rejection path, default parameter values, enum members, sort comparators and tie-breaks, rounding calls, date and timezone handling, validation patterns. [IN-02]
+- *Segment the plan* into numbered statements and type each as behavioural, structural ("use Postgres"), or process. Lines under an out-of-scope heading ("Out of scope", "Non-goals") are typed by position, not by the classifier, which in run 004 called "Persistence, authentication, exchange-rate lookup." behavioural. Only behavioural statements enter the reverse trace, and only behavioural statements can source a behaviour: a quote from a structural or process statement is dropped by rule (in runs 001 and 002 the out-of-scope line "Persistence, currencies, authentication." sourced a real silent decision). Structural ones go to ordinary deterministic checks. This fixes the denominator for everything reported later.
+- *Build the clean room*: a copy of the source with comments and docstrings stripped, and tests, docs, the plan, and version-control history excluded. Agent-written code carries the plan in its comments; an extractor that reads `// per spec: reject overdrafts` is not blind.
+- *Take the decision-point census*: an AST walk of the domain module that enumerates the places silent decisions concentrate: numeric and string literals, comparisons on domain fields, every rejection path, default parameter values, enum members, sort comparators and tie-breaks, rounding calls, date and timezone handling, validation patterns.
 
 **1. Implement.** The agent builds from the plan as normal. Nothing changes here.
 
@@ -63,16 +62,16 @@ Withholding the plan is the central hypothesis of the method: an extractor that 
 
 Concreteness is load-bearing. An abstract property like *"an accepted debit cannot violate the permitted balance floor"* is true whether or not overdrafts are allowed: it absorbs the decision. A scenario cannot. You have to write a number, and the census turns that into a rule: **every domain literal in the code must appear in the plan or in the delta.**
 
-The one sanctioned leak is a nouns-only glossary (terms, no rules, no numbers) so the extractor can write in domain language. [TR-06] Each scenario is a structured record that declares where it observes the system (`observed_at`: public API, persisted state, emitted event), not free prose.
+The one sanctioned leak is a nouns-only glossary (terms, no rules, no numbers) so the extractor can write in domain language. Each scenario is a structured record that declares where it observes the system (`observed_at`: public API, persisted state, emitted event), not free prose.
 
-Extraction loops against the census: every census item must be exercised by at least one surviving scenario or explicitly marked immaterial with a reason. Uncovered items go back to the extractor as targeted prompts. **Material** means a scenario at the declared boundary changes outcome. Items filtered as immaterial are logged and counted, never dropped. [TR-12]
+Extraction loops against the census: every census item must be exercised by at least one surviving scenario or explicitly marked immaterial with a reason. Uncovered items go back to the extractor as targeted prompts. **Material** means a scenario at the declared boundary changes outcome. Items filtered as immaterial are logged and counted, never dropped.
 
 **3. Verify by execution.**
 
 - Run every scenario against the implementation. Survivors form the *verified account of behaviour*.
-- Run each scenario's **perturbed twin**, the same scenario with its Then changed. If both pass, the test glue is vacuous and the scenario is void. [IN-04]
-- On a change to existing code, run survivors against **base and head**. Passes on head only: behaviour this change introduced, goes to the tracer. Passes on both: pre-existing, skipped. Passed on base and fails on head: behaviour this change removed, reported as an **unrequested regression** unless the plan asked for it. [IN-06]
-- Scenarios that fail are logged, not deleted. A scenario that independent blind extractors agree on and execution refutes means the code reads as doing one thing and does another. [TR-08]
+- Run each scenario's **perturbed twin**, the same scenario with its Then changed. If both pass, the test glue is vacuous and the scenario is void.
+- On a change to existing code, run survivors against **base and head**. Passes on head only: behaviour this change introduced, goes to the tracer. Passes on both: pre-existing, skipped. Passed on base and fails on head: behaviour this change removed, reported as an **unrequested regression** unless the plan asked for it.
+- Scenarios that fail are logged, not deleted. A scenario that independent blind extractors agree on and execution refutes means the code reads as doing one thing and does another.
 
 Extraction claims are directly testable against the artifact they describe, which is what makes this cheap. Note what it proves: that the scenarios are true of the code. It does not prove the account is complete. The census and the reverse probes below are the two checks on completeness.
 
@@ -83,7 +82,7 @@ Extraction claims are directly testable against the artifact they describe, whic
 | behaviour → plan | Where does the plan specify this? | **unsourced**: a silent decision |
 | plan → behaviour | Where is this realised? | **unrealised**: a dropped requirement, once a probe confirms it |
 
-The test that defines "sourced" is the **flip test**: behaviour B is `stated` by plan sentence S only if the contrary behaviour B′ (same Given and When, different Then) would *violate* S. *"Users can withdraw funds"* is not violated by *"withdrawals below zero succeed"*, so *"withdrawals below zero are rejected"* is unsourced, however relevant the sentence looks. The plan discriminates between B and B′ or it does not. [IN-03]
+The test that defines "sourced" is the **flip test**: behaviour B is `stated` by plan sentence S only if the contrary behaviour B′ (same Given and When, different Then) would *violate* S. *"Users can withdraw funds"* is not violated by *"withdrawals below zero succeed"*, so *"withdrawals below zero are rejected"* is unsourced, however relevant the sentence looks. The plan discriminates between B and B′ or it does not.
 
 B′ comes from the blind extractor: every scenario ships with a **contrary outcome** in plain language, the same one its perturbed twin checks. So no model that has read the plan writes anything the trace consumes.
 
@@ -97,22 +96,22 @@ What this removes: the tracer's narrative. An agent given the whole plan and the
 
 *LLM tracer (fallback).* A fresh agent given the plan and the verified behaviours, under constraints that exist to stop it being agreeable: quote verbatim, mechanically checked (kills fabricated citations); three-valued verdict `stated` / `entailed` / `unsourced`, with `entailed` required to quote every passage it combines; default to unsourced; and an adversarial pass by a third agent that constructs B′ for each claimed citation and argues that it satisfies the quote.
 
-In both modes, **reverse probes** settle the reverse direction: for **every** behavioural statement (not only candidate `unrealised` or `contradicted` ones), write a scenario *from the plan statement* and execute it. Probing only the candidates trusted the trace's `realised` verdict, and in run 001 that verdict rested on two unrelated scenarios while the requirement was in fact dropped. A failing probe overrules a `realised` verdict. Pass: the code does realise it and the extractor missed it, a direct measurement of extraction recall. Fail: a confirmed dropped requirement, with an executable witness. This is the one place plan-derived tests are legitimate, because they run after blind extraction and never feed the forward trace. [IN-05]
+In both modes, **reverse probes** settle the reverse direction: for **every** behavioural statement (not only candidate `unrealised` or `contradicted` ones), write a scenario *from the plan statement* and execute it. Probing only the candidates trusted the trace's `realised` verdict, and in run 001 that verdict rested on two unrelated scenarios while the requirement was in fact dropped. A failing probe overrules a `realised` verdict. Pass: the code does realise it and the extractor missed it, a direct measurement of extraction recall. Fail: a confirmed dropped requirement, with an executable witness. This is the one place plan-derived tests are legitimate, because they run after blind extraction and never feed the forward trace.
 
 **5. Control the run.**
 
-- **Leave-one-out.** Pick *k* plan statements that were the sole source for some behaviour. Remove them from a copy of the plan and re-trace those behaviours. Each must come back `unsourced`, or be sourced from a different passage that survives the flip test. The share that stays sourced is the false-sourced rate on this plan, this code, this run. A run whose control fails is void. With the pairwise classifier the control cannot fail by citation, only by re-sourcing, and re-sourcing is then a fact about the plan's redundancy or the classifier's judgement, both worth a look. [IN-01]
+- **Leave-one-out.** Pick *k* plan statements that were the sole source for some behaviour. Remove them from a copy of the plan and re-trace those behaviours. Each must come back `unsourced`, or be sourced from a different passage that survives the flip test. The share that stays sourced is the false-sourced rate on this plan, this code, this run. A run whose control fails is void. With the pairwise classifier the control cannot fail by citation, only by re-sourcing, and re-sourcing is then a fact about the plan's redundancy or the classifier's judgement, both worth a look.
 - **Leak check.** Overlap between the extractor's output and the plan's text, beyond glossary terms, flags a suspect extraction; the run nonce appearing in it marks it contaminated. What the extractor actually touched is taken from the confinement hook's audit log, or, without the hook, from the extractor's own session transcript: naming the plan or reaching outside its room marks the run contaminated. Only what a call can reach counts (a path argument or a shell command, with relative paths resolved against the command's directory), not the content it writes. A phrase overlap with a clean transcript stays `suspect` with the explanation attached, for a person to accept. Contrary alternatives that describe refusing an operation will often reuse the plan's wording for the same rule, so overlap alone is weak evidence.
 
 Over-matching is the failure that would silently break this method, and in v1 a broken run looked identical to a clean one. These two checks are what make a clean result mean something.
 
-**6. Review the delta.** The human reads silent decisions, dropped requirements, and unrequested regressions. Matched is a dead end by design, with one exception: `entailed` verdicts are sampled at a stated rate and the overturn rate is reported. [TR-04]
+**6. Review the delta.** The human reads silent decisions, dropped requirements, and unrequested regressions. Matched is a dead end by design, with one exception: `entailed` verdicts are sampled at a stated rate and the overturn rate is reported.
 
-- Each item is a **two-option card**: what the code does, against B′. *"Rejects at zero"* / *"allows down to a limit: which?"* Not approve/reject. [IN-09]
+- Each item is a **two-option card**: what the code does, against B′. *"Rejects at zero"* / *"allows down to a limit: which?"* Not approve/reject.
 - Items are clustered by root cause; one missing rule usually spawns several behaviours.
-- **There is a cap** (starting value 25). Above it the verdict is *plan not ready*, and the output is the list of open areas, not the cards. [TR-15]
+- **There is a cap** (starting value 25). Above it the verdict is *plan not ready*, and the output is the list of open areas, not the cards.
 
-**7. Record.** Plan prose is never edited, since that would invalidate earlier quotes. Approved decisions are appended to a **decisions ledger** with an ID, the scenario, the approver, the date, and the plan hash. The approved scenario is promoted to a regression test tagged as human-signed. A rejected decision becomes its inverse, handed to the implementer as a failing acceptance test. [IN-07]
+**7. Record.** Plan prose is never edited, since that would invalidate earlier quotes. Approved decisions are appended to a **decisions ledger** with an ID, the scenario, the approver, the date, and the plan hash. The approved scenario is promoted to a regression test tagged as human-signed. A rejected decision becomes its inverse, handed to the implementer as a failing acceptance test.
 
 ## What this buys
 
@@ -128,7 +127,7 @@ Over-matching is the failure that would silently break this method, and in v1 a 
 
 ## Extensions
 
-**Provenance chain.** The trace applies between any two adjacent artifacts: prompt or ticket → plan → code. Plans are increasingly agent-written and human-skimmed, so `stated` may trace to text no person decided. Running the trace one level up, plan against the human's original words, closes that. It is weaker there because a plan cannot be executed: flip test and quotes only. The thesis it supports: every behaviour in production either traces to words a human wrote or approved, or it is on a list. [IN-08]
+**Provenance chain.** The trace applies between any two adjacent artifacts: prompt or ticket → plan → code. Plans are increasingly agent-written and human-skimmed, so `stated` may trace to text no person decided. Running the trace one level up, plan against the human's original words, closes that. It is weaker there because a plan cannot be executed: flip test and quotes only. The thesis it supports: every behaviour in production either traces to words a human wrote or approved, or it is on a list.
 
 **Divergence.** Underdetermination can also be found mechanically: generate several independent implementations from the same plan, extract a decision record from each, and diff them. What differs is what the plan failed to specify. At function level this is established technique (ClarifyGPT, SpecFix, BeSpec); the contribution here would be applying it at plan level with structured decision records. If you use it:
 
@@ -138,11 +137,11 @@ Over-matching is the failure that would silently break this method, and in v1 a 
 - Anything both branches receive must come from a source that has seen neither implementation.
 - It is a prioritiser, not the mechanism. It runs once per plan and amortises.
 
-**Canary clause (experiment).** One arbitrary, harmless, checkable clause per plan. If it comes back dropped, the implementer was not reading closely. Whether that predicts anything else is untested. [IN-10]
+**Canary clause (experiment).** One arbitrary, harmless, checkable clause per plan. If it comes back dropped, the implementer was not reading closely. Whether that predicts anything else is untested.
 
 ## Limits
 
-**Joint silence.** If neither the plan nor the code mentions authorization, rate limits, or audit, nothing surfaces. Extraction describes what is there; tracing finds what one side has and the other lacks. Absent from both is the residual omission problem. Partial defence: a per-domain question bank ("every ledger must answer: overdraft? rounding? currency? duplicate key with a different payload?") from a source that has seen neither plan nor code. [TR-11]
+**Joint silence.** If neither the plan nor the code mentions authorization, rate limits, or audit, nothing surfaces. Extraction describes what is there; tracing finds what one side has and the other lacks. Absent from both is the residual omission problem. Partial defence: a per-domain question bank ("every ledger must answer: overdraft? rounding? currency? duplicate key with a different payload?") from a source that has seen neither plan nor code.
 
 **Extraction recall is bounded below, not guaranteed.** The census covers the syntactic shapes where decisions concentrate; decisions encoded in control flow across modules can escape it. Reverse probes estimate recall only on the plan side.
 
@@ -164,7 +163,7 @@ The closest published neighbour is **AssumptionMiner** (Wu, July 2026), which ex
 
 Older roots: characterization tests (Feathers) for extracting behaviour from code as executable examples; specification mining (Daikon), whose abstract invariants are what the concreteness argument above rejects; requirements-to-code traceability recovery; TiCoder, where users approve or reject concrete tests to pin down intent; Clover and round-trip correctness for consistency checks by reconstructing one artifact from another; mutation-guided test generation (Meta's ACH).
 
-What we have not found elsewhere: blind extraction as a contamination control; execution-verified behaviour as the thing traced; a bidirectional trace with a flip test, run as isolated pairwise decisions with the contrary supplied by the blind side; a per-run control on the tracer; delta size as a pre-deploy metric of plan quality; adjudicated deltas accumulating into the contract. Full references are in the review.
+What we have not found elsewhere: blind extraction as a contamination control; execution-verified behaviour as the thing traced; a bidirectional trace with a flip test, run as isolated pairwise decisions with the contrary supplied by the blind side; a per-run control on the tracer; delta size as a pre-deploy metric of plan quality; adjudicated deltas accumulating into the contract.
 
 ## Evaluation
 
@@ -179,4 +178,3 @@ The method is falsifiable without planting bugs, and the result can come out aga
 
 ---
 
-*Diagram source: `trace-what-was-built.svg` (v1; redraw for the seven-step pipeline).*

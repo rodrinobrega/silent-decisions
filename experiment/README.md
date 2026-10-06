@@ -33,7 +33,9 @@ experiment/run.sh ledger ef          # just the classifier arms
 
 Outputs land in `experiment/out/<case>/<arm>/` (delta.md, score.json) and `experiment/results.md`.
 
-`run.sh` drives every model role through `claude -p --bare`, so the whole experiment is reproducible from a shell with no plugin installed. It has **not** been run end to end yet; expect to fix small things on the first pass (the `--bare` flag's authentication, prompt paths, JSON parsing of a role's output).
+`run.sh` drives every model role through `claude -p`, so the whole experiment is reproducible from a shell with no plugin installed (it picks the flags itself: `--setting-sources project --strict-mcp-config` with a subscription login, since `--bare` needs an API key).
+
+**What has been run:** arms e and f, five runs on the two cases below (see `diary/`). Arms a–d are written but **have never been executed**, so the comparison against self-report and a sighted reviewer, the one that matters most, is still open.
 
 ## Cases
 
