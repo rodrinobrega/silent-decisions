@@ -1,0 +1,15 @@
+{
+  "total": 35,
+  "covered": 34,
+  "waived": 1,
+  "uncovered": 0,
+  "basis": "declared",
+  "uncovered_items": [],
+  "waived_items": [
+    {
+      "census_id": "C-035",
+      "reason": "Private cents() fallback to 0 is never reached: every public caller (deposit, depositForeign, withdraw, transfer, split, applyInterest) calls open() on the account first, so the map always has an entry; the public balance() default is covered separately by C-010 (B-009)."
+    }
+  ],
+  "unknown_refs": []
+}

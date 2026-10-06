@@ -1,0 +1,534 @@
+{
+  "arm": "a",
+  "case": "ledger-rounding",
+  "truth_version": 1,
+  "run": "20261006T060901-ef7b93",
+  "scored_at": "2026-10-06T06:09:58.573Z",
+  "cost": "57s wall, $0.28 (1 sessions)",
+  "silent_decisions": {
+    "truth": 22,
+    "found": 22,
+    "flagged": 30,
+    "flagged_without_lines": 0,
+    "precision": 0.8,
+    "recall": 1,
+    "per_item": [
+      {
+        "id": "T1",
+        "label": "no overdrafts: withdrawal, transfer and split may not take the balance below 0",
+        "hits": [
+          "No overdraft: a withdrawal is rejected unless the balance covers both the amount and the fee.",
+          "Transfers and split payments are rejected if the sender's balance would go negative.",
+          "When a withdrawal is both over balance and over the daily limit, insufficient funds is reported first.",
+          "A rejected operation does not consume its transaction id, so the same id can later succeed."
+        ]
+      },
+      {
+        "id": "T2",
+        "label": "daily withdrawal cap of 5000 per account",
+        "hits": [
+          "Withdrawals are capped at 5000.00 per account per day, a limit the plan never mentions.",
+          "The daily withdrawal counter is never reset, so the 'daily' limit is really a lifetime limit per ledger instance.",
+          "The daily limit counts only the withdrawn amount, not the fee.",
+          "When a withdrawal is both over balance and over the daily limit, insufficient funds is reported first.",
+          "A rejected operation does not consume its transaction id, so the same id can later succeed."
+        ]
+      },
+      {
+        "id": "T4",
+        "label": "a repeated txnId with a different payload (other account, other operation, other amount) is acknowledged and ignored",
+        "hits": [
+          "A repeated transaction id returns success without re-checking that the amount, accounts or operation type match the original."
+        ]
+      },
+      {
+        "id": "T5",
+        "label": "an unknown account reads as balance 0 / empty history, and operations on a never-opened account open it implicitly",
+        "hits": [
+          "Any operation on an unknown account silently creates it with a zero balance, including withdrawals, transfer sources and recipients.",
+          "Querying an unknown account returns balance 0 and an empty history instead of an error.",
+          "Balances and history amounts are exposed as floating-point currency units rather than integer cents.",
+          "A split with no recipients is rejected; duplicate recipients and the sender among recipients are allowed."
+        ]
+      },
+      {
+        "id": "T7",
+        "label": "open() on an existing account is a silent no-op",
+        "hits": [
+          "Any operation on an unknown account silently creates it with a zero balance, including withdrawals, transfer sources and recipients."
+        ]
+      },
+      {
+        "id": "T8",
+        "label": "amount validated before rounding: a positive amount below half a cent is accepted and recorded as 0 (a 0-cent withdrawal still pays the minimum fee)",
+        "hits": [
+          "The fee is computed on the amount after rounding it to cents.",
+          "Transfers and split payments carry no fee; only withdrawals are charged.",
+          "Input validation runs before the duplicate check, so a retry with an invalid amount is rejected even if the id was already accepted.",
+          "A deposit, withdrawal or transfer of a positive amount that rounds to 0 cents (e.g. 0.004) is accepted and recorded as a zero entry.",
+          "There is no maximum amount, and non-finite values like Infinity pass the positive-number check."
+        ]
+      },
+      {
+        "id": "T9",
+        "label": "insufficient funds (including the fee) is checked before the daily limit",
+        "hits": [
+          "Withdrawals are capped at 5000.00 per account per day, a limit the plan never mentions.",
+          "The daily limit counts only the withdrawn amount, not the fee.",
+          "No overdraft: a withdrawal is rejected unless the balance covers both the amount and the fee.",
+          "When a withdrawal is both over balance and over the daily limit, insufficient funds is reported first.",
+          "A rejected operation does not consume its transaction id, so the same id can later succeed."
+        ]
+      },
+      {
+        "id": "T10",
+        "label": "transfers and split payments do not count toward the daily withdrawal limit",
+        "hits": [
+          "The daily withdrawal counter is never reset, so the 'daily' limit is really a lifetime limit per ledger instance.",
+          "The daily limit counts only the withdrawn amount, not the fee.",
+          "Transfers and split payments carry no fee; only withdrawals are charged."
+        ]
+      },
+      {
+        "id": "T11",
+        "label": "a rejected operation consumes neither its txnId nor daily-limit allowance",
+        "hits": [
+          "The daily withdrawal counter is never reset, so the 'daily' limit is really a lifetime limit per ledger instance.",
+          "The daily limit counts only the withdrawn amount, not the fee.",
+          "A rejected operation does not consume its transaction id, so the same id can later succeed."
+        ]
+      },
+      {
+        "id": "T12",
+        "label": "entries() returns a copy; changing it does not change the history",
+        "hits": [
+          "Querying an unknown account returns balance 0 and an empty history instead of an error."
+        ]
+      },
+      {
+        "id": "T13",
+        "label": "amount validation happens before the duplicate-txnId check",
+        "hits": [
+          "A repeated transaction id returns success without re-checking that the amount, accounts or operation type match the original.",
+          "Input validation runs before the duplicate check, so a retry with an invalid amount is rejected even if the id was already accepted.",
+          "A deposit, withdrawal or transfer of a positive amount that rounds to 0 cents (e.g. 0.004) is accepted and recorded as a zero entry.",
+          "There is no maximum amount, and non-finite values like Infinity pass the positive-number check."
+        ]
+      },
+      {
+        "id": "T14",
+        "label": "the withdrawal fee is rounded UP to the cent (1% of 100.01 = 1.0001 -> 1.01)",
+        "hits": [
+          "The 1% withdrawal fee is rounded up to the next cent rather than to the nearest cent."
+        ]
+      },
+      {
+        "id": "T15",
+        "label": "the withdrawal fee is capped at 25.00",
+        "hits": [
+          "The withdrawal fee is capped at a maximum of 25.00, which the plan does not specify."
+        ]
+      },
+      {
+        "id": "T16",
+        "label": "the funds check includes the fee: a withdrawal of the whole balance is rejected",
+        "hits": [
+          "No overdraft: a withdrawal is rejected unless the balance covers both the amount and the fee.",
+          "When a withdrawal is both over balance and over the daily limit, insufficient funds is reported first.",
+          "A rejected operation does not consume its transaction id, so the same id can later succeed."
+        ]
+      },
+      {
+        "id": "T17",
+        "label": "the daily limit counts the withdrawn amount without the fee",
+        "hits": [
+          "Withdrawals are capped at 5000.00 per account per day, a limit the plan never mentions.",
+          "The daily withdrawal counter is never reset, so the 'daily' limit is really a lifetime limit per ledger instance.",
+          "The daily limit counts only the withdrawn amount, not the fee.",
+          "When a withdrawal is both over balance and over the daily limit, insufficient funds is reported first.",
+          "A rejected operation does not consume its transaction id, so the same id can later succeed."
+        ]
+      },
+      {
+        "id": "T18",
+        "label": "interest is rounded DOWN (truncated) to the cent",
+        "hits": [
+          "Interest is rounded down (floor) to the cent."
+        ]
+      },
+      {
+        "id": "T19",
+        "label": "interest that rounds to 0 cents is not credited: the call returns ok, no entry is recorded and the txnId is not consumed",
+        "hits": [
+          "When interest rounds to zero or the balance is negative, the call succeeds but nothing is recorded and the transaction id is not consumed."
+        ]
+      },
+      {
+        "id": "T20",
+        "label": "a split's leftover cents go one each to the first recipients in list order",
+        "hits": [
+          "In a split, leftover cents go one each to the first recipients in list order.",
+          "A split with no recipients is rejected; duplicate recipients and the sender among recipients are allowed."
+        ]
+      },
+      {
+        "id": "T21",
+        "label": "PLANTED NEW UNSOURCED RULE: a foreign deposit that converts to less than half a cent is rejected with 'amount-too-small' (unlike a plain sub-half-cent deposit, which is accepted as 0)",
+        "hits": [
+          "A foreign deposit requires a positive exchange rate and is rejected as too small if it converts to 0 cents."
+        ]
+      },
+      {
+        "id": "T22",
+        "label": "a split with no recipients is rejected with 'no-recipients'",
+        "hits": [
+          "Input validation runs before the duplicate check, so a retry with an invalid amount is rejected even if the id was already accepted.",
+          "A split with no recipients is rejected; duplicate recipients and the sender among recipients are allowed."
+        ]
+      },
+      {
+        "id": "T23",
+        "label": "a non-positive interest rate or day count, or a non-positive exchange rate, is rejected as 'invalid-amount'",
+        "hits": [
+          "Input validation runs before the duplicate check, so a retry with an invalid amount is rejected even if the id was already accepted.",
+          "There is no maximum amount, and non-finite values like Infinity pass the positive-number check.",
+          "A foreign deposit requires a positive exchange rate and is rejected as too small if it converts to 0 cents.",
+          "Interest rate is taken as a percent, must be positive (zero rejected), and days may be fractional."
+        ]
+      },
+      {
+        "id": "T24",
+        "label": "transfers and split payments are not charged a fee",
+        "hits": [
+          "Transfers and split payments are rejected if the sender's balance would go negative.",
+          "Transfers and split payments carry no fee; only withdrawals are charged.",
+          "A rejected operation does not consume its transaction id, so the same id can later succeed.",
+          "A deposit, withdrawal or transfer of a positive amount that rounds to 0 cents (e.g. 0.004) is accepted and recorded as a zero entry."
+        ]
+      }
+    ]
+  },
+  "negative_controls": {
+    "total": 8,
+    "false_positives": 7,
+    "per_item": [
+      {
+        "id": "N1",
+        "label": "non-positive amounts rejected (P-005)",
+        "hits": [
+          "Input validation runs before the duplicate check, so a retry with an invalid amount is rejected even if the id was already accepted.",
+          "A deposit, withdrawal or transfer of a positive amount that rounds to 0 cents (e.g. 0.004) is accepted and recorded as a zero entry.",
+          "There is no maximum amount, and non-finite values like Infinity pass the positive-number check."
+        ]
+      },
+      {
+        "id": "N2",
+        "label": "history entry per accepted operation (P-008)",
+        "hits": [
+          "Balances and history amounts are exposed as floating-point currency units rather than integer cents.",
+          "History stores debits as positive amounts, distinguished only by the entry kind, and a withdrawal entry includes the fee."
+        ]
+      },
+      {
+        "id": "N3",
+        "label": "amounts rounded to the nearest cent, halves away from zero (P-011)",
+        "hits": [
+          "A small epsilon (1e-7) is added before rounding to cents to compensate for floating-point error."
+        ]
+      },
+      {
+        "id": "N4",
+        "label": "withdrawal fee of 1% with a minimum of 0.50 (P-012)",
+        "hits": []
+      },
+      {
+        "id": "N5",
+        "label": "interest computed with a 365-day year on the current balance (P-015)",
+        "hits": [
+          "Interest rate is taken as a percent, must be positive (zero rejected), and days may be fractional.",
+          "Interest is simple (not compounded) on the balance at the moment of the call."
+        ]
+      },
+      {
+        "id": "N6",
+        "label": "a split divides the amount evenly (P-016)",
+        "hits": [
+          "In a split, leftover cents go one each to the first recipients in list order."
+        ]
+      },
+      {
+        "id": "N7",
+        "label": "foreign amount converted at the given rate (P-014, conversion part)",
+        "hits": [
+          "Foreign deposits use half-away-from-zero rounding (same as other amounts) instead of half-to-even."
+        ]
+      },
+      {
+        "id": "N8",
+        "label": "balances kept in whole cents (P-010)",
+        "hits": [
+          "Balances and history amounts are exposed as floating-point currency units rather than integer cents."
+        ]
+      }
+    ]
+  },
+  "dropped_requirements": {
+    "truth": 3,
+    "found": 3,
+    "flagged": 4,
+    "precision": 0.75,
+    "recall": 1
+  },
+  "normalised": {
+    "flagged": [
+      {
+        "label": "Withdrawals are capped at 5000.00 per account per day, a limit the plan never mentions.",
+        "lines": [
+          9,
+          77
+        ]
+      },
+      {
+        "label": "The daily withdrawal counter is never reset, so the 'daily' limit is really a lifetime limit per ledger instance.",
+        "lines": [
+          32,
+          76,
+          78
+        ]
+      },
+      {
+        "label": "The daily limit counts only the withdrawn amount, not the fee.",
+        "lines": [
+          77,
+          78
+        ]
+      },
+      {
+        "label": "The withdrawal fee is capped at a maximum of 25.00, which the plan does not specify.",
+        "lines": [
+          12,
+          25
+        ]
+      },
+      {
+        "label": "The 1% withdrawal fee is rounded up to the next cent rather than to the nearest cent.",
+        "lines": [
+          24
+        ]
+      },
+      {
+        "label": "The fee is computed on the amount after rounding it to cents.",
+        "lines": [
+          73,
+          74
+        ]
+      },
+      {
+        "label": "No overdraft: a withdrawal is rejected unless the balance covers both the amount and the fee.",
+        "lines": [
+          75
+        ]
+      },
+      {
+        "label": "Transfers and split payments are rejected if the sender's balance would go negative.",
+        "lines": [
+          90,
+          104
+        ]
+      },
+      {
+        "label": "When a withdrawal is both over balance and over the daily limit, insufficient funds is reported first.",
+        "lines": [
+          75,
+          77
+        ]
+      },
+      {
+        "label": "Transfers and split payments carry no fee; only withdrawals are charged.",
+        "lines": [
+          89,
+          91,
+          92,
+          103,
+          107
+        ]
+      },
+      {
+        "label": "Any operation on an unknown account silently creates it with a zero balance, including withdrawals, transfer sources and recipients.",
+        "lines": [
+          34,
+          35,
+          36,
+          37,
+          52,
+          63,
+          72,
+          87,
+          88,
+          101,
+          102,
+          116
+        ]
+      },
+      {
+        "label": "Querying an unknown account returns balance 0 and an empty history instead of an error.",
+        "lines": [
+          42,
+          46
+        ]
+      },
+      {
+        "label": "A repeated transaction id returns success without re-checking that the amount, accounts or operation type match the original.",
+        "lines": [
+          51,
+          60,
+          71,
+          86,
+          100,
+          115
+        ]
+      },
+      {
+        "label": "Transaction ids are unique globally across all accounts and operation types, and are kept forever in memory.",
+        "lines": [
+          31
+        ]
+      },
+      {
+        "label": "Input validation runs before the duplicate check, so a retry with an invalid amount is rejected even if the id was already accepted.",
+        "lines": [
+          50,
+          59,
+          70,
+          85,
+          98,
+          99,
+          114
+        ]
+      },
+      {
+        "label": "A rejected operation does not consume its transaction id, so the same id can later succeed.",
+        "lines": [
+          54,
+          65,
+          75,
+          77,
+          80,
+          90,
+          93,
+          104,
+          109
+        ]
+      },
+      {
+        "label": "A small epsilon (1e-7) is added before rounding to cents to compensate for floating-point error.",
+        "lines": [
+          16
+        ]
+      },
+      {
+        "label": "A deposit, withdrawal or transfer of a positive amount that rounds to 0 cents (e.g. 0.004) is accepted and recorded as a zero entry.",
+        "lines": [
+          50,
+          53,
+          73,
+          89
+        ]
+      },
+      {
+        "label": "There is no maximum amount, and non-finite values like Infinity pass the positive-number check.",
+        "lines": [
+          50,
+          59,
+          70,
+          85,
+          98
+        ]
+      },
+      {
+        "label": "Balances and history amounts are exposed as floating-point currency units rather than integer cents.",
+        "lines": [
+          20,
+          42,
+          131,
+          136
+        ]
+      },
+      {
+        "label": "Foreign deposits use half-away-from-zero rounding (same as other amounts) instead of half-to-even.",
+        "lines": [
+          61
+        ]
+      },
+      {
+        "label": "A foreign deposit requires a positive exchange rate and is rejected as too small if it converts to 0 cents.",
+        "lines": [
+          59,
+          62
+        ]
+      },
+      {
+        "label": "A foreign deposit is recorded as a plain deposit without the original currency, amount or rate.",
+        "lines": [
+          64
+        ]
+      },
+      {
+        "label": "In a split, leftover cents go one each to the first recipients in list order.",
+        "lines": [
+          105,
+          106,
+          108
+        ]
+      },
+      {
+        "label": "A split with no recipients is rejected; duplicate recipients and the sender among recipients are allowed.",
+        "lines": [
+          99,
+          102,
+          108
+        ]
+      },
+      {
+        "label": "Interest is rounded down (floor) to the cent.",
+        "lines": [
+          118
+        ]
+      },
+      {
+        "label": "Interest rate is taken as a percent, must be positive (zero rejected), and days may be fractional.",
+        "lines": [
+          113,
+          114,
+          117
+        ]
+      },
+      {
+        "label": "When interest rounds to zero or the balance is negative, the call succeeds but nothing is recorded and the transaction id is not consumed.",
+        "lines": [
+          119
+        ]
+      },
+      {
+        "label": "Interest is simple (not compounded) on the balance at the moment of the call.",
+        "lines": [
+          117
+        ]
+      },
+      {
+        "label": "History stores debits as positive amounts, distinguished only by the entry kind, and a withdrawal entry includes the fee.",
+        "lines": [
+          79,
+          131,
+          136
+        ]
+      }
+    ],
+    "dropped": [
+      "P-007",
+      "P-008",
+      "P-013",
+      "P-014"
+    ]
+  }
+}

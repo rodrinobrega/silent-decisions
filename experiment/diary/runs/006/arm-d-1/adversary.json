@@ -1,0 +1,100 @@
+{
+  "findings": [
+    {
+      "behaviour_id": "B-002",
+      "contrary_then": "the zero deposit is accepted and a deposit entry of 0 is recorded",
+      "contrary_satisfies_quotes": false,
+      "argument": "'An amount must be a positive number, otherwise the operation is rejected' rules out accepting 0, because 0 is not positive. The quote does not fix the reason label 'invalid-amount', so a rejection with any other reason would also comply."
+    },
+    {
+      "behaviour_id": "B-003",
+      "contrary_then": "the deposit is treated as its absolute value 5 and the balance becomes 55",
+      "contrary_satisfies_quotes": false,
+      "argument": "-5 is not 'a positive number', so 'otherwise the operation is rejected' forbids crediting anything. Only the reason label 'invalid-amount' is left open."
+    },
+    {
+      "behaviour_id": "B-004",
+      "contrary_then": "banker's rounding (half to even) is used and the balance is 1.00",
+      "contrary_satisfies_quotes": false,
+      "argument": "1.005 is exactly a half cent, and 'halves rounded away from zero' requires 1.01. That excludes half-to-even and truncation."
+    },
+    {
+      "behaviour_id": "B-006",
+      "contrary_then": "the repeat is rejected with { ok: false, reason: 'duplicate' } and the balance stays 100",
+      "contrary_satisfies_quotes": true,
+      "argument": "'so that retries are safe' only requires that a retry does not move money twice, and rejecting it as a duplicate is safe. Nothing in the quote says a retry must report success."
+    },
+    {
+      "behaviour_id": "B-011",
+      "contrary_then": "the amount is divided by the rate, so 6.67 is credited and the entry is a deposit of 6.67",
+      "contrary_satisfies_quotes": true,
+      "argument": "'the amount is converted at that rate' does not say whether the rate is home-per-foreign or foreign-per-home. Dividing 10 by 1.5 is just as much a conversion at that rate as multiplying."
+    },
+    {
+      "behaviour_id": "B-019",
+      "contrary_then": "the repeat is rejected with { ok: false, reason: 'duplicate' } and the balance stays 15",
+      "contrary_satisfies_quotes": true,
+      "argument": "Rejecting the retry still keeps it safe, because nothing is credited twice. The quote does not require the retry to return ok."
+    },
+    {
+      "behaviour_id": "B-021",
+      "contrary_then": "the 0.50 fee is deducted from the payout (customer receives 9.50), so 10 is debited and balance('a') is 90",
+      "contrary_satisfies_quotes": true,
+      "argument": "'Each withdrawal is charged a fee of 1% ... with a minimum fee of 0.50' fixes the fee at 0.50 but not whether it is added to the debit or taken out of the amount paid out. Netting it from the proceeds still charges the withdrawal 0.50."
+    },
+    {
+      "behaviour_id": "B-023",
+      "contrary_then": "the 0.60 fee is deducted from the payout (customer receives 59.40), so 60 is debited and balance('a') is 40",
+      "contrary_satisfies_quotes": true,
+      "argument": "The quote sets the fee at 1% of 60 = 0.60 but does not say the fee is debited on top of the amount. Taking it out of the money paid out complies just as well, and the balance would be 40 rather than 39.4."
+    },
+    {
+      "behaviour_id": "B-028",
+      "contrary_then": "the withdrawal is accepted and the minimum fee 0.50 is charged, leaving 99.5",
+      "contrary_satisfies_quotes": false,
+      "argument": "0 is not 'a positive number', so 'otherwise the operation is rejected' forbids accepting the withdrawal and charging a fee. Only the reason label is open."
+    },
+    {
+      "behaviour_id": "B-029",
+      "contrary_then": "the repeat is rejected with { ok: false, reason: 'duplicate' } and the balance stays 99",
+      "contrary_satisfies_quotes": true,
+      "argument": "Rejecting the retry as a duplicate does not debit twice, so retries stay safe. The quote does not decide between returning ok and returning an error."
+    },
+    {
+      "behaviour_id": "B-041",
+      "contrary_then": "the transfer goes through and 'a' becomes 110 while 'b' becomes -10",
+      "contrary_satisfies_quotes": false,
+      "argument": "-10 is not 'a positive number', so 'otherwise the operation is rejected' forbids executing the transfer. The reason 'invalid-amount' is not fixed by the quote."
+    },
+    {
+      "behaviour_id": "B-042",
+      "contrary_then": "the repeat is rejected with { ok: false, reason: 'duplicate' }, 'a' stays 70 and 'b' stays 30",
+      "contrary_satisfies_quotes": true,
+      "argument": "Retries are safe when the repeat is refused, because no money moves twice. The quote does not require the retry to return ok."
+    },
+    {
+      "behaviour_id": "B-050",
+      "contrary_then": "the repeat is rejected with { ok: false, reason: 'duplicate' }, 'a' stays 90 and 'b' stays 5",
+      "contrary_satisfies_quotes": true,
+      "argument": "A duplicate rejection pays nothing out twice and so meets 'retries are safe'. Returning ok is not required by the words."
+    },
+    {
+      "behaviour_id": "B-054",
+      "contrary_then": "interest is compounded daily over a 365-day year: 1000 x ((1 + 0.05/365)^365 - 1) = 51.27 is credited, giving 1051.27",
+      "contrary_satisfies_quotes": true,
+      "argument": "'computed on the current balance with a 365-day year' rules out a 360-day year but does not say simple or compound interest. Daily compounding on the current balance with a 365-day year is computed exactly as the words describe."
+    },
+    {
+      "behaviour_id": "B-056",
+      "contrary_then": "interest is compounded daily (73 x ((1 + 0.1/365)^50 - 1) = 1.0067) and rounded to the nearest cent, so 1.01 is credited and the balance is 74.01",
+      "contrary_satisfies_quotes": true,
+      "argument": "The quote fixes the base (the current balance) and the day count (365), but not simple versus compound interest or how the result is rounded. Daily compounding with rounding to the nearest cent complies and credits 1.01, not 1.00."
+    },
+    {
+      "behaviour_id": "B-059",
+      "contrary_then": "the repeat is rejected with { ok: false, reason: 'duplicate' } and the balance stays 1050",
+      "contrary_satisfies_quotes": true,
+      "argument": "Refusing the retry does not credit interest twice, so retries stay safe. The quote does not require the repeat to return ok."
+    }
+  ]
+}

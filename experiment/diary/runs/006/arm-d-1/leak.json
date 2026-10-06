@@ -1,0 +1,56 @@
+{
+  "status": "suspect",
+  "review": "transcript shows no access outside the room and no mention of the plan: the overlap is phrasing, not a leak",
+  "shingle_size": 6,
+  "overlapping_phrases": [
+    "a transfer to the same account"
+  ],
+  "nonce_seen": false,
+  "extractor_reported_nonce": [],
+  "audit": {
+    "source": "transcript",
+    "found": true,
+    "sessions": [
+      "a571399f-9334-4363-8c32-f41685c39bcb.jsonl"
+    ],
+    "calls": 4,
+    "by_tool": {
+      "Bash": 2,
+      "Read": 1,
+      "Write": 1
+    },
+    "plan_mentions": 0,
+    "outside_room": [],
+    "denied": 1,
+    "tool_calls": [
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"cd /var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-S3bpLY && find . -type f | head -100 && cat census.json && ls out; cat census.uncovered.json 2>/dev/null\",\"description\":\"List files and show census\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\":\"/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-S3bpLY/cleanroom/src/ledger.ts\"}",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Write",
+        "input": "{\"file_path\":\"/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-S3bpLY/out/behaviours.json\",\"content\":\"{\\n  \\\"nonce_seen\\\": [],\\n  \\\"behaviours\\\": [\\n    {\\n      \\\"id\\\": \\\"B-001\\\",\\n      \\\"title\\\": \\\"A deposit credits the account and records a deposit entry\\\",\\n      \\\"given\\\": \\\"a new Ledg",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": false
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\":\"python3 -c \\\"import json;d=json.load(open('/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-S3bpLY/out/behaviours.json'));c={x for b in d['behaviours'] for x in b['covers']}|{i['census_id'] for i in d['immaterial']};print(len(d['behaviours']),sorted({'C-%03d'%i for i in range(1,3",
+        "outside_room": false,
+        "mentions_plan": false,
+        "denied": true
+      }
+    ]
+  }
+}

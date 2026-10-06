@@ -1,0 +1,58 @@
+{
+  "findings": [
+    {
+      "behaviour_id": "B-001",
+      "contrary_then": "the half cent is rounded down (as naive Math.round(10.005*100)/100 does in binary floating point) and the balance of 'a' is 10.00",
+      "contrary_satisfies_quotes": false,
+      "argument": "'rounded to the nearest cent, with halves rounded away from zero' fixes 10.005 at 10.01 and 10.004 at 10.00. It also rules out rejecting such amounts, because they 'are rounded'."
+    },
+    {
+      "behaviour_id": "B-011",
+      "contrary_then": "the second depositForeign with 'f1' is rejected with reason 'duplicate-transaction' and the balance stays 150",
+      "contrary_satisfies_quotes": true,
+      "argument": "'so that retries are safe' is met as long as the retry is not applied twice. It does not say a retry reports ok rather than an error, and the Then claims 'both report ok'."
+    },
+    {
+      "behaviour_id": "B-012",
+      "contrary_then": "the 0.50 fee is taken out of the 10 withdrawn (the customer receives 9.50) and the balance becomes 90",
+      "contrary_satisfies_quotes": true,
+      "argument": "'Each withdrawal is charged a fee of 1% of the amount, with a minimum fee of 0.50' fixes the fee at 0.50, but not whether it is debited on top of the amount or netted from the payout. Both systems charge 0.50."
+    },
+    {
+      "behaviour_id": "B-022",
+      "contrary_then": "both withdrawals are rejected with reason 'non-positive-amount' and the balance stays 100",
+      "contrary_satisfies_quotes": true,
+      "argument": "'otherwise the operation is rejected' decides that the operation is rejected but not the reason it reports. The Then asserts 'invalid-amount'. Accepting 0 or -10 would be a breach."
+    },
+    {
+      "behaviour_id": "B-027",
+      "contrary_then": "both transfers are rejected with reason 'non-positive-amount'; 'a' stays 100 and 'b' 0",
+      "contrary_satisfies_quotes": true,
+      "argument": "As with B-022, the quote requires rejection but names no reason code, so the 'invalid-amount' label in the Then is not decided. Accepting the transfers would be a breach."
+    },
+    {
+      "behaviour_id": "B-028",
+      "contrary_then": "both transfers with 't1' are applied: 'a' has 40 and 'b' has 60",
+      "contrary_satisfies_quotes": false,
+      "argument": "Applying an identical retry twice moves money twice, which contradicts 'so that retries are safe'. Any system that is safe gives 70/30, and the Then claims nothing about return values."
+    },
+    {
+      "behaviour_id": "B-033",
+      "contrary_then": "both splits with 's1' are applied: 'a' has 80, 'b' 10 and 'c' 10",
+      "contrary_satisfies_quotes": false,
+      "argument": "A retry that splits twice is not 'safe'. The Then states only the end balances, which every safe implementation shares."
+    },
+    {
+      "behaviour_id": "B-035",
+      "contrary_then": "interest of 9.8630... is rounded up to 9.87 (or compounded daily to 9.91) and the balance becomes 1009.87",
+      "contrary_satisfies_quotes": true,
+      "argument": "'computed on the current balance with a 365-day year' rules out a 360-day year but sets no rounding and no simple-versus-compound method. Rounding up, or compounding daily on a 365-day year, uses the current balance and a 365-day year just the same."
+    },
+    {
+      "behaviour_id": "B-038",
+      "contrary_then": "interest is credited again on the new balance and it becomes 1019.82",
+      "contrary_satisfies_quotes": false,
+      "argument": "Crediting interest a second time on an identical retry is exactly what 'so that retries are safe' excludes. The Then asserts only the single-credit balance."
+    }
+  ]
+}

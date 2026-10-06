@@ -1,0 +1,383 @@
+[
+  {
+    "n": 1,
+    "kind": "code decision the plan does not make",
+    "description": "Withdrawals are capped at a daily limit of 5000.00 per account, which the plan never mentioned.",
+    "file": "src/ledger.ts",
+    "lines": [
+      9,
+      77
+    ]
+  },
+  {
+    "n": 2,
+    "kind": "code decision the plan does not make",
+    "description": "The daily withdrawal total is never reset, so the 'daily' limit is really a lifetime limit for the ledger instance.",
+    "file": "src/ledger.ts",
+    "lines": [
+      32,
+      76,
+      78
+    ]
+  },
+  {
+    "n": 3,
+    "kind": "code decision the plan does not make",
+    "description": "The daily limit counts only the withdrawn amount, not the fee.",
+    "file": "src/ledger.ts",
+    "lines": [
+      77,
+      78
+    ]
+  },
+  {
+    "n": 4,
+    "kind": "code decision the plan does not make",
+    "description": "The withdrawal fee is capped at a maximum of 25.00.",
+    "file": "src/ledger.ts",
+    "lines": [
+      12,
+      25
+    ]
+  },
+  {
+    "n": 5,
+    "kind": "code decision the plan does not make",
+    "description": "The 1% withdrawal fee is rounded up to the next cent.",
+    "file": "src/ledger.ts",
+    "lines": [
+      24
+    ]
+  },
+  {
+    "n": 6,
+    "kind": "code decision the plan does not make",
+    "description": "The fee is added to the withdrawal and recorded as one combined history entry instead of its own separate entry.",
+    "file": "src/ledger.ts",
+    "lines": [
+      79
+    ]
+  },
+  {
+    "n": 7,
+    "kind": "code decision the plan does not make",
+    "description": "A withdrawal is rejected unless the balance covers both the amount and the fee, so no overdraft is allowed.",
+    "file": "src/ledger.ts",
+    "lines": [
+      75
+    ]
+  },
+  {
+    "n": 8,
+    "kind": "code decision the plan does not make",
+    "description": "Transfers and split payments are rejected when the sender's balance would go negative.",
+    "file": "src/ledger.ts",
+    "lines": [
+      90,
+      104
+    ]
+  },
+  {
+    "n": 9,
+    "kind": "code decision the plan does not make",
+    "description": "Insufficient funds is checked before the daily limit, which decides which rejection reason the customer sees.",
+    "file": "src/ledger.ts",
+    "lines": [
+      75,
+      77
+    ]
+  },
+  {
+    "n": 10,
+    "kind": "code decision the plan does not make",
+    "description": "A repeated transaction id returns success without doing anything and without checking that the account, amount or type match the original.",
+    "file": "src/ledger.ts",
+    "lines": [
+      51,
+      60,
+      71,
+      86,
+      100,
+      115
+    ]
+  },
+  {
+    "n": 11,
+    "kind": "code decision the plan does not make",
+    "description": "Transaction ids are unique across the whole ledger, not per account or per operation type.",
+    "file": "src/ledger.ts",
+    "lines": [
+      31
+    ]
+  },
+  {
+    "n": 12,
+    "kind": "code decision the plan does not make",
+    "description": "Input validation runs before the duplicate check, so a retry with a bad amount is rejected even if the txn id was already processed.",
+    "file": "src/ledger.ts",
+    "lines": [
+      50,
+      59,
+      70,
+      85,
+      98,
+      114
+    ]
+  },
+  {
+    "n": 13,
+    "kind": "code decision the plan does not make",
+    "description": "Rejected operations do not record their transaction id, so the same id can later succeed.",
+    "file": "src/ledger.ts",
+    "lines": [
+      75,
+      77,
+      90,
+      104
+    ]
+  },
+  {
+    "n": 14,
+    "kind": "code decision the plan does not make",
+    "description": "Accounts are created automatically on any operation, including withdrawals, transfers and splits that then fail.",
+    "file": "src/ledger.ts",
+    "lines": [
+      52,
+      63,
+      72,
+      87,
+      88,
+      101,
+      102,
+      116
+    ]
+  },
+  {
+    "n": 15,
+    "kind": "code decision the plan does not make",
+    "description": "Asking for the balance of an unknown account returns 0 rather than an error.",
+    "file": "src/ledger.ts",
+    "lines": [
+      42
+    ]
+  },
+  {
+    "n": 16,
+    "kind": "code decision the plan does not make",
+    "description": "A transfer from an account to itself is accepted instead of rejected.",
+    "file": "src/ledger.ts",
+    "lines": [
+      84,
+      85,
+      86
+    ]
+  },
+  {
+    "n": 17,
+    "kind": "code decision the plan does not make",
+    "description": "Foreign-currency deposits are rounded half away from zero instead of half to even.",
+    "file": "src/ledger.ts",
+    "lines": [
+      61
+    ]
+  },
+  {
+    "n": 18,
+    "kind": "code decision the plan does not make",
+    "description": "The foreign amount is multiplied by the rate (rate means account currency per foreign unit).",
+    "file": "src/ledger.ts",
+    "lines": [
+      61
+    ]
+  },
+  {
+    "n": 19,
+    "kind": "code decision the plan does not make",
+    "description": "A foreign deposit that converts to less than one cent is rejected as 'amount-too-small'.",
+    "file": "src/ledger.ts",
+    "lines": [
+      62
+    ]
+  },
+  {
+    "n": 20,
+    "kind": "code decision the plan does not make",
+    "description": "Foreign deposits are recorded as plain 'deposit' entries with no currency or rate kept.",
+    "file": "src/ledger.ts",
+    "lines": [
+      64
+    ]
+  },
+  {
+    "n": 21,
+    "kind": "code decision the plan does not make",
+    "description": "A regular deposit, withdrawal or transfer smaller than half a cent rounds to zero and is still accepted and recorded.",
+    "file": "src/ledger.ts",
+    "lines": [
+      50,
+      53,
+      73,
+      89
+    ]
+  },
+  {
+    "n": 22,
+    "kind": "code decision the plan does not make",
+    "description": "Infinity and arbitrarily large amounts pass the positive-number check.",
+    "file": "src/ledger.ts",
+    "lines": [
+      50,
+      59,
+      70,
+      85,
+      98
+    ]
+  },
+  {
+    "n": 23,
+    "kind": "code decision the plan does not make",
+    "description": "A small epsilon is added before rounding amounts to cents to absorb floating-point error.",
+    "file": "src/ledger.ts",
+    "lines": [
+      16
+    ]
+  },
+  {
+    "n": 24,
+    "kind": "code decision the plan does not make",
+    "description": "The interest rate is given as a percentage (5 means 5%), not a fraction.",
+    "file": "src/ledger.ts",
+    "lines": [
+      113,
+      117
+    ]
+  },
+  {
+    "n": 25,
+    "kind": "code decision the plan does not make",
+    "description": "Interest is simple (not compounded) over the given days.",
+    "file": "src/ledger.ts",
+    "lines": [
+      117
+    ]
+  },
+  {
+    "n": 26,
+    "kind": "code decision the plan does not make",
+    "description": "Interest is rounded down to the cent.",
+    "file": "src/ledger.ts",
+    "lines": [
+      118
+    ]
+  },
+  {
+    "n": 27,
+    "kind": "code decision the plan does not make",
+    "description": "When interest rounds to zero, or the balance is zero or negative, the call returns success with no entry and the transaction id is not recorded.",
+    "file": "src/ledger.ts",
+    "lines": [
+      119
+    ]
+  },
+  {
+    "n": 28,
+    "kind": "code decision the plan does not make",
+    "description": "A zero or negative interest rate or day count is rejected, and fractional days are allowed.",
+    "file": "src/ledger.ts",
+    "lines": [
+      114
+    ]
+  },
+  {
+    "n": 29,
+    "kind": "code decision the plan does not make",
+    "description": "In a split payment, leftover cents go one each to the first recipients in list order.",
+    "file": "src/ledger.ts",
+    "lines": [
+      105,
+      106,
+      108
+    ]
+  },
+  {
+    "n": 30,
+    "kind": "code decision the plan does not make",
+    "description": "A split with no recipients is rejected.",
+    "file": "src/ledger.ts",
+    "lines": [
+      99
+    ]
+  },
+  {
+    "n": 31,
+    "kind": "code decision the plan does not make",
+    "description": "Split recipients may repeat or include the payer.",
+    "file": "src/ledger.ts",
+    "lines": [
+      102,
+      108
+    ]
+  },
+  {
+    "n": 32,
+    "kind": "code decision the plan does not make",
+    "description": "Split payments charge no fee, and neither do transfers.",
+    "file": "src/ledger.ts",
+    "lines": [
+      89,
+      91,
+      103,
+      107
+    ]
+  },
+  {
+    "n": 33,
+    "kind": "code decision the plan does not make",
+    "description": "History amounts are stored as positive numbers for both credits and debits, so the direction comes only from the entry kind.",
+    "file": "src/ledger.ts",
+    "lines": [
+      131,
+      136
+    ]
+  },
+  {
+    "n": 34,
+    "kind": "code decision the plan does not make",
+    "description": "The rejection reason strings returned to callers are 'invalid-amount', 'amount-too-small', 'insufficient-funds', 'daily-limit' and 'no-recipients'.",
+    "file": "src/ledger.ts",
+    "lines": [
+      50,
+      62,
+      75,
+      77,
+      99
+    ]
+  },
+  {
+    "n": 35,
+    "kind": "plan statement the code does not implement",
+    "plan_text": "A transfer to the same account is rejected.",
+    "plan_lines": [
+      13,
+      13
+    ]
+  },
+  {
+    "n": 36,
+    "kind": "plan statement the code does not implement",
+    "plan_text": "The fee is recorded in the account history as its own entry, separate from the withdrawal.",
+    "plan_lines": [
+      22,
+      22
+    ]
+  },
+  {
+    "n": 37,
+    "kind": "plan statement the code does not implement",
+    "plan_text": "Customers can deposit an amount in a foreign currency together with an exchange rate; the amount is converted at that rate and rounded to the nearest cent, with halves rounded to even.",
+    "plan_lines": [
+      23,
+      23
+    ]
+  }
+]

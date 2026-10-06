@@ -1,0 +1,15 @@
+{
+  "total": 35,
+  "covered": 34,
+  "waived": 1,
+  "uncovered": 0,
+  "basis": "declared",
+  "uncovered_items": [],
+  "waived_items": [
+    {
+      "census_id": "C-035",
+      "reason": "Unreachable: the private cents() helper is only called after open() has set the account to 0, so its '?? 0' fallback never applies; the observable default is C-010 (balance of unknown account), exercised by B-005."
+    }
+  ],
+  "unknown_refs": []
+}

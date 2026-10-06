@@ -1,0 +1,638 @@
+{
+  "mode": "llm-tracer",
+  "forward": [
+    {
+      "behaviour_id": "B-001",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-011",
+          "text": "An amount with more than two decimals is rounded to the nearest cent, with halves rounded away from zero."
+        }
+      ],
+      "reasoning": "Rounding 10.005 down or to even (10.00) would violate 'halves rounded away from zero'.",
+      "contrary": "the half cent is rounded down (as naive Math.round(10.005*100)/100 does in binary floating point) and the balance of 'a' is 10.00",
+      "contrary_argument": "'rounded to the nearest cent, with halves rounded away from zero' fixes 10.005 at 10.01 and 10.004 at 10.00. It also rules out rejecting such amounts, because they 'are rounded'.",
+      "cluster": "amount rounding",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-002",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "P-005 rejects non-positive amounts but does not say every positive amount is accepted; rejecting a deposit that rounds to 0 cents satisfies the plan equally.",
+      "contrary": "the deposit is rejected because it rounds to 0 cents",
+      "contrary_argument": "",
+      "cluster": "sub-cent amounts",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-003",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "Rejecting 0 and -5 follows from P-005, but the distinguishing claim is that rejected calls do not consume the transaction id. The plan does not decide whether a rejected operation's id may be reused; treating the later 100 with 't1' as a retry would satisfy P-009 just as well.",
+      "contrary": "the deposit of 100 with 't1' is treated as a repeat of the rejected 't1' and is not applied",
+      "contrary_argument": "",
+      "cluster": "transaction id idempotency",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-004",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "A call with the same id but a different amount or account is not a retry. P-009 makes retries safe but does not decide whether such a conflicting reuse is silently reported ok, rejected, or applied.",
+      "contrary": "reusing 't1' with a different amount or account is rejected as a conflicting transaction id",
+      "contrary_argument": "",
+      "cluster": "transaction id idempotency",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-005",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan says nothing about reading accounts that do not exist.",
+      "contrary": "reading an unknown account raises an error",
+      "contrary_argument": "",
+      "cluster": "account lifecycle",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-006",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan does not mention opening accounts.",
+      "contrary": "open('a') on an existing account fails or resets it",
+      "contrary_argument": "",
+      "cluster": "account lifecycle",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-007",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "'converted at that rate' does not fix the direction (multiply or divide), and the plan does not say a foreign deposit is recorded as a plain 'deposit' entry rather than its own kind.",
+      "contrary": "the amount is divided by the rate, or the entry is recorded as a distinct foreign-deposit kind",
+      "contrary_argument": "",
+      "cluster": "foreign currency deposit",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-008",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "This contradicts the plan. P-014 asks for halves rounded to even, which gives 0.62, the contrary outcome.",
+      "contrary": "the half cent is rounded to even and the balance is 0.62",
+      "contrary_argument": "",
+      "cluster": "foreign currency deposit",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-009",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "P-005 covers the -100 amount, but an exchange rate is not an amount; the plan does not decide how a zero or negative rate is handled.",
+      "contrary": "a rate of 0 is rejected with a distinct reason such as 'invalid-rate'",
+      "contrary_argument": "",
+      "cluster": "foreign currency deposit",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-010",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has no minimum converted amount; 0.004 is positive, and accepting it as 0 satisfies the plan equally.",
+      "contrary": "the 0.004 foreign deposit is accepted and recorded as 0",
+      "contrary_argument": "",
+      "cluster": "sub-cent amounts",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-011",
+      "verdict": "unsourced",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-009",
+          "text": "Each operation carries a client-supplied transaction id so that retries are safe."
+        }
+      ],
+      "reasoning": "An identical retry applied twice (balance 300) would not be safe.",
+      "contrary": "the second depositForeign with 'f1' is rejected with reason 'duplicate-transaction' and the balance stays 150",
+      "contrary_argument": "'so that retries are safe' is met as long as the retry is not applied twice. It does not say a retry reports ok rather than an error, and the Then claims 'both report ok'.",
+      "cluster": "transaction id idempotency",
+      "notes": [
+        "flip test: the contrary behaviour also satisfies the quoted text"
+      ]
+    },
+    {
+      "behaviour_id": "B-012",
+      "verdict": "unsourced",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-012",
+          "text": "Each withdrawal is charged a fee of 1% of the amount, with a minimum fee of 0.50."
+        }
+      ],
+      "reasoning": "Charging only 0.10 would violate the 0.50 minimum.",
+      "contrary": "the 0.50 fee is taken out of the 10 withdrawn (the customer receives 9.50) and the balance becomes 90",
+      "contrary_argument": "'Each withdrawal is charged a fee of 1% of the amount, with a minimum fee of 0.50' fixes the fee at 0.50, but not whether it is debited on top of the amount or netted from the payout. Both systems charge 0.50.",
+      "cluster": "withdrawal fee",
+      "notes": [
+        "flip test: the contrary behaviour also satisfies the quoted text"
+      ]
+    },
+    {
+      "behaviour_id": "B-013",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "This contradicts P-013, which asks for the fee to be recorded as its own entry, separate from the withdrawal.",
+      "contrary": "the history shows a 'withdrawal' entry of 10 and a separate fee entry of 0.50",
+      "contrary_argument": "",
+      "cluster": "withdrawal fee",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-014",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan does not say how a fractional-cent fee is rounded; rounding to the nearest cent (0.60) would satisfy it equally, and arguably fits P-011 better.",
+      "contrary": "the fee is rounded to the nearest cent, 0.60, and the balance becomes 39.39",
+      "contrary_argument": "",
+      "cluster": "withdrawal fee",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-015",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan specifies a minimum fee but no maximum; the uncapped 1% fee of 30 is what P-012 literally describes.",
+      "contrary": "the full 1% fee of 30 is charged and the balance becomes 970",
+      "contrary_argument": "",
+      "cluster": "withdrawal fee",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-016",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has no insufficient-funds or overdraft rule at all, let alone one counting the fee.",
+      "contrary": "the 100 withdrawal is accepted because only the amount is checked against the balance",
+      "contrary_argument": "",
+      "cluster": "overdraft policy",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-017",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has no overdraft rule, so whether a zero balance is allowed is undecided.",
+      "contrary": "the 10 withdrawal is rejected because the balance must stay above 0",
+      "contrary_argument": "",
+      "cluster": "overdraft policy",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-018",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has no withdrawal limit.",
+      "contrary": "the 0.01 withdrawal is accepted",
+      "contrary_argument": "",
+      "cluster": "withdrawal limit",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-019",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has no withdrawal limit.",
+      "contrary": "it is rejected because amount plus fee exceeds 5000",
+      "contrary_argument": "",
+      "cluster": "withdrawal limit",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-020",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has no withdrawal limit.",
+      "contrary": "it is accepted and the balance becomes 4974.99",
+      "contrary_argument": "",
+      "cluster": "withdrawal limit",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-021",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan defines neither rejection reason, so it does not set their order.",
+      "contrary": "it is rejected with 'daily-limit'",
+      "contrary_argument": "",
+      "cluster": "withdrawal limit",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-022",
+      "verdict": "unsourced",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-005",
+          "text": "An amount must be a positive number, otherwise the operation is rejected."
+        }
+      ],
+      "reasoning": "Accepting a withdrawal of 0 or -10 would violate P-005. The reason label itself is not decided by the plan.",
+      "contrary": "both withdrawals are rejected with reason 'non-positive-amount' and the balance stays 100",
+      "contrary_argument": "'otherwise the operation is rejected' decides that the operation is rejected but not the reason it reports. The Then asserts 'invalid-amount'. Accepting 0 or -10 would be a breach.",
+      "cluster": "amount validation",
+      "notes": [
+        "flip test: the contrary behaviour also satisfies the quoted text"
+      ]
+    },
+    {
+      "behaviour_id": "B-023",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "A withdrawal reusing a deposit's id is not a retry. The plan does not decide whether ids are shared across operation kinds, or whether such reuse is silently ignored rather than rejected. The double 'w1' part alone would follow from P-009.",
+      "contrary": "the 'x' withdrawal is applied (ids are scoped per operation kind) or rejected as a conflicting id",
+      "contrary_argument": "",
+      "cluster": "transaction id idempotency",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-024",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan does not say whether a transfer counts as a withdrawal for the fee, and it does not name the history entries; charging the fee on transfers would satisfy it equally.",
+      "contrary": "the withdrawal fee of 0.50 is also charged and 'a' has 69.5",
+      "contrary_argument": "",
+      "cluster": "transfer",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-025",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has no overdraft rule.",
+      "contrary": "the 100.01 transfer is accepted and 'a' goes negative",
+      "contrary_argument": "",
+      "cluster": "overdraft policy",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-026",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "This contradicts P-007, which says a transfer to the same account is rejected.",
+      "contrary": "the transfer is rejected because source and destination are the same",
+      "contrary_argument": "",
+      "cluster": "transfer",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-027",
+      "verdict": "unsourced",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-005",
+          "text": "An amount must be a positive number, otherwise the operation is rejected."
+        }
+      ],
+      "reasoning": "Accepting a transfer of 0 would violate P-005.",
+      "contrary": "both transfers are rejected with reason 'non-positive-amount'; 'a' stays 100 and 'b' 0",
+      "contrary_argument": "As with B-022, the quote requires rejection but names no reason code, so the 'invalid-amount' label in the Then is not decided. Accepting the transfers would be a breach.",
+      "cluster": "amount validation",
+      "notes": [
+        "flip test: the contrary behaviour also satisfies the quoted text"
+      ]
+    },
+    {
+      "behaviour_id": "B-028",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-009",
+          "text": "Each operation carries a client-supplied transaction id so that retries are safe."
+        }
+      ],
+      "reasoning": "Applying an identical retry twice would not be safe.",
+      "contrary": "both transfers with 't1' are applied: 'a' has 40 and 'b' has 60",
+      "contrary_argument": "Applying an identical retry twice moves money twice, which contradicts 'so that retries are safe'. Any system that is safe gives 70/30, and the Then claims nothing about return values.",
+      "cluster": "transaction id idempotency",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-029",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "'divides an amount evenly' does not decide who gets the leftover cent.",
+      "contrary": "the leftover cent goes to the last recipient: 'b' 3.33 and 'd' 3.34",
+      "contrary_argument": "",
+      "cluster": "split payment",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-030",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan does not decide whether a recipient receiving 0 gets an entry.",
+      "contrary": "'d' receives nothing and has no history entry",
+      "contrary_argument": "",
+      "cluster": "split payment",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-031",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "P-005 covers rejecting 0 and -1, but the plan does not mention an empty recipient list or which check is reported first.",
+      "contrary": "splitting 0 to [] is reported as 'no-recipients', or a split to [] is a no-op",
+      "contrary_argument": "",
+      "cluster": "split payment",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-032",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan has no overdraft rule.",
+      "contrary": "the split of 10.01 is accepted and 'a' goes negative",
+      "contrary_argument": "",
+      "cluster": "overdraft policy",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-033",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-009",
+          "text": "Each operation carries a client-supplied transaction id so that retries are safe."
+        }
+      ],
+      "reasoning": "Applying an identical retry twice would not be safe.",
+      "contrary": "both splits with 's1' are applied: 'a' has 80, 'b' 10 and 'c' 10",
+      "contrary_argument": "A retry that splits twice is not 'safe'. The Then states only the end balances, which every safe implementation shares.",
+      "cluster": "transaction id idempotency",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-034",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "P-015 does not say how interest is rounded; rounding to the nearest cent (4.11) would satisfy it equally.",
+      "contrary": "interest is rounded to the nearest cent, 4.11, and the balance becomes 1004.11",
+      "contrary_argument": "",
+      "cluster": "interest",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-035",
+      "verdict": "unsourced",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-015",
+          "text": "computed on the current balance with a 365-day year"
+        }
+      ],
+      "reasoning": "A 360-day year (10.00) would violate it.",
+      "contrary": "interest of 9.8630... is rounded up to 9.87 (or compounded daily to 9.91) and the balance becomes 1009.87",
+      "contrary_argument": "'computed on the current balance with a 365-day year' rules out a 360-day year but sets no rounding and no simple-versus-compound method. Rounding up, or compounding daily on a 365-day year, uses the current balance and a 365-day year just the same.",
+      "cluster": "interest",
+      "notes": [
+        "flip test: the contrary behaviour also satisfies the quoted text"
+      ]
+    },
+    {
+      "behaviour_id": "B-036",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "The plan does not cover zero-cent interest or whether the id stays reusable. Reporting ok while recording nothing is also in tension with P-008 ('Every accepted operation is recorded').",
+      "contrary": "the second call is treated as a repeat of 'i1' and ignored, leaving the balance at 1001",
+      "contrary_argument": "",
+      "cluster": "interest",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-037",
+      "verdict": "unsourced",
+      "tracer_verdict": "unsourced",
+      "quotes": [],
+      "reasoning": "A rate or a day count is not an amount, so P-005 does not decide this; accepting 0% as a no-op satisfies the plan equally.",
+      "contrary": "a 0% rate is accepted as a no-op",
+      "contrary_argument": "",
+      "cluster": "interest",
+      "notes": []
+    },
+    {
+      "behaviour_id": "B-038",
+      "verdict": "stated",
+      "tracer_verdict": "stated",
+      "quotes": [
+        {
+          "statement_id": "P-009",
+          "text": "Each operation carries a client-supplied transaction id so that retries are safe."
+        }
+      ],
+      "reasoning": "Crediting interest again on an identical retry would not be safe.",
+      "contrary": "interest is credited again on the new balance and it becomes 1019.82",
+      "contrary_argument": "Crediting interest a second time on an identical retry is exactly what 'so that retries are safe' excludes. The Then asserts only the single-credit balance.",
+      "cluster": "transaction id idempotency",
+      "notes": []
+    }
+  ],
+  "reverse": [
+    {
+      "statement_id": "P-001",
+      "type": "structural",
+      "status": "not_behavioural",
+      "realised_by": []
+    },
+    {
+      "statement_id": "P-002",
+      "type": "structural",
+      "status": "not_behavioural",
+      "realised_by": []
+    },
+    {
+      "statement_id": "P-003",
+      "type": "behavioural",
+      "status": "realised",
+      "realised_by": [
+        "B-001",
+        "B-002",
+        "B-004"
+      ]
+    },
+    {
+      "statement_id": "P-004",
+      "type": "behavioural",
+      "status": "realised",
+      "realised_by": [
+        "B-012",
+        "B-023"
+      ]
+    },
+    {
+      "statement_id": "P-005",
+      "type": "behavioural",
+      "status": "realised",
+      "realised_by": [
+        "B-003",
+        "B-009",
+        "B-022",
+        "B-027",
+        "B-031"
+      ]
+    },
+    {
+      "statement_id": "P-006",
+      "type": "behavioural",
+      "status": "realised",
+      "realised_by": [
+        "B-024",
+        "B-028"
+      ]
+    },
+    {
+      "statement_id": "P-007",
+      "type": "behavioural",
+      "status": "candidate_unrealised",
+      "realised_by": []
+    },
+    {
+      "statement_id": "P-008",
+      "type": "behavioural",
+      "status": "realised",
+      "realised_by": [
+        "B-024",
+        "B-034"
+      ]
+    },
+    {
+      "statement_id": "P-009",
+      "type": "behavioural",
+      "status": "realised",
+      "realised_by": [
+        "B-004",
+        "B-011",
+        "B-023",
+        "B-028",
+        "B-033",
+        "B-038"
+      ]
+    },
+    {
+      "statement_id": "P-010",
+      "type": "behavioural",
+      "status": "realised",
+      "realised_by": [
+        "B-001"
+      ]
+    },
+    {
+      "statement_id": "P-011",
+      "type": "behavioural",
+      "status": "realised",
+      "realised_by": [
+        "B-001"
+      ]
+    },
+    {
+      "statement_id": "P-012",
+      "type": "behavioural",
+      "status": "realised",
+      "realised_by": [
+        "B-012"
+      ]
+    },
+    {
+      "statement_id": "P-013",
+      "type": "behavioural",
+      "status": "candidate_unrealised",
+      "realised_by": []
+    },
+    {
+      "statement_id": "P-014",
+      "type": "behavioural",
+      "status": "realised",
+      "realised_by": [
+        "B-007"
+      ]
+    },
+    {
+      "statement_id": "P-015",
+      "type": "behavioural",
+      "status": "realised",
+      "realised_by": [
+        "B-035"
+      ]
+    },
+    {
+      "statement_id": "P-016",
+      "type": "behavioural",
+      "status": "realised",
+      "realised_by": [
+        "B-029",
+        "B-032"
+      ]
+    },
+    {
+      "statement_id": "P-017",
+      "type": "out-of-scope",
+      "status": "not_behavioural",
+      "realised_by": []
+    }
+  ],
+  "probe_scope": "all",
+  "probe_targets": [
+    "P-003",
+    "P-004",
+    "P-005",
+    "P-006",
+    "P-007",
+    "P-008",
+    "P-009",
+    "P-010",
+    "P-011",
+    "P-012",
+    "P-013",
+    "P-014",
+    "P-015",
+    "P-016"
+  ]
+}
