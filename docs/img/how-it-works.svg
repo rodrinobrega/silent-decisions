@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 430" width="1400" height="430" role="img" aria-labelledby="t d">
+  <title id="t">How silent-decisions works</title>
+  <desc id="d">code goes through 1 Prepare, 2 Extract (blind), 3 Run, 4 Trace back and 5 Probe forwards, producing a delta of silent decisions and dropped requirements. The plan is never in context for steps 1 to 3; it feeds steps 4 and 5. Step 6, controls, can void the run.</desc>
+  <style>
+    text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #1e1e1e; text-anchor: middle; }
+    .h { font-size: 19px; font-weight: 600; }
+    .s { font-size: 15px; fill: #444; }
+    .zl { font-size: 17px; font-style: italic; fill: #6d28d9; }
+    .bg { fill: #ffffff; }
+    .zone { fill: #f3efff; stroke: #8b5cf6; stroke-dasharray: 7 5; }
+    .blind { fill: #e5dbff; stroke: #8b5cf6; }
+    .trace { fill: #fff3bf; stroke: #d97706; }
+    .src { fill: #dbeafe; stroke: #3b82f6; }
+    .plan { fill: #ffe4c4; stroke: #d97706; }
+    .out { fill: #d3f9d8; stroke: #16a34a; }
+    .ctl { fill: #ffe3e3; stroke: #dc2626; stroke-dasharray: 7 5; }
+    rect { stroke-width: 2; }
+    .ar { stroke: #1e1e1e; stroke-width: 2; fill: none; }
+    .ap { stroke: #c2410c; stroke-width: 2; fill: none; }
+    .hd { fill: #1e1e1e; }
+    .hdp { fill: #c2410c; }
+    @media (prefers-color-scheme: dark) {
+      text { fill: #e6e6e6; }
+      .s { fill: #b5b5b5; }
+      .zl { fill: #c4b5fd; }
+      .bg { fill: #0d1117; }
+      .zone { fill: #1c1633; }
+      .blind { fill: #2d1b69; }
+      .trace { fill: #4a3a10; }
+      .src { fill: #1e3a5f; }
+      .plan { fill: #5c3d1a; }
+      .out { fill: #1a4d2e; }
+      .ctl { fill: #4a1a1a; }
+      .ar { stroke: #e6e6e6; }
+      .hd { fill: #e6e6e6; }
+      .ap { stroke: #fb923c; }
+      .hdp { fill: #fb923c; }
+    }
+  </style>
+  <defs>
+    <marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="hd" d="M0,0 L10,5 L0,10 z"/></marker>
+    <marker id="mp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="hdp" d="M0,0 L10,5 L0,10 z"/></marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1400" height="430" stroke="none"/>
+
+  <!-- blind zone -->
+  <rect class="zone" x="150" y="20" width="600" height="215" rx="16"/>
+  <text class="zl" x="450" y="218">the plan is never in context here</text>
+
+  <!-- code -->
+  <rect class="src" x="10" y="80" width="110" height="90" rx="12"/>
+  <text class="h" x="65" y="131">code</text>
+
+  <!-- 1 -->
+  <rect class="blind" x="170" y="80" width="160" height="90" rx="12"/>
+  <text class="h" x="250" y="118">1. Prepare</text>
+  <text class="s" x="250" y="142">clean room, AST</text>
+
+  <!-- 2 -->
+  <rect class="blind" x="370" y="80" width="160" height="90" rx="12"/>
+  <text class="h" x="450" y="110">2. Extract, blind</text>
+  <text class="s" x="450" y="134">scenarios +</text>
+  <text class="s" x="450" y="154">contraries</text>
+
+  <!-- 3 -->
+  <rect class="blind" x="570" y="80" width="160" height="90" rx="12"/>
+  <text class="h" x="650" y="110">3. Run</text>
+  <text class="s" x="650" y="134">tests + perturbed</text>
+  <text class="s" x="650" y="154">twins</text>
+
+  <!-- 4 -->
+  <rect class="trace" x="790" y="80" width="160" height="90" rx="12"/>
+  <text class="h" x="870" y="118">4. Trace back</text>
+  <text class="s" x="870" y="142">behaviour → plan</text>
+
+  <!-- 5 -->
+  <rect class="trace" x="990" y="80" width="160" height="90" rx="12"/>
+  <text class="h" x="1070" y="118">5. Probe forwards</text>
+  <text class="s" x="1070" y="142">plan → code</text>
+
+  <!-- delta -->
+  <rect class="out" x="1190" y="70" width="190" height="110" rx="12"/>
+  <text class="h" x="1285" y="108">delta</text>
+  <text class="s" x="1285" y="134">silent decisions</text>
+  <text class="s" x="1285" y="156">+ dropped requirements</text>
+
+  <!-- main flow -->
+  <line class="ar" x1="120" y1="125" x2="168" y2="125" marker-end="url(#m)"/>
+  <line class="ar" x1="330" y1="125" x2="368" y2="125" marker-end="url(#m)"/>
+  <line class="ar" x1="530" y1="125" x2="568" y2="125" marker-end="url(#m)"/>
+  <line class="ar" x1="730" y1="125" x2="788" y2="125" marker-end="url(#m)"/>
+  <line class="ar" x1="950" y1="125" x2="988" y2="125" marker-end="url(#m)"/>
+  <line class="ar" x1="1150" y1="125" x2="1188" y2="125" marker-end="url(#m)"/>
+
+  <!-- plan -->
+  <rect class="plan" x="890" y="320" width="160" height="70" rx="12"/>
+  <text class="h" x="970" y="361">plan</text>
+  <line class="ap" x1="935" y1="320" x2="875" y2="173" marker-end="url(#mp)"/>
+  <line class="ap" x1="1005" y1="320" x2="1065" y2="173" marker-end="url(#mp)"/>
+
+  <!-- 6 controls -->
+  <rect class="ctl" x="170" y="300" width="560" height="90" rx="12"/>
+  <text class="h" x="450" y="335">6. Controls</text>
+  <text class="s" x="450" y="360">leave-one-out re-trace, canary leak check: a failed control voids the run</text>
+</svg>

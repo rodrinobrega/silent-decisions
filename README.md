@@ -28,11 +28,7 @@ silent decision. Plan sentences the code doesn't satisfy are dropped requirement
 
 ## How it works
 
-```
- code ─▶ 1. Prepare ─▶ 2. Extract, blind ─▶ 3. Run ─▶ 4. Trace back ─▶ 5. Probe forwards ─▶ delta
-                ╰────── the plan is never in context here ──────╯        ▲               ▲
-                                                                         └──── plan ─────┘
-```
+![Pipeline: code goes through Prepare, Extract (blind), Run, Trace back and Probe forwards to a delta of silent decisions and dropped requirements. The plan is never in context for steps 1-3 and feeds steps 4 and 5.](docs/img/how-it-works.svg)
 
 1. **Prepare.** Copy the source into a clean room with comments, tests, docs and git history
    removed (agent code often carries the plan in its comments). An AST walk lists every decision
