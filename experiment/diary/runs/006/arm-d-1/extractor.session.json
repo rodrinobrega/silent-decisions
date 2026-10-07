@@ -1,6 +1,6 @@
 {
   "cwd": "/private/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-S3bpLY",
   "cwd_as_created": "/var/folders/5m/7wt7z31j2yl45pvf2fd46fpw0000gn/T/sd-room-S3bpLY",
-  "cmd": "/Users/rodrigonobrega/Workspace/silent-decisions/experiment/claude-role.sh -p --setting-sources project --strict-mcp-config --allowedTools Read,Glob,Grep,Write --permission-mode acceptEdits",
+  "cmd": "~/Workspace/silent-decisions/experiment/claude-role.sh -p --setting-sources project --strict-mcp-config --allowedTools Read,Glob,Grep,Write --permission-mode acceptEdits",
   "started": "2026-10-06T06:21:48.775Z"
 }
