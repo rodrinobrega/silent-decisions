@@ -2,9 +2,12 @@
 
 **Find what AI-written code decided that the plan didn't.**
 
-> **Status: research experiment, not a product.** It works end to end on two small test cases I
-> built. It has **not** been shown to beat simpler methods on code I didn't write. Details in
-> [What happened](#what-happened). The write-up is in the blog post (link coming).
+> **Status: work in progress, research experiment, not a product.** The pipeline works end to end on
+> two small test cases I built. The early result is that it does **not** beat a much simpler approach:
+> a single prompted review found as many silent decisions at about a tenth of the cost, and hiding
+> the plan from the reader (the core idea below) did not improve accuracy. See
+> [Early conclusion](#early-conclusion). The likely next step is a lightweight skill, not this
+> pipeline. The write-up is in the blog post (link coming).
 
 ## The problem
 
@@ -53,37 +56,80 @@ the format). The full method is in [`docs/methodology.md`](docs/methodology.md).
 
 ## What happened
 
-Two planted TypeScript cases (`ledger`: 10 silent decisions, `ledger-rounding`: 22), five runs.
-Arm e is the full pipeline; arm f is a cheap baseline that matches AST decision points against plan
-sentences with no extraction and no execution. Recall = share of planted silent decisions found.
+Two planted TypeScript cases (`ledger`: 10 silent decisions, `ledger-rounding`: 22) and seven runs,
+comparing six arms:
 
-| Run | Case | Pipeline (e) | Baseline (f) | Dropped requirements (e) |
+| Arm | What it is | Sees the plan? |
+|---|---|---|
+| a | ask a model that "implemented" the code what it decided that the plan didn't say | yes |
+| b | one sighted review pass: plan + code, list the unspecified decisions | yes |
+| c | the pipeline, but the extractor can see the plan | yes |
+| d | the pipeline, with an LLM tracer and adversary | no (extractor) |
+| e | **the full pipeline** (blind extractor, execution, pairwise classifier trace, probes) | no (extractor) |
+| f | static baseline: AST decision points matched to plan sentences, no model reading the code | – |
+
+Runs 001–005 developed the pipeline (arms e, f). Runs 006–007 ran arms a–d. All the outputs were
+then graded **at decision level by a blind grader**: a separate model session that saw the plan,
+the code and the answer key, but not which method produced which list
+([grading write-up](experiment/diary/grading/2026-10-07-blind/GRADING.md)). Recall = share of planted
+silent decisions found; precision = share of flagged items that are real unplanned decisions.
+
+**`ledger-rounding`** (the harder case, 22 decisions):
+
+| Arm | Runs | Recall | Precision | Time · cost per run |
 |---|---|---|---|---|
-| 001 | ledger | 0.80 | 0.60 | 0 / 1 |
-| 002 | ledger | 0.90 | 0.60 | 1 / 1 |
-| 003 | ledger | 0.97 (3 reps, 0.90–1.0) | 0.60 | 3 / 3 |
-| 004 | ledger-rounding | 0.77 (3 reps) | 0.55 | 9 / 9 |
-| 005 | ledger-rounding | 0.83 (3 reps, 0.77–0.91) | 0.50 | 9 / 9 |
+| a. self-report | 3 | 0.83 | 0.89 | ~1 min · ~$0.30 |
+| b. sighted review | 3 | 0.82 | **0.93** | ~1 min · ~$0.30 |
+| c. pipeline, sighted extractor | 1 | 0.86 | 0.82 | ~7 min · ~$2.20 |
+| d. pipeline, LLM tracer | 1 | **0.91** | 0.77 | ~10 min · ~$3.10 |
+| e. full pipeline (blind) | 3 | 0.83 | 0.85 | ~7 min · not logged |
+| f. static baseline | 1 | 0* | – | 5 s |
 
-All 461 extracted scenarios were verified by execution. The pipeline took ~400 s per run on the
-larger case against ~5 s for the baseline.
+Costs are API-equivalent figures reported by Claude Code (`claude-opus-5-5`). On `ledger`, every
+model-based arm is near the ceiling (recall 0.90–1.0). Every arm found every dropped requirement on
+both cases. All extracted scenarios were verified by execution.
 
-**Why this is not evidence that the method works:**
+\* Arm f lists code locations, not stated rules, so the blind grader rejected every item. A more
+lenient reading credits it with about 0.5.
 
-- **The comparisons that matter never ran.** Arms a–d (ask the implementer what it decided; a
-  sighted reviewer; a sighted extractor; an LLM tracer) are written in `experiment/` but were never
-  executed. The pipeline beats a static scan; whether it beats *just asking* is unknown.
-- **Self-made cases, non-blind grading.** Both cases and their answer keys were written on my side,
-  with an AI agent, and graded by that agent knowing which arm produced what. On the original
-  `ledger` key the baseline actually won (1.0 vs 0.8); the pipeline pulled ahead only after
-  decisions found in its own output were added to the key.
-- **Tuned on the test set.** Each run's misses were fixed and re-measured on the same case.
-- **High variance.** Three repetitions of the same run scored 0.77, 0.82 and 0.91.
-- **Known weaknesses:** planned rules flagged as silent (3–4 per run), general plan sentences
-  "explaining" specific decisions, and some interaction decisions never extracted.
+**Limits of this evidence:**
+
+- **Self-made cases.** Both cases and their answer keys were written on my side, with an AI agent.
+  They are small (one ~140-line file) with every rule written as an explicit `if` or constant: the
+  setting where a single read-through should do best.
+- **One model grader.** The grading was blind to the method, but it was done by a model, not a
+  person. Writing styles differ between arms (free text vs Given/When/Then).
+- **Tuned on the test set.** Each pipeline run's misses were fixed and re-measured on the same case.
+- **High variance.** Three repetitions of the same arm differ by up to ~0.2 recall. c and d ran once.
 
 Every run is recorded, including what went wrong, in [`experiment/diary/`](experiment/diary/README.md).
-Each run's code is tagged `run-001` … `run-005`.
+Each run's code is tagged `run-001` … `run-007`.
+
+## Early conclusion
+
+**Blindness did not improve accuracy.** The pipeline was built on one hypothesis: a model that can
+see the plan describes the code as conforming to it, so the extractor must never see the plan. On
+these cases the data does not support it:
+
+- the sighted review (b, 0.82) found as many silent decisions as the blind pipeline (e, 0.83), with
+  higher precision;
+- the pipeline with a sighted extractor (c, 0.86) did as well as with a blind one (e, 0.83);
+- the decisions the hardest to find (an interaction between transfers and the daily limit, for
+  example) were missed by **every** arm, blind or not.
+
+What the pipeline does add is **verification**: every scenario it reports has been executed, and every
+dropped requirement it reports is confirmed by a failing test. It also caught one decision the
+single-pass arms consistently missed. That is worth something, but on these cases not ten times the
+cost.
+
+**So the next step is probably a skill, not this pipeline:** a single, well-prompted review pass
+(arm b's prompt is the starting point), with execution of its claims as an optional check, not a
+multi-stage blind pipeline.
+
+This is an early conclusion from two small cases I wrote myself. It could change on real code, where
+rules are spread over many files and harder to see in one pass. The test that would settle it is
+independent cases (real repositories, with answer keys written by someone else), and a "single pass
+plus verification" arm against the full pipeline.
 
 ## Try it
 
@@ -126,7 +172,8 @@ The closest published neighbour is [AssumptionMiner](https://arxiv.org/abs/2607.
 which extracts implicit assumptions from LLM-generated code with the prompt in view and without
 executing anything. Older roots: characterization tests (Feathers), specification mining (Daikon),
 requirements traceability, TiCoder. What this project tried that I haven't seen elsewhere: blind
-extraction as a contamination control, execution-verified behaviour as the thing traced, and a
+extraction as a contamination control (which, so far, did not pay off; see
+[Early conclusion](#early-conclusion)), execution-verified behaviour as the thing traced, and a
 per-run control on the tracer.
 
 ## Licence
