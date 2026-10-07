@@ -1,0 +1,163 @@
+[
+  {
+    "item": 1,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `DAILY_WITHDRAWAL_LIMIT = 5000`",
+    "lines": [
+      9
+    ]
+  },
+  {
+    "item": 2,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `MAX_FEE_CENTS = 2500`",
+    "lines": [
+      12
+    ]
+  },
+  {
+    "item": 3,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `cents / 100`",
+    "lines": [
+      20
+    ]
+  },
+  {
+    "item": 4,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `Math.ceil((cents * FEE_PERCENT) / 100 - 1e-9)`",
+    "lines": [
+      24
+    ]
+  },
+  {
+    "item": 5,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `!this.balances.has(account)`",
+    "lines": [
+      35
+    ]
+  },
+  {
+    "item": 6,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `this.balances.get(account) ?? 0`",
+    "lines": [
+      42
+    ]
+  },
+  {
+    "item": 7,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `this.seen.has(txnId)`",
+    "lines": [
+      51
+    ]
+  },
+  {
+    "item": 8,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `!(amount > 0) || !(rate > 0)`",
+    "lines": [
+      59
+    ]
+  },
+  {
+    "item": 9,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `this.seen.has(txnId)`",
+    "lines": [
+      60
+    ]
+  },
+  {
+    "item": 10,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `this.seen.has(txnId)`",
+    "lines": [
+      71
+    ]
+  },
+  {
+    "item": 11,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `this.cents(account) - (cents + fee) < 0`",
+    "lines": [
+      75
+    ]
+  },
+  {
+    "item": 12,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `this.withdrawnToday.get(account) ?? 0`",
+    "lines": [
+      76
+    ]
+  },
+  {
+    "item": 13,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `used + cents > DAILY_WITHDRAWAL_LIMIT * 100`",
+    "lines": [
+      77
+    ]
+  },
+  {
+    "item": 14,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `this.seen.has(txnId)`",
+    "lines": [
+      86
+    ]
+  },
+  {
+    "item": 15,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `this.cents(from) - cents < 0`",
+    "lines": [
+      90
+    ]
+  },
+  {
+    "item": 16,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `recipients.length === 0`",
+    "lines": [
+      99
+    ]
+  },
+  {
+    "item": 17,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `this.seen.has(txnId)`",
+    "lines": [
+      100
+    ]
+  },
+  {
+    "item": 18,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `this.cents(from) - cents < 0`",
+    "lines": [
+      104
+    ]
+  },
+  {
+    "item": 19,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `Math.floor(cents / recipients.length)`",
+    "lines": [
+      105
+    ]
+  },
+  {
+    "item": 20,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `i < remainder`",
+    "lines": [
+      108
+    ]
+  },
+  {
+    "item": 21,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `!(annualRatePercent > 0) || !(days > 0)`",
+    "lines": [
+      114
+    ]
+  },
+  {
+    "item": 22,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `this.seen.has(txnId)`",
+    "lines": [
+      115
+    ]
+  },
+  {
+    "item": 23,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `this.balances.get(account) ?? 0`",
+    "lines": [
+      126
+    ]
+  }
+]

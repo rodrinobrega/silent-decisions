@@ -1,0 +1,308 @@
+[
+  {
+    "item": 1,
+    "text": "Withdrawals are capped at a daily limit of 5000.00 per account, rejected with 'daily-limit' when exceeded.",
+    "lines": [
+      9,
+      76,
+      77
+    ]
+  },
+  {
+    "item": 2,
+    "text": "The daily withdrawal counter is never reset, so the 'daily' limit is effectively a lifetime limit for the ledger instance.",
+    "lines": [
+      32,
+      78
+    ]
+  },
+  {
+    "item": 3,
+    "text": "The daily limit counts only the withdrawn amount, not the fee.",
+    "lines": [
+      77,
+      78
+    ]
+  },
+  {
+    "item": 4,
+    "text": "The withdrawal fee is capped at a maximum of 25.00.",
+    "lines": [
+      12,
+      25
+    ]
+  },
+  {
+    "item": 5,
+    "text": "The 1% fee is rounded up to the next cent (ceiling), a rounding mode the plan does not specify.",
+    "lines": [
+      24
+    ]
+  },
+  {
+    "item": 6,
+    "text": "Cent rounding adds a 1e-7 epsilon before rounding to compensate for floating-point error, which can shift values just below a half upward.",
+    "lines": [
+      16
+    ]
+  },
+  {
+    "item": 7,
+    "text": "The fee is charged on top of the withdrawal amount (debited in addition) rather than deducted from it.",
+    "lines": [
+      74,
+      75,
+      79
+    ]
+  },
+  {
+    "item": 8,
+    "text": "Withdrawals, transfers and split payments are rejected with 'insufficient-funds' if they would make the balance negative; overdraft policy is not in the plan.",
+    "lines": [
+      75,
+      90,
+      104
+    ]
+  },
+  {
+    "item": 9,
+    "text": "For withdrawals the funds check includes the fee, so a withdrawal is rejected if the balance covers the amount but not amount plus fee.",
+    "lines": [
+      75
+    ]
+  },
+  {
+    "item": 10,
+    "text": "When a withdrawal fails both the funds and daily-limit checks, insufficient-funds is reported first.",
+    "lines": [
+      75,
+      77
+    ]
+  },
+  {
+    "item": 11,
+    "text": "A repeated transaction id returns success without re-applying and without checking that the retry has the same account, amount or operation.",
+    "lines": [
+      51,
+      60,
+      71,
+      86,
+      100,
+      115
+    ]
+  },
+  {
+    "item": 12,
+    "text": "Transaction ids share one global namespace across all accounts and all operation types.",
+    "lines": [
+      31
+    ]
+  },
+  {
+    "item": 13,
+    "text": "Input validation runs before the duplicate check, so a retry with an invalid amount (or empty recipients) is rejected even if the id was already accepted.",
+    "lines": [
+      50,
+      51,
+      59,
+      60,
+      98,
+      99,
+      100,
+      114,
+      115
+    ]
+  },
+  {
+    "item": 14,
+    "text": "Rejected operations do not record their transaction id, so a retry of a rejected id can later succeed.",
+    "lines": [
+      54,
+      65,
+      80,
+      93,
+      109,
+      121
+    ]
+  },
+  {
+    "item": 15,
+    "text": "Accounts are created implicitly on first use by any operation, including withdrawal, transfer source and split recipients; there is no unknown-account error.",
+    "lines": [
+      34,
+      52,
+      63,
+      72,
+      87,
+      88,
+      101,
+      102,
+      116
+    ]
+  },
+  {
+    "item": 16,
+    "text": "Accounts are opened even when the operation is subsequently rejected (e.g. insufficient funds).",
+    "lines": [
+      72,
+      75,
+      87,
+      88,
+      90,
+      101,
+      102,
+      104
+    ]
+  },
+  {
+    "item": 17,
+    "text": "Querying the balance of an unknown account returns 0 and its history returns an empty list instead of an error.",
+    "lines": [
+      42,
+      46
+    ]
+  },
+  {
+    "item": 18,
+    "text": "The positivity check is applied to the raw amount, so amounts that round to 0 cents (e.g. 0.004) are accepted and recorded as zero entries, and a zero-cent withdrawal still incurs the 0.50 fee.",
+    "lines": [
+      50,
+      53,
+      70,
+      73,
+      74,
+      85,
+      89
+    ]
+  },
+  {
+    "item": 19,
+    "text": "Infinity passes the amount > 0 check and is accepted as a valid amount.",
+    "lines": [
+      50,
+      59,
+      70,
+      85,
+      98,
+      114
+    ]
+  },
+  {
+    "item": 20,
+    "text": "Foreign deposits reject a non-positive exchange rate, reported with the generic reason 'invalid-amount'.",
+    "lines": [
+      59
+    ]
+  },
+  {
+    "item": 21,
+    "text": "Foreign deposits whose converted value rounds to 0 cents are rejected with 'amount-too-small'.",
+    "lines": [
+      62
+    ]
+  },
+  {
+    "item": 22,
+    "text": "Foreign conversion is rounded half away from zero (via toCents) instead of half to even.",
+    "lines": [
+      61
+    ]
+  },
+  {
+    "item": 23,
+    "text": "Foreign deposits are recorded as a plain 'deposit' entry with no currency, original amount or rate kept.",
+    "lines": [
+      64
+    ]
+  },
+  {
+    "item": 24,
+    "text": "Transfers and split payments are charged no fee; only withdrawals are.",
+    "lines": [
+      91,
+      107
+    ]
+  },
+  {
+    "item": 25,
+    "text": "In a split, leftover cents from uneven division go one each to the first recipients in list order.",
+    "lines": [
+      105,
+      106,
+      108
+    ]
+  },
+  {
+    "item": 26,
+    "text": "A split with an empty recipient list is rejected with 'no-recipients'.",
+    "lines": [
+      99
+    ]
+  },
+  {
+    "item": 27,
+    "text": "Split recipients may repeat or include the payer, and recipients whose share is 0 cents still get a zero entry.",
+    "lines": [
+      102,
+      108
+    ]
+  },
+  {
+    "item": 28,
+    "text": "A split records a single 'split-out' debit for the whole amount on the payer rather than one entry per recipient.",
+    "lines": [
+      107
+    ]
+  },
+  {
+    "item": 29,
+    "text": "Interest is rounded down (floored) to the cent, with a 1e-7 epsilon.",
+    "lines": [
+      118
+    ]
+  },
+  {
+    "item": 30,
+    "text": "The interest rate is interpreted as a percentage (5 means 5%), and simple (non-compounding) interest is used.",
+    "lines": [
+      113,
+      117
+    ]
+  },
+  {
+    "item": 31,
+    "text": "Zero or negative interest rates and non-positive day counts are rejected; fractional days are accepted.",
+    "lines": [
+      114
+    ]
+  },
+  {
+    "item": 32,
+    "text": "Interest that rounds to 0 cents returns success without recording an entry or the transaction id.",
+    "lines": [
+      119
+    ]
+  },
+  {
+    "item": 33,
+    "text": "Errors are returned as {ok:false, reason} values with fixed reason strings rather than thrown.",
+    "lines": [
+      1
+    ]
+  },
+  {
+    "item": 34,
+    "text": "History entries store amounts as unsigned decimal units (not cents), with direction implied only by kind.",
+    "lines": [
+      131,
+      136
+    ]
+  },
+  {
+    "item": 35,
+    "text": "Balances are exposed as decimal units converted from cents.",
+    "lines": [
+      42
+    ]
+  }
+]

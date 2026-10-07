@@ -1,0 +1,195 @@
+[
+  {
+    "item": 1,
+    "text": "Withdrawals are capped by a hard-coded daily limit of 5000 per account.",
+    "lines": [
+      10,
+      57,
+      58,
+      59
+    ]
+  },
+  {
+    "item": 2,
+    "text": "The 'daily' withdrawal total is never reset, so the limit is effectively a lifetime cap per Ledger instance.",
+    "lines": [
+      21,
+      57,
+      59
+    ]
+  },
+  {
+    "item": 3,
+    "text": "Transfers out of an account are not counted against the daily withdrawal limit.",
+    "lines": [
+      66,
+      71,
+      72,
+      73
+    ]
+  },
+  {
+    "item": 4,
+    "text": "All amounts are rounded to two decimal places (cents) using Math.round, i.e. half rounds up toward positive infinity, on binary floating-point values.",
+    "lines": [
+      12,
+      13,
+      14,
+      43,
+      54,
+      71
+    ]
+  },
+  {
+    "item": 5,
+    "text": "Positivity is checked before rounding, so a tiny positive amount such as 0.001 is accepted and recorded as a zero-value operation.",
+    "lines": [
+      39,
+      43,
+      51,
+      54,
+      67,
+      71
+    ]
+  },
+  {
+    "item": 6,
+    "text": "Amount validation uses !(amount > 0), which rejects NaN but accepts Infinity.",
+    "lines": [
+      39,
+      51,
+      67
+    ]
+  },
+  {
+    "item": 7,
+    "text": "Balances are stored and summed as floating-point numbers rather than integer cents.",
+    "lines": [
+      18,
+      44,
+      60,
+      73,
+      74
+    ]
+  },
+  {
+    "item": 8,
+    "text": "Overdrafts are forbidden: a withdrawal or transfer that would make the balance negative is rejected with 'insufficient-funds'.",
+    "lines": [
+      55,
+      56,
+      72
+    ]
+  },
+  {
+    "item": 9,
+    "text": "A repeated transaction id is acknowledged with ok:true and ignored, without checking that the account, amount or operation type match the original.",
+    "lines": [
+      40,
+      41,
+      52,
+      68
+    ]
+  },
+  {
+    "item": 10,
+    "text": "Transaction ids are deduplicated in one global set shared across all accounts and operation kinds, kept forever with no expiry.",
+    "lines": [
+      20,
+      46,
+      62,
+      77
+    ]
+  },
+  {
+    "item": 11,
+    "text": "Amount validation runs before the duplicate check, so a retry with an invalid amount is rejected even if the id was already processed.",
+    "lines": [
+      39,
+      41,
+      51,
+      52,
+      67,
+      68
+    ]
+  },
+  {
+    "item": 12,
+    "text": "Rejected operations do not record their transaction id, so the same id can later be reused and succeed.",
+    "lines": [
+      56,
+      58,
+      72
+    ]
+  },
+  {
+    "item": 13,
+    "text": "Accounts are created implicitly with a zero balance on first use by any operation, including operations that are then rejected.",
+    "lines": [
+      23,
+      24,
+      25,
+      26,
+      42,
+      53,
+      69,
+      70
+    ]
+  },
+  {
+    "item": 14,
+    "text": "Querying the balance or history of an unknown account returns 0 or an empty list rather than an error.",
+    "lines": [
+      31,
+      35
+    ]
+  },
+  {
+    "item": 15,
+    "text": "Failures are reported as a result object with a reason string rather than by throwing.",
+    "lines": [
+      2,
+      39,
+      56,
+      58,
+      72
+    ]
+  },
+  {
+    "item": 16,
+    "text": "A transfer is recorded as two history entries, transfer-out on the source and transfer-in on the destination, sharing the same transaction id.",
+    "lines": [
+      6,
+      75,
+      76
+    ]
+  },
+  {
+    "item": 17,
+    "text": "History entries hold only txnId, kind and amount, with no timestamp, counterparty or resulting balance.",
+    "lines": [
+      4,
+      5,
+      6,
+      7,
+      8
+    ]
+  },
+  {
+    "item": 18,
+    "text": "Transaction ids and account ids are not validated, so empty or arbitrary strings are accepted.",
+    "lines": [
+      38,
+      50,
+      66
+    ]
+  },
+  {
+    "item": 19,
+    "text": "Withdrawal checks insufficient funds before the daily limit, which determines which reason is reported when both apply.",
+    "lines": [
+      56,
+      58
+    ]
+  }
+]

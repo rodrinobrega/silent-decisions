@@ -1,0 +1,1362 @@
+[
+  {
+    "case": "ledger-rounding",
+    "retest": {
+      "list": "006/b-3",
+      "items": 30,
+      "same_verdict": 30,
+      "differing": []
+    }
+  },
+  {
+    "case": "ledger-rounding",
+    "source": "006/a-1",
+    "arm": "a",
+    "flagged": 34,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 1,
+    "found": [
+      "T1",
+      "T11",
+      "T13",
+      "T14",
+      "T15",
+      "T16",
+      "T17",
+      "T18",
+      "T19",
+      "T2",
+      "T20",
+      "T22",
+      "T23",
+      "T24",
+      "T4",
+      "T5",
+      "T8",
+      "T9"
+    ],
+    "missed": [
+      "T7",
+      "T10",
+      "T12",
+      "T21"
+    ],
+    "recall": 0.818,
+    "recall_without_post_hoc": 0.818,
+    "precision": 0.852,
+    "valid_unlisted": [
+      "#2",
+      "#20",
+      "#22",
+      "#24",
+      "#25",
+      "#31",
+      "#33"
+    ],
+    "misbucketed": [
+      "#6→T25",
+      "#16→T6",
+      "#17→T26"
+    ],
+    "false_positives": [
+      "#18",
+      "#19",
+      "#23",
+      "#34"
+    ],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 3,
+      "found": 3,
+      "flagged": 3,
+      "precision": 1,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger-rounding/adjudication/run-006-a-1.blind.json"
+  },
+  {
+    "case": "ledger-rounding",
+    "source": "006/b-1",
+    "arm": "b",
+    "flagged": 35,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 1,
+    "found": [
+      "T1",
+      "T11",
+      "T13",
+      "T14",
+      "T15",
+      "T16",
+      "T17",
+      "T18",
+      "T19",
+      "T2",
+      "T20",
+      "T21",
+      "T22",
+      "T23",
+      "T24",
+      "T4",
+      "T5",
+      "T8",
+      "T9"
+    ],
+    "missed": [
+      "T7",
+      "T10",
+      "T12"
+    ],
+    "recall": 0.864,
+    "recall_without_post_hoc": 0.864,
+    "precision": 0.96,
+    "valid_unlisted": [
+      "#2",
+      "#7",
+      "#19",
+      "#23",
+      "#27",
+      "#28",
+      "#30",
+      "#33",
+      "#34",
+      "#35"
+    ],
+    "misbucketed": [
+      "#22→T26"
+    ],
+    "false_positives": [
+      "#6"
+    ],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 3,
+      "found": 3,
+      "flagged": 3,
+      "precision": 1,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger-rounding/adjudication/run-006-b-1.blind.json"
+  },
+  {
+    "case": "ledger-rounding",
+    "source": "006/d-1",
+    "arm": "d",
+    "flagged": 54,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 1,
+    "found": [
+      "T1",
+      "T11",
+      "T13",
+      "T14",
+      "T15",
+      "T16",
+      "T17",
+      "T18",
+      "T19",
+      "T2",
+      "T20",
+      "T21",
+      "T22",
+      "T23",
+      "T24",
+      "T4",
+      "T5",
+      "T7",
+      "T8",
+      "T9"
+    ],
+    "missed": [
+      "T10",
+      "T12"
+    ],
+    "recall": 0.909,
+    "recall_without_post_hoc": 0.909,
+    "precision": 0.765,
+    "valid_unlisted": [
+      "B-034",
+      "B-048",
+      "B-053"
+    ],
+    "misbucketed": [
+      "B-012→T26",
+      "B-016→T26",
+      "B-020→T25",
+      "B-044→T6"
+    ],
+    "false_positives": [
+      "B-001",
+      "B-006",
+      "B-011",
+      "B-019",
+      "B-021",
+      "B-023",
+      "B-029",
+      "B-042",
+      "B-050",
+      "B-054",
+      "B-056",
+      "B-059"
+    ],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 3,
+      "found": 3,
+      "flagged": 3,
+      "precision": 1,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger-rounding/adjudication/run-006-d-1.blind.json"
+  },
+  {
+    "case": "ledger-rounding",
+    "source": "005/e-b",
+    "arm": "e",
+    "flagged": 30,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 1,
+    "found": [
+      "T1",
+      "T11",
+      "T14",
+      "T15",
+      "T16",
+      "T17",
+      "T18",
+      "T19",
+      "T2",
+      "T20",
+      "T21",
+      "T22",
+      "T23",
+      "T24",
+      "T4",
+      "T5",
+      "T7",
+      "T9"
+    ],
+    "missed": [
+      "T8",
+      "T10",
+      "T12",
+      "T13"
+    ],
+    "recall": 0.818,
+    "recall_without_post_hoc": 0.818,
+    "precision": 0.8,
+    "valid_unlisted": [],
+    "misbucketed": [
+      "B-045→T26"
+    ],
+    "false_positives": [
+      "B-001",
+      "B-011",
+      "B-012",
+      "B-034",
+      "B-035",
+      "B-041"
+    ],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 3,
+      "found": 3,
+      "flagged": 3,
+      "precision": 1,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger-rounding/adjudication/run-005-e-b.blind.json"
+  },
+  {
+    "case": "ledger-rounding",
+    "source": "006/b-2",
+    "arm": "b",
+    "flagged": 35,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 1,
+    "found": [
+      "T1",
+      "T11",
+      "T13",
+      "T14",
+      "T15",
+      "T16",
+      "T17",
+      "T18",
+      "T19",
+      "T2",
+      "T20",
+      "T21",
+      "T22",
+      "T23",
+      "T24",
+      "T4",
+      "T5",
+      "T8",
+      "T9"
+    ],
+    "missed": [
+      "T7",
+      "T10",
+      "T12"
+    ],
+    "recall": 0.864,
+    "recall_without_post_hoc": 0.864,
+    "precision": 0.962,
+    "valid_unlisted": [
+      "#1",
+      "#3",
+      "#17",
+      "#24",
+      "#28",
+      "#29",
+      "#30",
+      "#34",
+      "#35"
+    ],
+    "misbucketed": [
+      "#9→T25",
+      "#13→T26",
+      "#25→T6"
+    ],
+    "false_positives": [
+      "#12"
+    ],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 3,
+      "found": 3,
+      "flagged": 3,
+      "precision": 1,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger-rounding/adjudication/run-006-b-2.blind.json"
+  },
+  {
+    "case": "ledger-rounding",
+    "source": "006/a-3",
+    "arm": "a",
+    "flagged": 44,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 1,
+    "found": [
+      "T1",
+      "T11",
+      "T13",
+      "T14",
+      "T15",
+      "T16",
+      "T17",
+      "T18",
+      "T19",
+      "T2",
+      "T20",
+      "T21",
+      "T22",
+      "T23",
+      "T24",
+      "T4",
+      "T5",
+      "T8",
+      "T9"
+    ],
+    "missed": [
+      "T7",
+      "T10",
+      "T12"
+    ],
+    "recall": 0.864,
+    "recall_without_post_hoc": 0.864,
+    "precision": 0.867,
+    "valid_unlisted": [
+      "#2",
+      "#6",
+      "#12",
+      "#15",
+      "#18",
+      "#19",
+      "#24",
+      "#33",
+      "#34",
+      "#35",
+      "#36",
+      "#40",
+      "#41",
+      "#42"
+    ],
+    "misbucketed": [
+      "#8→T26",
+      "#29→T25",
+      "#30→T6"
+    ],
+    "false_positives": [
+      "#7",
+      "#9",
+      "#43",
+      "#44"
+    ],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 3,
+      "found": 3,
+      "flagged": 3,
+      "precision": 1,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger-rounding/adjudication/run-006-a-3.blind.json"
+  },
+  {
+    "case": "ledger-rounding",
+    "source": "006/a-2",
+    "arm": "a",
+    "flagged": 30,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 1,
+    "found": [
+      "T1",
+      "T11",
+      "T13",
+      "T14",
+      "T15",
+      "T16",
+      "T17",
+      "T18",
+      "T19",
+      "T2",
+      "T20",
+      "T21",
+      "T22",
+      "T24",
+      "T4",
+      "T5",
+      "T8",
+      "T9"
+    ],
+    "missed": [
+      "T7",
+      "T10",
+      "T12",
+      "T23"
+    ],
+    "recall": 0.818,
+    "recall_without_post_hoc": 0.818,
+    "precision": 0.955,
+    "valid_unlisted": [
+      "#2",
+      "#6",
+      "#19",
+      "#20",
+      "#23",
+      "#27",
+      "#29",
+      "#30"
+    ],
+    "misbucketed": [
+      "#21→T26"
+    ],
+    "false_positives": [
+      "#17"
+    ],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 3,
+      "found": 3,
+      "flagged": 4,
+      "precision": 0.75,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger-rounding/adjudication/run-006-a-2.blind.json"
+  },
+  {
+    "case": "ledger-rounding",
+    "source": "005/e-c",
+    "arm": "e",
+    "flagged": 38,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 1,
+    "found": [
+      "T1",
+      "T11",
+      "T12",
+      "T13",
+      "T14",
+      "T15",
+      "T16",
+      "T17",
+      "T18",
+      "T19",
+      "T2",
+      "T20",
+      "T21",
+      "T22",
+      "T23",
+      "T24",
+      "T4",
+      "T5",
+      "T7",
+      "T8",
+      "T9"
+    ],
+    "missed": [
+      "T10"
+    ],
+    "recall": 0.955,
+    "recall_without_post_hoc": 0.955,
+    "precision": 0.816,
+    "valid_unlisted": [],
+    "misbucketed": [],
+    "false_positives": [
+      "B-003",
+      "B-013",
+      "B-017",
+      "B-018",
+      "B-019",
+      "B-026",
+      "B-045"
+    ],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 3,
+      "found": 3,
+      "flagged": 3,
+      "precision": 1,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger-rounding/adjudication/run-005-e-c.blind.json"
+  },
+  {
+    "case": "ledger-rounding",
+    "source": "006/c-1",
+    "arm": "c",
+    "flagged": 34,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 1,
+    "found": [
+      "T1",
+      "T11",
+      "T14",
+      "T15",
+      "T16",
+      "T17",
+      "T18",
+      "T19",
+      "T2",
+      "T20",
+      "T21",
+      "T22",
+      "T23",
+      "T24",
+      "T4",
+      "T5",
+      "T7",
+      "T8",
+      "T9"
+    ],
+    "missed": [
+      "T10",
+      "T12",
+      "T13"
+    ],
+    "recall": 0.864,
+    "recall_without_post_hoc": 0.864,
+    "precision": 0.824,
+    "valid_unlisted": [],
+    "misbucketed": [
+      "B-008→T26",
+      "B-013→T25",
+      "B-026→T6"
+    ],
+    "false_positives": [
+      "B-007",
+      "B-011",
+      "B-012",
+      "B-022",
+      "B-027",
+      "B-035"
+    ],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 3,
+      "found": 3,
+      "flagged": 3,
+      "precision": 1,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger-rounding/adjudication/run-006-c-1.blind.json"
+  },
+  {
+    "case": "ledger-rounding",
+    "source": "005/e-a",
+    "arm": "e",
+    "flagged": 20,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 1,
+    "found": [
+      "T1",
+      "T11",
+      "T13",
+      "T14",
+      "T15",
+      "T16",
+      "T18",
+      "T19",
+      "T2",
+      "T20",
+      "T21",
+      "T23",
+      "T4",
+      "T5",
+      "T7",
+      "T9"
+    ],
+    "missed": [
+      "T8",
+      "T10",
+      "T12",
+      "T17",
+      "T22",
+      "T24"
+    ],
+    "recall": 0.727,
+    "recall_without_post_hoc": 0.727,
+    "precision": 0.947,
+    "valid_unlisted": [
+      "B-025"
+    ],
+    "misbucketed": [],
+    "false_positives": [
+      "B-030"
+    ],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 3,
+      "found": 3,
+      "flagged": 3,
+      "precision": 1,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger-rounding/adjudication/run-005-e-a.blind.json"
+  },
+  {
+    "case": "ledger-rounding",
+    "source": "006/b-3",
+    "arm": "b",
+    "flagged": 30,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 1,
+    "found": [
+      "T1",
+      "T11",
+      "T13",
+      "T14",
+      "T15",
+      "T16",
+      "T17",
+      "T18",
+      "T19",
+      "T2",
+      "T20",
+      "T21",
+      "T22",
+      "T23",
+      "T4",
+      "T5"
+    ],
+    "missed": [
+      "T7",
+      "T8",
+      "T9",
+      "T10",
+      "T12",
+      "T24"
+    ],
+    "recall": 0.727,
+    "recall_without_post_hoc": 0.727,
+    "precision": 0.87,
+    "valid_unlisted": [
+      "#2",
+      "#15",
+      "#16",
+      "#20",
+      "#22",
+      "#28",
+      "#29"
+    ],
+    "misbucketed": [
+      "#21→T25"
+    ],
+    "false_positives": [
+      "#8",
+      "#18",
+      "#30"
+    ],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 3,
+      "found": 3,
+      "flagged": 3,
+      "precision": 1,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger-rounding/adjudication/run-006-b-3.blind.json"
+  },
+  {
+    "case": "ledger-rounding",
+    "source": "005/f",
+    "arm": "f",
+    "flagged": 23,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 1,
+    "found": [],
+    "missed": [
+      "T1",
+      "T2",
+      "T4",
+      "T5",
+      "T7",
+      "T8",
+      "T9",
+      "T10",
+      "T11",
+      "T12",
+      "T13",
+      "T14",
+      "T15",
+      "T16",
+      "T17",
+      "T18",
+      "T19",
+      "T20",
+      "T21",
+      "T22",
+      "T23",
+      "T24"
+    ],
+    "recall": 0,
+    "recall_without_post_hoc": 0,
+    "precision": 0,
+    "valid_unlisted": [],
+    "misbucketed": [],
+    "false_positives": [
+      "C-001",
+      "C-004",
+      "C-007",
+      "C-008",
+      "C-009",
+      "C-010",
+      "C-012",
+      "C-013",
+      "C-014",
+      "C-017",
+      "C-018",
+      "C-019",
+      "C-020",
+      "C-022",
+      "C-023",
+      "C-025",
+      "C-026",
+      "C-027",
+      "C-028",
+      "C-029",
+      "C-030",
+      "C-031",
+      "C-035"
+    ],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 3,
+      "found": 3,
+      "flagged": 13,
+      "precision": 0.231,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger-rounding/adjudication/run-005-f.blind.json"
+  },
+  {
+    "case": "ledger",
+    "retest": {
+      "list": "007/b-3",
+      "items": 20,
+      "same_verdict": 20,
+      "differing": []
+    }
+  },
+  {
+    "case": "ledger",
+    "source": "003/e-c",
+    "arm": "e",
+    "flagged": 28,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 2,
+    "found": [
+      "T1",
+      "T10",
+      "T11",
+      "T2",
+      "T3",
+      "T4",
+      "T5",
+      "T7",
+      "T8",
+      "T9"
+    ],
+    "missed": [],
+    "recall": 1,
+    "recall_without_post_hoc": 1,
+    "precision": 0.958,
+    "valid_unlisted": [
+      "B-002",
+      "B-005",
+      "B-013",
+      "B-037"
+    ],
+    "misbucketed": [
+      "B-044→T6"
+    ],
+    "false_positives": [
+      "B-003"
+    ],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 1,
+      "found": 1,
+      "flagged": 1,
+      "precision": 1,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger/adjudication/run-003-e-c.blind.json"
+  },
+  {
+    "case": "ledger",
+    "source": "007/a-3",
+    "arm": "a",
+    "flagged": 24,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 2,
+    "found": [
+      "T1",
+      "T10",
+      "T11",
+      "T2",
+      "T3",
+      "T4",
+      "T5",
+      "T8",
+      "T9"
+    ],
+    "missed": [
+      "T7"
+    ],
+    "recall": 0.9,
+    "recall_without_post_hoc": 1,
+    "precision": 0.846,
+    "valid_unlisted": [
+      "#2",
+      "#6",
+      "#7",
+      "#11",
+      "#12",
+      "#13",
+      "#15",
+      "#21",
+      "#22",
+      "#23",
+      "#24"
+    ],
+    "misbucketed": [],
+    "false_positives": [
+      "#16",
+      "#19"
+    ],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 1,
+      "found": 1,
+      "flagged": 1,
+      "precision": 1,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger/adjudication/run-007-a-3.blind.json"
+  },
+  {
+    "case": "ledger",
+    "source": "007/a-2",
+    "arm": "a",
+    "flagged": 20,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 2,
+    "found": [
+      "T1",
+      "T10",
+      "T11",
+      "T2",
+      "T3",
+      "T4",
+      "T5",
+      "T8",
+      "T9"
+    ],
+    "missed": [
+      "T7"
+    ],
+    "recall": 0.9,
+    "recall_without_post_hoc": 1,
+    "precision": 1,
+    "valid_unlisted": [
+      "#2",
+      "#6",
+      "#12",
+      "#13",
+      "#14",
+      "#16",
+      "#17",
+      "#18",
+      "#19",
+      "#20"
+    ],
+    "misbucketed": [],
+    "false_positives": [],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 1,
+      "found": 1,
+      "flagged": 1,
+      "precision": 1,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger/adjudication/run-007-a-2.blind.json"
+  },
+  {
+    "case": "ledger",
+    "source": "007/b-1",
+    "arm": "b",
+    "flagged": 23,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 2,
+    "found": [
+      "T1",
+      "T10",
+      "T11",
+      "T2",
+      "T3",
+      "T4",
+      "T5",
+      "T8",
+      "T9"
+    ],
+    "missed": [
+      "T7"
+    ],
+    "recall": 0.9,
+    "recall_without_post_hoc": 1,
+    "precision": 1,
+    "valid_unlisted": [
+      "#3",
+      "#8",
+      "#9",
+      "#14",
+      "#15",
+      "#16",
+      "#18",
+      "#19",
+      "#21",
+      "#22",
+      "#23"
+    ],
+    "misbucketed": [],
+    "false_positives": [],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 1,
+      "found": 1,
+      "flagged": 1,
+      "precision": 1,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger/adjudication/run-007-b-1.blind.json"
+  },
+  {
+    "case": "ledger",
+    "source": "003/e-a",
+    "arm": "e",
+    "flagged": 25,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 2,
+    "found": [
+      "T1",
+      "T10",
+      "T11",
+      "T2",
+      "T3",
+      "T4",
+      "T5",
+      "T7",
+      "T8",
+      "T9"
+    ],
+    "missed": [],
+    "recall": 1,
+    "recall_without_post_hoc": 1,
+    "precision": 1,
+    "valid_unlisted": [
+      "B-001",
+      "B-029",
+      "B-037"
+    ],
+    "misbucketed": [
+      "B-035→T6"
+    ],
+    "false_positives": [],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 1,
+      "found": 1,
+      "flagged": 1,
+      "precision": 1,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger/adjudication/run-003-e-a.blind.json"
+  },
+  {
+    "case": "ledger",
+    "source": "003/e-b",
+    "arm": "e",
+    "flagged": 25,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 2,
+    "found": [
+      "T1",
+      "T10",
+      "T11",
+      "T2",
+      "T3",
+      "T4",
+      "T5",
+      "T9"
+    ],
+    "missed": [
+      "T7",
+      "T8"
+    ],
+    "recall": 0.8,
+    "recall_without_post_hoc": 1,
+    "precision": 1,
+    "valid_unlisted": [
+      "B-001",
+      "B-004",
+      "B-005",
+      "B-020",
+      "B-033",
+      "B-037"
+    ],
+    "misbucketed": [
+      "B-038→T6"
+    ],
+    "false_positives": [],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 1,
+      "found": 1,
+      "flagged": 1,
+      "precision": 1,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger/adjudication/run-003-e-b.blind.json"
+  },
+  {
+    "case": "ledger",
+    "source": "003/f",
+    "arm": "f",
+    "flagged": 12,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 2,
+    "found": [],
+    "missed": [
+      "T1",
+      "T2",
+      "T3",
+      "T4",
+      "T5",
+      "T7",
+      "T8",
+      "T9",
+      "T10",
+      "T11"
+    ],
+    "recall": 0,
+    "recall_without_post_hoc": 0,
+    "precision": 0,
+    "valid_unlisted": [],
+    "misbucketed": [],
+    "false_positives": [
+      "C-001",
+      "C-002",
+      "C-003",
+      "C-004",
+      "C-005",
+      "C-007",
+      "C-009",
+      "C-010",
+      "C-011",
+      "C-012",
+      "C-014",
+      "C-015"
+    ],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 1,
+      "found": 1,
+      "flagged": 9,
+      "precision": 0.111,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger/adjudication/run-003-f.blind.json"
+  },
+  {
+    "case": "ledger",
+    "source": "007/a-1",
+    "arm": "a",
+    "flagged": 21,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 2,
+    "found": [
+      "T1",
+      "T10",
+      "T11",
+      "T2",
+      "T3",
+      "T4",
+      "T5",
+      "T8",
+      "T9"
+    ],
+    "missed": [
+      "T7"
+    ],
+    "recall": 0.9,
+    "recall_without_post_hoc": 1,
+    "precision": 1,
+    "valid_unlisted": [
+      "#2",
+      "#7",
+      "#8",
+      "#11",
+      "#14",
+      "#15",
+      "#16",
+      "#18",
+      "#19",
+      "#20"
+    ],
+    "misbucketed": [
+      "#21→T6"
+    ],
+    "false_positives": [],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 1,
+      "found": 1,
+      "flagged": 1,
+      "precision": 1,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger/adjudication/run-007-a-1.blind.json"
+  },
+  {
+    "case": "ledger",
+    "source": "007/b-2",
+    "arm": "b",
+    "flagged": 19,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 2,
+    "found": [
+      "T1",
+      "T10",
+      "T11",
+      "T2",
+      "T3",
+      "T4",
+      "T5",
+      "T8",
+      "T9"
+    ],
+    "missed": [
+      "T7"
+    ],
+    "recall": 0.9,
+    "recall_without_post_hoc": 1,
+    "precision": 1,
+    "valid_unlisted": [
+      "#2",
+      "#6",
+      "#7",
+      "#11",
+      "#13",
+      "#15",
+      "#16",
+      "#17",
+      "#18"
+    ],
+    "misbucketed": [],
+    "false_positives": [],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 1,
+      "found": 1,
+      "flagged": 1,
+      "precision": 1,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger/adjudication/run-007-b-2.blind.json"
+  },
+  {
+    "case": "ledger",
+    "source": "007/b-3",
+    "arm": "b",
+    "flagged": 20,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 2,
+    "found": [
+      "T1",
+      "T10",
+      "T11",
+      "T2",
+      "T3",
+      "T4",
+      "T5",
+      "T7",
+      "T8",
+      "T9"
+    ],
+    "missed": [],
+    "recall": 1,
+    "recall_without_post_hoc": 1,
+    "precision": 1,
+    "valid_unlisted": [
+      "#2",
+      "#6",
+      "#12",
+      "#13",
+      "#14",
+      "#17",
+      "#18",
+      "#19",
+      "#20"
+    ],
+    "misbucketed": [],
+    "false_positives": [],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 1,
+      "found": 1,
+      "flagged": 1,
+      "precision": 1,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger/adjudication/run-007-b-3.blind.json"
+  },
+  {
+    "case": "ledger",
+    "source": "007/c-1",
+    "arm": "c",
+    "flagged": 35,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 2,
+    "found": [
+      "T1",
+      "T10",
+      "T11",
+      "T2",
+      "T3",
+      "T4",
+      "T5",
+      "T7",
+      "T8",
+      "T9"
+    ],
+    "missed": [],
+    "recall": 1,
+    "recall_without_post_hoc": 1,
+    "precision": 0.862,
+    "valid_unlisted": [
+      "B-003",
+      "B-008",
+      "B-016",
+      "B-032",
+      "B-035",
+      "B-042"
+    ],
+    "misbucketed": [
+      "B-036→T6"
+    ],
+    "false_positives": [
+      "B-009",
+      "B-017",
+      "B-020",
+      "B-039"
+    ],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 1,
+      "found": 1,
+      "flagged": 1,
+      "precision": 1,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger/adjudication/run-007-c-1.blind.json"
+  },
+  {
+    "case": "ledger",
+    "source": "007/d-1",
+    "arm": "d",
+    "flagged": 39,
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 2,
+    "found": [
+      "T1",
+      "T10",
+      "T11",
+      "T2",
+      "T3",
+      "T4",
+      "T5",
+      "T7",
+      "T8",
+      "T9"
+    ],
+    "missed": [],
+    "recall": 1,
+    "recall_without_post_hoc": 1,
+    "precision": 0.735,
+    "valid_unlisted": [
+      "B-002",
+      "B-005",
+      "B-011",
+      "B-031",
+      "B-039"
+    ],
+    "misbucketed": [
+      "B-037→T6"
+    ],
+    "false_positives": [
+      "B-004",
+      "B-006",
+      "B-007",
+      "B-008",
+      "B-009",
+      "B-020",
+      "B-021",
+      "B-034",
+      "B-035"
+    ],
+    "unadjudicated": [],
+    "dropped": {
+      "truth": 1,
+      "found": 1,
+      "flagged": 1,
+      "precision": 1,
+      "recall": 1
+    },
+    "adjPath": "experiment/cases/ledger/adjudication/run-007-d-1.blind.json"
+  }
+]

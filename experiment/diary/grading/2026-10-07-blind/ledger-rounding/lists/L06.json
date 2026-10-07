@@ -1,0 +1,373 @@
+[
+  {
+    "item": 1,
+    "text": "Withdrawals are capped by a daily limit of 5000.00 per account, which the plan never mentions.",
+    "lines": [
+      9,
+      77
+    ]
+  },
+  {
+    "item": 2,
+    "text": "The daily withdrawal counter never resets, so the 'daily' limit is in fact a lifetime limit per account.",
+    "lines": [
+      32,
+      76,
+      78
+    ]
+  },
+  {
+    "item": 3,
+    "text": "The daily limit counts only the withdrawn amount and excludes the fee.",
+    "lines": [
+      77,
+      78
+    ]
+  },
+  {
+    "item": 4,
+    "text": "The withdrawal fee is capped at a maximum of 25.00, which the plan does not specify.",
+    "lines": [
+      12,
+      25
+    ]
+  },
+  {
+    "item": 5,
+    "text": "The 1% withdrawal fee is rounded up to the next cent, not to the nearest cent.",
+    "lines": [
+      24
+    ]
+  },
+  {
+    "item": 6,
+    "text": "The 1% fee is computed on the amount after it has been rounded to cents.",
+    "lines": [
+      73,
+      74
+    ]
+  },
+  {
+    "item": 7,
+    "text": "Amount rounding adds a small epsilon (1e-7) before rounding to absorb floating-point error, which can shift values that sit just under a half cent.",
+    "lines": [
+      16
+    ]
+  },
+  {
+    "item": 8,
+    "text": "Foreign-currency deposits are rounded with halves away from zero, using the same helper as other amounts, rather than with halves to even.",
+    "lines": [
+      61
+    ]
+  },
+  {
+    "item": 9,
+    "text": "The foreign amount is converted unrounded, without first rounding it to two decimals in its own currency.",
+    "lines": [
+      61
+    ]
+  },
+  {
+    "item": 10,
+    "text": "A foreign deposit that converts to less than half a cent is rejected as 'amount-too-small'.",
+    "lines": [
+      62
+    ]
+  },
+  {
+    "item": 11,
+    "text": "The exchange rate must be positive or the deposit is rejected with the same 'invalid-amount' reason as a bad amount.",
+    "lines": [
+      59
+    ]
+  },
+  {
+    "item": 12,
+    "text": "Foreign deposits take no currency code, and the history records them as plain 'deposit' entries without the original amount, currency or rate.",
+    "lines": [
+      58,
+      64
+    ]
+  },
+  {
+    "item": 13,
+    "text": "A positive amount that rounds to zero cents (e.g. 0.001) is accepted and records a 0.00 entry for deposits, transfers and splits.",
+    "lines": [
+      50,
+      53,
+      85,
+      89,
+      98,
+      103
+    ]
+  },
+  {
+    "item": 14,
+    "text": "A withdrawal of a positive amount that rounds to zero cents is accepted and still charged the 0.50 minimum fee.",
+    "lines": [
+      70,
+      73,
+      74
+    ]
+  },
+  {
+    "item": 15,
+    "text": "Infinity passes the positive-number check and is accepted as an amount, while NaN is rejected.",
+    "lines": [
+      50,
+      59,
+      70,
+      85,
+      98,
+      114
+    ]
+  },
+  {
+    "item": 16,
+    "text": "A repeated transaction id returns success without doing anything, even when the retried request has a different account, amount or operation type.",
+    "lines": [
+      51,
+      60,
+      71,
+      86,
+      100,
+      115
+    ]
+  },
+  {
+    "item": 17,
+    "text": "Transaction ids are unique globally across all accounts and operation types, not per account.",
+    "lines": [
+      31
+    ]
+  },
+  {
+    "item": 18,
+    "text": "Transaction ids are kept in memory forever, with no expiry window.",
+    "lines": [
+      31
+    ]
+  },
+  {
+    "item": 19,
+    "text": "Empty or blank transaction ids are accepted without validation.",
+    "lines": [
+      51
+    ]
+  },
+  {
+    "item": 20,
+    "text": "Input validation runs before the duplicate check, so retrying a known id with an invalid amount is rejected instead of being treated as a replay.",
+    "lines": [
+      50,
+      51,
+      59,
+      60,
+      70,
+      71,
+      85,
+      86,
+      98,
+      99,
+      100,
+      114,
+      115
+    ]
+  },
+  {
+    "item": 21,
+    "text": "Rejected operations do not record their transaction id, so a retry with the same id can succeed later, for example after funds arrive.",
+    "lines": [
+      75,
+      77,
+      90,
+      104
+    ]
+  },
+  {
+    "item": 22,
+    "text": "Unknown accounts are created automatically by any operation, including withdrawals, transfers and splits from accounts that never existed.",
+    "lines": [
+      52,
+      63,
+      72,
+      87,
+      88,
+      101,
+      102,
+      116
+    ]
+  },
+  {
+    "item": 23,
+    "text": "Querying the balance or history of an unknown account returns 0 or an empty list instead of an error.",
+    "lines": [
+      42,
+      46
+    ]
+  },
+  {
+    "item": 24,
+    "text": "Account ids are not validated, so an empty string is a valid account.",
+    "lines": [
+      34
+    ]
+  },
+  {
+    "item": 25,
+    "text": "Overdrafts are not allowed: a withdrawal is rejected unless the balance covers the amount plus the fee.",
+    "lines": [
+      75
+    ]
+  },
+  {
+    "item": 26,
+    "text": "Transfers and splits are rejected if they would make the sender's balance negative.",
+    "lines": [
+      90,
+      104
+    ]
+  },
+  {
+    "item": 27,
+    "text": "The insufficient-funds check runs before the daily-limit check, which determines which rejection reason the customer sees.",
+    "lines": [
+      75,
+      77
+    ]
+  },
+  {
+    "item": 28,
+    "text": "Transfers and split payments carry no fee; only withdrawals are charged.",
+    "lines": [
+      91,
+      107
+    ]
+  },
+  {
+    "item": 29,
+    "text": "The withdrawal and its fee are debited together as one combined history entry.",
+    "lines": [
+      79
+    ]
+  },
+  {
+    "item": 30,
+    "text": "A transfer to the same account is allowed and records both a transfer-out and a transfer-in on that account.",
+    "lines": [
+      84,
+      91,
+      92
+    ]
+  },
+  {
+    "item": 31,
+    "text": "In a split payment, leftover cents go one each to the first recipients in list order.",
+    "lines": [
+      105,
+      106,
+      108
+    ]
+  },
+  {
+    "item": 32,
+    "text": "A split with an empty recipient list is rejected as 'no-recipients'.",
+    "lines": [
+      99
+    ]
+  },
+  {
+    "item": 33,
+    "text": "Split recipients are not deduplicated, and the payer may be a recipient, so one account can receive several shares.",
+    "lines": [
+      102,
+      108
+    ]
+  },
+  {
+    "item": 34,
+    "text": "The payer's side of a split is recorded as one 'split-out' entry for the full amount, not one entry per recipient.",
+    "lines": [
+      107
+    ]
+  },
+  {
+    "item": 35,
+    "text": "The interest rate is read as a percentage (5 means 5%), not as a fraction.",
+    "lines": [
+      113,
+      117
+    ]
+  },
+  {
+    "item": 36,
+    "text": "Interest is simple, not compounded, on the current balance for the given days.",
+    "lines": [
+      117
+    ]
+  },
+  {
+    "item": 37,
+    "text": "Interest is rounded down to the cent.",
+    "lines": [
+      118
+    ]
+  },
+  {
+    "item": 38,
+    "text": "Interest that rounds to zero, or a zero or negative balance, returns success without recording an entry or the transaction id.",
+    "lines": [
+      119
+    ]
+  },
+  {
+    "item": 39,
+    "text": "Negative interest rates are rejected, and zero rates and zero days are rejected too.",
+    "lines": [
+      114
+    ]
+  },
+  {
+    "item": 40,
+    "text": "Fractional days are accepted for interest.",
+    "lines": [
+      114
+    ]
+  },
+  {
+    "item": 41,
+    "text": "History amounts are stored as unsigned decimal numbers, so debits and credits are distinguished only by entry kind.",
+    "lines": [
+      131,
+      136
+    ]
+  },
+  {
+    "item": 42,
+    "text": "Balances and history amounts are exposed as floating-point currency units rather than integer cents.",
+    "lines": [
+      20,
+      42,
+      131,
+      136
+    ]
+  },
+  {
+    "item": 43,
+    "text": "History entries have no timestamp or resulting balance.",
+    "lines": [
+      3,
+      4,
+      5,
+      6
+    ]
+  },
+  {
+    "item": 44,
+    "text": "Rejection reasons are free-form string codes chosen by the implementation.",
+    "lines": [
+      1
+    ]
+  }
+]

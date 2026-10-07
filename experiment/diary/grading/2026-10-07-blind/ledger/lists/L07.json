@@ -1,0 +1,86 @@
+[
+  {
+    "item": 1,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `DAILY_WITHDRAWAL_LIMIT = 5000`",
+    "lines": [
+      10
+    ]
+  },
+  {
+    "item": 2,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `Math.round(amount * 100)`",
+    "lines": [
+      14
+    ]
+  },
+  {
+    "item": 3,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `Math.round(amount * 100) / 100`",
+    "lines": [
+      14
+    ]
+  },
+  {
+    "item": 4,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `!this.balances.has(account)`",
+    "lines": [
+      24
+    ]
+  },
+  {
+    "item": 5,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `this.balances.get(account) ?? 0`",
+    "lines": [
+      31
+    ]
+  },
+  {
+    "item": 6,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `this.seen.has(txnId)`",
+    "lines": [
+      41
+    ]
+  },
+  {
+    "item": 7,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `this.seen.has(txnId)`",
+    "lines": [
+      52
+    ]
+  },
+  {
+    "item": 8,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `this.balance(account) - value < 0`",
+    "lines": [
+      56
+    ]
+  },
+  {
+    "item": 9,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `this.withdrawnToday.get(account) ?? 0`",
+    "lines": [
+      57
+    ]
+  },
+  {
+    "item": 10,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `used + value > DAILY_WITHDRAWAL_LIMIT`",
+    "lines": [
+      58
+    ]
+  },
+  {
+    "item": 11,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `this.seen.has(txnId)`",
+    "lines": [
+      68
+    ]
+  },
+  {
+    "item": 12,
+    "text": "The code makes a decision at this point, and no plan sentence covers it: `this.balance(from) - value < 0`",
+    "lines": [
+      72
+    ]
+  }
+]

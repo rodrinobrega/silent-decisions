@@ -1,0 +1,415 @@
+{
+  "arm": "c",
+  "case": "ledger",
+  "truth_version": 2,
+  "run": "20261006T063811-11a66f",
+  "scored_at": "2026-10-07T09:17:08.515Z",
+  "cost": null,
+  "silent_decisions": {
+    "truth": 10,
+    "found": 8,
+    "flagged": 35,
+    "flagged_without_lines": 5,
+    "precision": 0.857,
+    "recall": 0.8,
+    "per_item": [
+      {
+        "id": "T1",
+        "label": "no overdrafts (balance may not go below 0)",
+        "hits": [
+          "B-021 Withdrawing the entire balance is allowed (balance may reach exactly 0)",
+          "B-022 Withdrawing one cent more than the balance is rejected",
+          "B-023 A withdrawal rejected for insufficient funds can be retried with the same txnId later",
+          "B-024 Withdrawing from an account that was never funded is insufficient-funds",
+          "B-025 Insufficient funds is checked before the daily limit",
+          "B-040 Transferring the entire balance is allowed",
+          "B-041 Transferring one cent more than the balance is rejected"
+        ]
+      },
+      {
+        "id": "T2",
+        "label": "daily withdrawal cap of 5000",
+        "hits": [
+          "B-025 Insufficient funds is checked before the daily limit",
+          "B-026 A single withdrawal of exactly 5000 is within the daily limit",
+          "B-027 A single withdrawal of 5000.01 exceeds the daily limit",
+          "B-028 Withdrawals accumulate toward the 5000 daily limit",
+          "B-029 Once 5000 has been withdrawn, even 0.01 more is refused",
+          "B-030 A withdrawal refused for the daily limit does not count toward the limit",
+          "B-031 The daily limit is tracked per account",
+          "B-032 The 'daily' limit never resets when the date changes",
+          "B-033 The daily limit is checked on the rounded amount (5000.004 counts as 5000)",
+          "B-034 Transfers do not count toward the daily withdrawal limit"
+        ]
+      },
+      {
+        "id": "T3",
+        "label": "amounts rounded half-up to cents",
+        "hits": [
+          "B-013 Amounts are rounded to cents, half rounds up (0.125 becomes 0.13)",
+          "B-014 Amounts below half a cent round down (0.124 becomes 0.12)",
+          "B-015 A positive amount that rounds to 0 cents is accepted as a 0 deposit",
+          "B-016 The running balance itself is not rounded to cents",
+          "B-033 The daily limit is checked on the rounded amount (5000.004 counts as 5000)"
+        ]
+      },
+      {
+        "id": "T4",
+        "label": "repeated txn id with a different payload is acknowledged and ignored",
+        "hits": [
+          "B-007 A rejected (invalid-amount) deposit does not use up its txnId",
+          "B-008 The amount check runs before the retry check",
+          "B-009 Retrying a deposit with the same txnId is a no-op that reports success",
+          "B-010 A reused txnId with a different amount is silently ignored",
+          "B-011 txnIds are shared across all accounts",
+          "B-012 txnIds are shared across operation types",
+          "B-020 Retrying a withdrawal with the same txnId withdraws only once",
+          "B-023 A withdrawal rejected for insufficient funds can be retried with the same txnId later",
+          "B-039 Retrying a transfer with the same txnId moves money only once"
+        ]
+      },
+      {
+        "id": "T5",
+        "label": "unknown account reads as balance 0 instead of an error",
+        "hits": [
+          "B-001 An account never opened reads as balance 0 and empty history",
+          "B-024 Withdrawing from an account that was never funded is insufficient-funds"
+        ]
+      },
+      {
+        "id": "T7",
+        "label": "open() on an existing account is a silent no-op (not an error, not a reset)",
+        "hits": [
+          "B-002 Opening an existing account again does not reset it"
+        ]
+      },
+      {
+        "id": "T8",
+        "label": "amount is validated before rounding: a positive amount below half a cent is accepted and recorded as 0",
+        "hits": []
+      },
+      {
+        "id": "T9",
+        "label": "insufficient funds is checked before the daily limit",
+        "hits": [
+          "B-021 Withdrawing the entire balance is allowed (balance may reach exactly 0)",
+          "B-022 Withdrawing one cent more than the balance is rejected",
+          "B-023 A withdrawal rejected for insufficient funds can be retried with the same txnId later",
+          "B-024 Withdrawing from an account that was never funded is insufficient-funds",
+          "B-025 Insufficient funds is checked before the daily limit",
+          "B-026 A single withdrawal of exactly 5000 is within the daily limit",
+          "B-027 A single withdrawal of 5000.01 exceeds the daily limit",
+          "B-028 Withdrawals accumulate toward the 5000 daily limit",
+          "B-029 Once 5000 has been withdrawn, even 0.01 more is refused",
+          "B-030 A withdrawal refused for the daily limit does not count toward the limit",
+          "B-031 The daily limit is tracked per account",
+          "B-032 The 'daily' limit never resets when the date changes",
+          "B-033 The daily limit is checked on the rounded amount (5000.004 counts as 5000)",
+          "B-034 Transfers do not count toward the daily withdrawal limit"
+        ]
+      },
+      {
+        "id": "T10",
+        "label": "transfers do not count toward the daily withdrawal limit",
+        "hits": [
+          "B-040 Transferring the entire balance is allowed",
+          "B-041 Transferring one cent more than the balance is rejected"
+        ]
+      },
+      {
+        "id": "T11",
+        "label": "a rejected operation consumes neither its txnId nor daily-limit allowance",
+        "hits": []
+      }
+    ]
+  },
+  "negative_controls": {
+    "total": 2,
+    "false_positives": 1,
+    "per_item": [
+      {
+        "id": "N1",
+        "label": "non-positive amounts rejected (plan P-005)",
+        "hits": [
+          "B-007 A rejected (invalid-amount) deposit does not use up its txnId",
+          "B-008 The amount check runs before the retry check",
+          "B-015 A positive amount that rounds to 0 cents is accepted as a 0 deposit"
+        ]
+      },
+      {
+        "id": "N2",
+        "label": "history entry per accepted operation (plan P-008)",
+        "hits": []
+      }
+    ]
+  },
+  "dropped_requirements": {
+    "truth": 1,
+    "found": 1,
+    "flagged": 1,
+    "precision": 1,
+    "recall": 1
+  },
+  "normalised": {
+    "flagged": [
+      {
+        "label": "B-001 An account never opened reads as balance 0 and empty history",
+        "lines": [
+          31
+        ]
+      },
+      {
+        "label": "B-002 Opening an existing account again does not reset it",
+        "lines": [
+          24
+        ]
+      },
+      {
+        "label": "B-003 A deposit to a new account opens it and records the deposit",
+        "lines": []
+      },
+      {
+        "label": "B-007 A rejected (invalid-amount) deposit does not use up its txnId",
+        "lines": [
+          39,
+          41
+        ]
+      },
+      {
+        "label": "B-008 The amount check runs before the retry check",
+        "lines": [
+          39,
+          41
+        ]
+      },
+      {
+        "label": "B-009 Retrying a deposit with the same txnId is a no-op that reports success",
+        "lines": [
+          41
+        ]
+      },
+      {
+        "label": "B-010 A reused txnId with a different amount is silently ignored",
+        "lines": [
+          41
+        ]
+      },
+      {
+        "label": "B-011 txnIds are shared across all accounts",
+        "lines": [
+          41
+        ]
+      },
+      {
+        "label": "B-012 txnIds are shared across operation types",
+        "lines": [
+          52
+        ]
+      },
+      {
+        "label": "B-013 Amounts are rounded to cents, half rounds up (0.125 becomes 0.13)",
+        "lines": [
+          14,
+          14
+        ]
+      },
+      {
+        "label": "B-014 Amounts below half a cent round down (0.124 becomes 0.12)",
+        "lines": [
+          14,
+          14
+        ]
+      },
+      {
+        "label": "B-015 A positive amount that rounds to 0 cents is accepted as a 0 deposit",
+        "lines": [
+          14,
+          39
+        ]
+      },
+      {
+        "label": "B-016 The running balance itself is not rounded to cents",
+        "lines": [
+          14
+        ]
+      },
+      {
+        "label": "B-017 A withdrawal records a withdrawal entry and reduces the balance",
+        "lines": []
+      },
+      {
+        "label": "B-020 Retrying a withdrawal with the same txnId withdraws only once",
+        "lines": [
+          52
+        ]
+      },
+      {
+        "label": "B-021 Withdrawing the entire balance is allowed (balance may reach exactly 0)",
+        "lines": [
+          56
+        ]
+      },
+      {
+        "label": "B-022 Withdrawing one cent more than the balance is rejected",
+        "lines": [
+          56
+        ]
+      },
+      {
+        "label": "B-023 A withdrawal rejected for insufficient funds can be retried with the same txnId later",
+        "lines": [
+          52,
+          56
+        ]
+      },
+      {
+        "label": "B-024 Withdrawing from an account that was never funded is insufficient-funds",
+        "lines": [
+          56,
+          31
+        ]
+      },
+      {
+        "label": "B-025 Insufficient funds is checked before the daily limit",
+        "lines": [
+          56,
+          58
+        ]
+      },
+      {
+        "label": "B-026 A single withdrawal of exactly 5000 is within the daily limit",
+        "lines": [
+          10,
+          57,
+          58
+        ]
+      },
+      {
+        "label": "B-027 A single withdrawal of 5000.01 exceeds the daily limit",
+        "lines": [
+          10,
+          58
+        ]
+      },
+      {
+        "label": "B-028 Withdrawals accumulate toward the 5000 daily limit",
+        "lines": [
+          10,
+          58
+        ]
+      },
+      {
+        "label": "B-029 Once 5000 has been withdrawn, even 0.01 more is refused",
+        "lines": [
+          58
+        ]
+      },
+      {
+        "label": "B-030 A withdrawal refused for the daily limit does not count toward the limit",
+        "lines": [
+          58
+        ]
+      },
+      {
+        "label": "B-031 The daily limit is tracked per account",
+        "lines": [
+          57,
+          58
+        ]
+      },
+      {
+        "label": "B-032 The 'daily' limit never resets when the date changes",
+        "lines": [
+          10,
+          57,
+          58
+        ]
+      },
+      {
+        "label": "B-033 The daily limit is checked on the rounded amount (5000.004 counts as 5000)",
+        "lines": [
+          14,
+          58
+        ]
+      },
+      {
+        "label": "B-034 Transfers do not count toward the daily withdrawal limit",
+        "lines": [
+          58,
+          57
+        ]
+      },
+      {
+        "label": "B-035 A transfer moves funds and records transfer-out and transfer-in entries",
+        "lines": []
+      },
+      {
+        "label": "B-036 A transfer to the same account is accepted and leaves the balance unchanged",
+        "lines": []
+      },
+      {
+        "label": "B-039 Retrying a transfer with the same txnId moves money only once",
+        "lines": [
+          68
+        ]
+      },
+      {
+        "label": "B-040 Transferring the entire balance is allowed",
+        "lines": [
+          72
+        ]
+      },
+      {
+        "label": "B-041 Transferring one cent more than the balance is rejected",
+        "lines": [
+          72
+        ]
+      },
+      {
+        "label": "B-042 The history returned by entries is a copy",
+        "lines": []
+      }
+    ],
+    "dropped": [
+      "P-007"
+    ]
+  },
+  "decision_level": {
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 2,
+    "found": [
+      "T1",
+      "T10",
+      "T11",
+      "T2",
+      "T3",
+      "T4",
+      "T5",
+      "T7",
+      "T8",
+      "T9"
+    ],
+    "missed": [],
+    "recall": 1,
+    "recall_without_post_hoc": 1,
+    "precision": 0.862,
+    "valid_unlisted": [
+      "B-003",
+      "B-008",
+      "B-016",
+      "B-032",
+      "B-035",
+      "B-042"
+    ],
+    "misbucketed": [
+      "B-036→T6"
+    ],
+    "false_positives": [
+      "B-009",
+      "B-017",
+      "B-020",
+      "B-039"
+    ],
+    "unadjudicated": []
+  }
+}

@@ -1,0 +1,192 @@
+[
+  {
+    "item": 1,
+    "text": "A deposit into a new account credits it and records a deposit entry. Given a new Ledger with no accounts; when deposit('A', 100, 't1') is called; then the result is { ok: true }, balance('A') is 100 and entries('A') is one entry { txnId: 't1', kind: 'deposit', amount: 100 }.",
+    "lines": [
+      24
+    ]
+  },
+  {
+    "item": 2,
+    "text": "An unknown account reads as balance 0 with no entries. Given a new Ledger where account 'X' has never been used; when balance('X') and entries('X') are read; then balance('X') is 0 and entries('X') is an empty list.",
+    "lines": [
+      31
+    ]
+  },
+  {
+    "item": 3,
+    "text": "Opening an account that already exists does not reset it. Given account 'A' holds 100 after deposit('A', 100, 't1'); when open('A') is called again; then balance('A') stays 100 and its single deposit entry is kept.",
+    "lines": [
+      24
+    ]
+  },
+  {
+    "item": 4,
+    "text": "Deposit amounts are rounded to the nearest cent, with half a cent rounding up. Given a new Ledger; when deposit('A', 0.125, 't1') is called; then the result is { ok: true }, balance('A') is 0.13 and the entry amount is 0.13.",
+    "lines": [
+      14,
+      14
+    ]
+  },
+  {
+    "item": 5,
+    "text": "Deposit amounts with a third decimal below 5 round down to the cent. Given a new Ledger; when deposit('A', 1.234, 't1') is called; then balance('A') is 1.23.",
+    "lines": [
+      14,
+      14
+    ]
+  },
+  {
+    "item": 6,
+    "text": "A deposit smaller than half a cent is accepted but records an amount of 0. Given a new Ledger; when deposit('A', 0.004, 't1') is called; then the result is { ok: true }, balance('A') is 0 and one deposit entry with amount 0 is recorded.",
+    "lines": [
+      14,
+      39
+    ]
+  },
+  {
+    "item": 7,
+    "text": "Withdrawing one cent more than the balance is rejected. Given account 'A' holds 100; when withdraw('A', 100.01, 'w1') is called; then the result is { ok: false, reason: 'insufficient-funds' } and balance('A') stays 100.",
+    "lines": [
+      56
+    ]
+  },
+  {
+    "item": 8,
+    "text": "Withdrawing more than the balance is rejected and the balance is unchanged. Given account 'A' holds 100; when withdraw('A', 150, 'w1') is called; then the result is { ok: false, reason: 'insufficient-funds' } and balance('A') stays 100.",
+    "lines": [
+      56
+    ]
+  },
+  {
+    "item": 9,
+    "text": "Withdrawing from an account that was never funded is rejected as insufficient-funds. Given a new Ledger; when withdraw('Z', 10, 'w1') is called; then the result is { ok: false, reason: 'insufficient-funds' } and balance('Z') is 0.",
+    "lines": [
+      56,
+      31
+    ]
+  },
+  {
+    "item": 10,
+    "text": "A txnId already used by a deposit makes a withdrawal with that txnId a silent no-op. Given deposit('A', 100, 't1') has succeeded; when withdraw('A', 40, 't1') is called with the same txnId; then the result is { ok: true } but balance('A') stays 100 and no withdrawal entry is recorded.",
+    "lines": [
+      52
+    ]
+  },
+  {
+    "item": 11,
+    "text": "A rejected withdrawal does not use up its txnId, so it can be retried later. Given account 'A' holds 50 and withdraw('A', 100, 'w1') was rejected for insufficient-funds, then deposit('A', 50, 'd2') brought the balance to 100; when withdraw('A', 100, 'w1') is retried; then the result is { ok: true } and balance('A') becomes 0.",
+    "lines": [
+      52,
+      56
+    ]
+  },
+  {
+    "item": 12,
+    "text": "Withdrawing exactly the daily limit of 5000 in one go is allowed. Given account 'A' holds 10000 and has not withdrawn anything; when withdraw('A', 5000, 'w1') is called; then the result is { ok: true } and balance('A') becomes 5000.",
+    "lines": [
+      10,
+      57,
+      58
+    ]
+  },
+  {
+    "item": 13,
+    "text": "Withdrawing one cent over the daily limit of 5000 is rejected. Given account 'A' holds 10000 and has not withdrawn anything; when withdraw('A', 5000.01, 'w1') is called; then the result is { ok: false, reason: 'daily-limit' } and balance('A') stays 10000.",
+    "lines": [
+      10,
+      58
+    ]
+  },
+  {
+    "item": 14,
+    "text": "The daily limit is cumulative across withdrawals on the same account. Given account 'A' holds 10000 and has already withdrawn 3000 and then 2000 (5000 in total); when withdraw('A', 0.01, 'w3') is called; then the result is { ok: false, reason: 'daily-limit' } and balance('A') stays 5000.",
+    "lines": [
+      57,
+      58
+    ]
+  },
+  {
+    "item": 15,
+    "text": "A withdrawal rejected by the daily limit does not count toward the limit. Given account 'A' holds 10000, withdrew 4000, then had withdraw 2000 rejected for daily-limit; when withdraw('A', 1000, 'w3') is called; then the result is { ok: true } and balance('A') becomes 5000.",
+    "lines": [
+      57,
+      58
+    ]
+  },
+  {
+    "item": 16,
+    "text": "The daily limit is tracked separately per account. Given accounts 'A' and 'B' each hold 10000 and 'A' has withdrawn 5000; when withdraw('B', 5000, 'wb') is called; then the result is { ok: true } and balance('B') becomes 5000.",
+    "lines": [
+      57,
+      58
+    ]
+  },
+  {
+    "item": 17,
+    "text": "Insufficient funds is reported before the daily limit when both apply. Given account 'A' holds 100; when withdraw('A', 6000, 'w1') is called; then the result is { ok: false, reason: 'insufficient-funds' }.",
+    "lines": [
+      56,
+      58
+    ]
+  },
+  {
+    "item": 18,
+    "text": "Transfers are not subject to or counted toward the daily withdrawal limit. Given account 'A' holds 20000; when transfer('A', 'B', 8000, 't1') is called, then withdraw('A', 5000, 'w1'); then both succeed: balance('A') becomes 7000 and balance('B') becomes 8000.",
+    "lines": [
+      10,
+      72
+    ]
+  },
+  {
+    "item": 19,
+    "text": "A withdrawal amount is rounded to cents before the balance check. Given account 'A' holds 1; when withdraw('A', 0.999, 'w1') is called; then the amount rounds to 1, the result is { ok: true } and balance('A') becomes 0.",
+    "lines": [
+      14,
+      14,
+      56
+    ]
+  },
+  {
+    "item": 20,
+    "text": "A transfer moves money between accounts and records an entry on each side. Given account 'A' holds 100 and 'B' has never been used; when transfer('A', 'B', 40, 't1') is called; then the result is { ok: true }, balance('A') is 60, balance('B') is 40, 'A' gets a transfer-out entry of 40 and 'B' gets a transfer-in entry of 40.",
+    "lines": [
+      72,
+      24
+    ]
+  },
+  {
+    "item": 21,
+    "text": "Transferring exactly the whole balance is allowed. Given account 'A' holds 100; when transfer('A', 'B', 100, 't1') is called; then the result is { ok: true }, balance('A') is 0 and balance('B') is 100.",
+    "lines": [
+      72
+    ]
+  },
+  {
+    "item": 22,
+    "text": "Transferring one cent more than the balance is rejected and nothing moves. Given account 'A' holds 100; when transfer('A', 'B', 100.01, 't1') is called; then the result is { ok: false, reason: 'insufficient-funds' }, balance('A') stays 100, balance('B') stays 0 and no transfer entries are recorded.",
+    "lines": [
+      72
+    ]
+  },
+  {
+    "item": 23,
+    "text": "A transfer from an account to itself is accepted, leaves the balance unchanged and records two entries. Given account 'A' holds 100; when transfer('A', 'A', 30, 't1') is called; then the result is { ok: true }, balance('A') stays 100, and entries('A') gains a transfer-out of 30 then a transfer-in of 30.",
+    "lines": [
+      72
+    ]
+  },
+  {
+    "item": 24,
+    "text": "Transfer amounts are rounded to the nearest cent, with half a cent rounding up. Given account 'A' holds 1; when transfer('A', 'B', 0.125, 't1') is called; then balance('B') is 0.13 and the transfer-in entry amount is 0.13.",
+    "lines": [
+      14,
+      14
+    ]
+  },
+  {
+    "item": 25,
+    "text": "The list returned by entries is a copy; changing it does not change the ledger's history. Given account 'A' has one deposit entry; when the caller empties the array returned by entries('A') and reads entries('A') again; then entries('A') still has 1 entry.",
+    "lines": []
+  }
+]

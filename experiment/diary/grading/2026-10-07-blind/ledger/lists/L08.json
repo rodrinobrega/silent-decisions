@@ -1,0 +1,211 @@
+[
+  {
+    "item": 1,
+    "text": "Withdrawals are capped at 5000 per account per day, a limit the plan never mentions.",
+    "lines": [
+      10,
+      58
+    ]
+  },
+  {
+    "item": 2,
+    "text": "The 'daily' withdrawal total is never reset, so it is really a lifetime cap of 5000 per account.",
+    "lines": [
+      21,
+      57,
+      59
+    ]
+  },
+  {
+    "item": 3,
+    "text": "The withdrawal limit applies only to withdrawals, so transfers can move any amount out of an account.",
+    "lines": [
+      72
+    ]
+  },
+  {
+    "item": 4,
+    "text": "When a withdrawal would both overdraw and exceed the limit, it is reported as insufficient funds because that check runs first.",
+    "lines": [
+      56,
+      58
+    ]
+  },
+  {
+    "item": 5,
+    "text": "Amounts are rounded to cents with half-up rounding (Math.round), which runs on floating-point values.",
+    "lines": [
+      12,
+      13,
+      14,
+      43,
+      54,
+      71
+    ]
+  },
+  {
+    "item": 6,
+    "text": "Rounding happens after the positivity check, so an amount like 0.001 is accepted, rounds to 0, and records a zero-value entry.",
+    "lines": [
+      39,
+      43,
+      51,
+      54,
+      67,
+      71
+    ]
+  },
+  {
+    "item": 7,
+    "text": "Balances are stored as floating-point numbers instead of integer cents, so totals can drift.",
+    "lines": [
+      18,
+      44,
+      60,
+      73,
+      74
+    ]
+  },
+  {
+    "item": 8,
+    "text": "The positivity check rejects NaN but accepts Infinity and amounts with any number of decimal places.",
+    "lines": [
+      39,
+      51,
+      67
+    ]
+  },
+  {
+    "item": 9,
+    "text": "Overdrafts are not allowed, but a withdrawal or transfer may take the balance down to exactly zero.",
+    "lines": [
+      55,
+      56,
+      72
+    ]
+  },
+  {
+    "item": 10,
+    "text": "A repeated transaction id returns success and does nothing, without checking that the account, amount or operation type match the original.",
+    "lines": [
+      40,
+      41,
+      52,
+      68
+    ]
+  },
+  {
+    "item": 11,
+    "text": "A retry gets a plain ok, the same reply as a new operation, so the caller cannot tell it was a duplicate.",
+    "lines": [
+      41,
+      52,
+      68
+    ]
+  },
+  {
+    "item": 12,
+    "text": "Transaction ids share one global namespace across all accounts and operation types, and they are kept forever.",
+    "lines": [
+      20
+    ]
+  },
+  {
+    "item": 13,
+    "text": "Rejected operations do not mark their transaction id as used, so the same id can later succeed with different data.",
+    "lines": [
+      46,
+      56,
+      58,
+      62,
+      72,
+      77
+    ]
+  },
+  {
+    "item": 14,
+    "text": "The amount is validated before the duplicate check, so a retry of an accepted id with a bad amount is rejected instead of acknowledged.",
+    "lines": [
+      39,
+      41,
+      51,
+      52,
+      67,
+      68
+    ]
+  },
+  {
+    "item": 15,
+    "text": "Deposits, withdrawals and transfers silently create any account that does not exist, and there is no check for valid account ids.",
+    "lines": [
+      42,
+      53,
+      69,
+      70
+    ]
+  },
+  {
+    "item": 16,
+    "text": "A rejected withdrawal or transfer still creates the accounts it named.",
+    "lines": [
+      53,
+      69,
+      70
+    ]
+  },
+  {
+    "item": 17,
+    "text": "Unknown accounts report a balance of 0 and an empty history rather than an error.",
+    "lines": [
+      31,
+      35
+    ]
+  },
+  {
+    "item": 18,
+    "text": "Transaction ids are not validated, so empty or blank ids are accepted.",
+    "lines": [
+      38,
+      50,
+      66
+    ]
+  },
+  {
+    "item": 19,
+    "text": "A transfer writes the same transaction id into both accounts' histories, with no counterparty, timestamp or resulting balance on either entry.",
+    "lines": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      75,
+      76
+    ]
+  },
+  {
+    "item": 20,
+    "text": "Rejection reasons are the fixed strings 'invalid-amount', 'insufficient-funds' and 'daily-limit'.",
+    "lines": [
+      39,
+      51,
+      56,
+      58,
+      67,
+      72
+    ]
+  },
+  {
+    "item": 21,
+    "text": "A transfer to the same account is accepted, leaves the balance unchanged and records two history entries.",
+    "lines": [
+      66,
+      69,
+      70,
+      73,
+      74,
+      75,
+      76
+    ]
+  }
+]

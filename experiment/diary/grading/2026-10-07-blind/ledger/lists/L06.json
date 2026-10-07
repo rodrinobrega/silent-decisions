@@ -1,0 +1,190 @@
+[
+  {
+    "item": 1,
+    "text": "Depositing into a never-opened account opens it and credits the amount. Given a new Ledger where account 'A' has never been opened; when 100 is deposited into 'A' with txnId 't1'; then the result is { ok: true }, the balance of 'A' is 100 and its entries are one deposit of 100 with txnId 't1'.",
+    "lines": [
+      24,
+      39
+    ]
+  },
+  {
+    "item": 2,
+    "text": "Balance of an unknown account reads as 0. Given a new Ledger where account 'ghost' was never opened; when the balance of 'ghost' is read; then the balance is 0.",
+    "lines": [
+      31
+    ]
+  },
+  {
+    "item": 3,
+    "text": "Entries of an unknown account are an empty list. Given a new Ledger where account 'ghost' was never opened; when the entries of 'ghost' are read; then an empty list is returned.",
+    "lines": []
+  },
+  {
+    "item": 4,
+    "text": "Entries returned are a copy; changing them does not change the ledger. Given account 'A' has one deposit of 100 with txnId 't1'; when the list returned by entries('A') is emptied by the caller; then reading entries('A') again still returns one entry.",
+    "lines": []
+  },
+  {
+    "item": 5,
+    "text": "Deposit amounts are rounded to cents, with a half cent rounding up. Given a new Ledger; when 0.125 is deposited into 'A' with txnId 't1'; then the balance of 'A' is 0.13 and the entry records an amount of 0.13.",
+    "lines": [
+      14,
+      14
+    ]
+  },
+  {
+    "item": 6,
+    "text": "Deposit fractions below half a cent are dropped. Given a new Ledger; when 1.004 is deposited into 'A' with txnId 't1'; then the balance of 'A' is 1.",
+    "lines": [
+      14,
+      14
+    ]
+  },
+  {
+    "item": 7,
+    "text": "A withdrawal reusing a seen txnId reports success without checking funds. Given account 'A' holds 100 from a deposit with txnId 't1'; when 500 is withdrawn from 'A' with txnId 't1'; then the result is { ok: true } and the balance stays 100.",
+    "lines": [
+      52
+    ]
+  },
+  {
+    "item": 8,
+    "text": "Withdrawing more than the balance is refused as insufficient-funds. Given account 'A' holds 100; when 150 is withdrawn from 'A' with txnId 'w1'; then the result is { ok: false, reason: 'insufficient-funds' } and the balance stays 100.",
+    "lines": [
+      56
+    ]
+  },
+  {
+    "item": 9,
+    "text": "The funds check uses the amount after rounding to cents. Given account 'A' holds 100; when 100.004 is withdrawn from 'A' with txnId 'w1'; then the amount rounds to 100, the result is { ok: true } and the balance is 0.",
+    "lines": [
+      14,
+      14,
+      56
+    ]
+  },
+  {
+    "item": 10,
+    "text": "Withdrawing from a never-opened account is refused and opens it empty. Given a new Ledger where 'A' was never opened; when 50 is withdrawn from 'A' with txnId 'w1'; then the result is { ok: false, reason: 'insufficient-funds' }, the balance is 0 and entries('A') is an empty list.",
+    "lines": [
+      56,
+      24
+    ]
+  },
+  {
+    "item": 11,
+    "text": "A single withdrawal of exactly 5000 is within the daily limit. Given account 'A' holds 10000 and nothing has been withdrawn yet; when 5000 is withdrawn from 'A' with txnId 'w1'; then the result is { ok: true } and the balance is 5000.",
+    "lines": [
+      10,
+      57,
+      58
+    ]
+  },
+  {
+    "item": 12,
+    "text": "A single withdrawal of 5000.01 exceeds the daily limit. Given account 'A' holds 10000 and nothing has been withdrawn yet; when 5000.01 is withdrawn from 'A' with txnId 'w1'; then the result is { ok: false, reason: 'daily-limit' } and the balance stays 10000.",
+    "lines": [
+      10,
+      58
+    ]
+  },
+  {
+    "item": 13,
+    "text": "Withdrawals accumulate towards the 5000 daily limit. Given account 'A' holds 10000 and 3000 has already been withdrawn with txnId 'w1'; when 2001 is withdrawn from 'A' with txnId 'w2'; then the result is { ok: false, reason: 'daily-limit' } and the balance stays 7000.",
+    "lines": [
+      57,
+      58
+    ]
+  },
+  {
+    "item": 14,
+    "text": "Accumulated withdrawals reaching exactly 5000 are allowed. Given account 'A' holds 10000 and 3000 has already been withdrawn with txnId 'w1'; when 2000 is withdrawn from 'A' with txnId 'w2'; then the result is { ok: true } and the balance is 5000.",
+    "lines": [
+      58
+    ]
+  },
+  {
+    "item": 15,
+    "text": "A refused withdrawal does not use up any of the daily limit. Given account 'A' holds 10000 and a withdrawal of 6000 with txnId 'w1' was refused for 'daily-limit'; when 5000 is withdrawn from 'A' with txnId 'w2'; then the result is { ok: true } and the balance is 5000.",
+    "lines": [
+      58
+    ]
+  },
+  {
+    "item": 16,
+    "text": "The daily limit is tracked separately per account. Given accounts 'A' and 'B' each hold 10000, and 5000 has been withdrawn from 'A'; when 5000 is withdrawn from 'B' with txnId 'w2'; then the result is { ok: true } and 'B' has a balance of 5000.",
+    "lines": [
+      57,
+      58
+    ]
+  },
+  {
+    "item": 17,
+    "text": "The funds check is applied before the daily-limit check. Given account 'A' holds 100 and nothing has been withdrawn; when 6000 is withdrawn from 'A' with txnId 'w1'; then the result is { ok: false, reason: 'insufficient-funds' }.",
+    "lines": [
+      56,
+      58
+    ]
+  },
+  {
+    "item": 18,
+    "text": "A refused withdrawal's txnId can be reused later to succeed. Given account 'A' held 100, a withdrawal of 150 with txnId 'w1' was refused, then 100 more was deposited (balance 200); when 150 is withdrawn from 'A' with txnId 'w1' again; then the result is { ok: true } and the balance is 50.",
+    "lines": [
+      52,
+      56
+    ]
+  },
+  {
+    "item": 19,
+    "text": "Transferring more than the sender holds is refused as insufficient-funds. Given account 'A' holds 100 and 'B' holds 0; when 150 is transferred from 'A' to 'B' with txnId 'x1'; then the result is { ok: false, reason: 'insufficient-funds' }; 'A' stays 100 and 'B' stays 0.",
+    "lines": [
+      72
+    ]
+  },
+  {
+    "item": 20,
+    "text": "Transferring the whole balance is allowed and records out/in entries. Given account 'A' holds 100 and 'B' was never opened; when 100 is transferred from 'A' to 'B' with txnId 'x1'; then the result is { ok: true }; 'A' is 0, 'B' is 100, 'A' gets a transfer-out entry of 100 and 'B' gets a transfer-in entry of 100, both with txnId 'x1'.",
+    "lines": [
+      72,
+      24
+    ]
+  },
+  {
+    "item": 21,
+    "text": "Transfers are not subject to the 5000 daily withdrawal limit. Given account 'A' holds 10000; when 6000 is transferred from 'A' to 'B' with txnId 'x1'; then the result is { ok: true }; 'A' is 4000 and 'B' is 6000.",
+    "lines": [
+      72
+    ]
+  },
+  {
+    "item": 22,
+    "text": "Transfers do not use up the daily withdrawal limit. Given account 'A' holds 10000 and 3000 was transferred from 'A' to 'B'; when 5000 is withdrawn from 'A' with txnId 'w1'; then the result is { ok: true } and 'A' is 2000.",
+    "lines": [
+      57,
+      58
+    ]
+  },
+  {
+    "item": 23,
+    "text": "Transfer amounts are rounded to cents, half a cent rounding up. Given account 'A' holds 1; when 0.125 is transferred from 'A' to 'B' with txnId 'x1'; then 'B' receives 0.13 and both entries record 0.13.",
+    "lines": [
+      14,
+      14
+    ]
+  },
+  {
+    "item": 24,
+    "text": "A refused transfer still opens the receiving account with no entries. Given a new Ledger where neither 'A' nor 'B' was opened; when 10 is transferred from 'A' to 'B' with txnId 'x1'; then the result is { ok: false, reason: 'insufficient-funds' }; 'B' has balance 0 and entries('B') is an empty list.",
+    "lines": [
+      72,
+      24
+    ]
+  },
+  {
+    "item": 25,
+    "text": "A transfer to the same account leaves the balance unchanged but records two entries. Given account 'A' holds 100; when 50 is transferred from 'A' to 'A' with txnId 'x1'; then the result is { ok: true }, the balance stays 100, and 'A' gains a transfer-out and a transfer-in entry of 50 in that order.",
+    "lines": [
+      72
+    ]
+  }
+]

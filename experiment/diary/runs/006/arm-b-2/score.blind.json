@@ -1,0 +1,631 @@
+{
+  "arm": "b",
+  "case": "ledger-rounding",
+  "truth_version": 1,
+  "run": "20261006T062148-32eeef",
+  "scored_at": "2026-10-07T09:17:07.856Z",
+  "cost": null,
+  "silent_decisions": {
+    "truth": 22,
+    "found": 21,
+    "flagged": 35,
+    "flagged_without_lines": 0,
+    "precision": 0.771,
+    "recall": 0.955,
+    "per_item": [
+      {
+        "id": "T1",
+        "label": "no overdrafts: withdrawal, transfer and split may not take the balance below 0",
+        "hits": [
+          "Operations report failure by returning a {ok:false, reason} result with fixed reason strings instead of throwing.",
+          "The insufficient-funds check runs before the daily-limit check, deciding which rejection reason wins.",
+          "A withdrawal is rejected unless the balance covers amount plus fee; no overdraft is allowed.",
+          "Transfers and splits are rejected if the sender's balance would go negative.",
+          "Rejected operations do not record their transaction id, so the same id can later succeed."
+        ]
+      },
+      {
+        "id": "T2",
+        "label": "daily withdrawal cap of 5000 per account",
+        "hits": [
+          "Operations report failure by returning a {ok:false, reason} result with fixed reason strings instead of throwing.",
+          "Withdrawals are capped by a daily limit of 5000.00 per account.",
+          "The daily withdrawal counter never resets, so the 'daily' limit is effectively a lifetime limit.",
+          "Only the withdrawal amount, not the fee, counts toward the daily limit.",
+          "The insufficient-funds check runs before the daily-limit check, deciding which rejection reason wins.",
+          "Rejected operations do not record their transaction id, so the same id can later succeed."
+        ]
+      },
+      {
+        "id": "T4",
+        "label": "a repeated txnId with a different payload (other account, other operation, other amount) is acknowledged and ignored",
+        "hits": [
+          "A repeated transaction id returns success without checking that the retry carries the same account, amount or operation type.",
+          "Input validation runs before the duplicate check, so a retry with invalid input is rejected rather than treated as a replay."
+        ]
+      },
+      {
+        "id": "T5",
+        "label": "an unknown account reads as balance 0 / empty history, and operations on a never-opened account open it implicitly",
+        "hits": [
+          "Unknown accounts are created implicitly by any operation, including as withdrawal or transfer source and even when the operation is then rejected.",
+          "Querying an unknown account returns balance 0 and empty history instead of an error.",
+          "A transfer to the same account is accepted, writing a transfer-out and a transfer-in entry on that account.",
+          "Split allows duplicate recipients and the sender among the recipients.",
+          "balance() and entry amounts are returned as floating-point currency units (cents/100), not cents."
+        ]
+      },
+      {
+        "id": "T7",
+        "label": "open() on an existing account is a silent no-op",
+        "hits": []
+      },
+      {
+        "id": "T8",
+        "label": "amount validated before rounding: a positive amount below half a cent is accepted and recorded as 0 (a 0-cent withdrawal still pays the minimum fee)",
+        "hits": [
+          "Operations report failure by returning a {ok:false, reason} result with fixed reason strings instead of throwing.",
+          "A positive amount that rounds to zero cents (e.g. 0.001) is accepted for deposit, withdrawal, transfer and split, recording a 0.00 entry (a withdrawal is still charged the minimum fee).",
+          "Infinity passes the positive-amount check and is accepted as an amount.",
+          "Input validation runs before the duplicate check, so a retry with invalid input is rejected rather than treated as a replay."
+        ]
+      },
+      {
+        "id": "T9",
+        "label": "insufficient funds (including the fee) is checked before the daily limit",
+        "hits": [
+          "Operations report failure by returning a {ok:false, reason} result with fixed reason strings instead of throwing.",
+          "Withdrawals are capped by a daily limit of 5000.00 per account.",
+          "Only the withdrawal amount, not the fee, counts toward the daily limit.",
+          "The insufficient-funds check runs before the daily-limit check, deciding which rejection reason wins.",
+          "A withdrawal is rejected unless the balance covers amount plus fee; no overdraft is allowed.",
+          "Rejected operations do not record their transaction id, so the same id can later succeed."
+        ]
+      },
+      {
+        "id": "T10",
+        "label": "transfers and split payments do not count toward the daily withdrawal limit",
+        "hits": [
+          "The daily withdrawal counter never resets, so the 'daily' limit is effectively a lifetime limit.",
+          "Only the withdrawal amount, not the fee, counts toward the daily limit.",
+          "Transfers and split payments charge no fee.",
+          "A transfer to the same account is accepted, writing a transfer-out and a transfer-in entry on that account."
+        ]
+      },
+      {
+        "id": "T11",
+        "label": "a rejected operation consumes neither its txnId nor daily-limit allowance",
+        "hits": [
+          "The daily withdrawal counter never resets, so the 'daily' limit is effectively a lifetime limit.",
+          "Only the withdrawal amount, not the fee, counts toward the daily limit.",
+          "Rejected operations do not record their transaction id, so the same id can later succeed."
+        ]
+      },
+      {
+        "id": "T12",
+        "label": "entries() returns a copy; changing it does not change the history",
+        "hits": [
+          "Querying an unknown account returns balance 0 and empty history instead of an error."
+        ]
+      },
+      {
+        "id": "T13",
+        "label": "amount validation happens before the duplicate-txnId check",
+        "hits": [
+          "Operations report failure by returning a {ok:false, reason} result with fixed reason strings instead of throwing.",
+          "A positive amount that rounds to zero cents (e.g. 0.001) is accepted for deposit, withdrawal, transfer and split, recording a 0.00 entry (a withdrawal is still charged the minimum fee).",
+          "Infinity passes the positive-amount check and is accepted as an amount.",
+          "A repeated transaction id returns success without checking that the retry carries the same account, amount or operation type.",
+          "Input validation runs before the duplicate check, so a retry with invalid input is rejected rather than treated as a replay."
+        ]
+      },
+      {
+        "id": "T14",
+        "label": "the withdrawal fee is rounded UP to the cent (1% of 100.01 = 1.0001 -> 1.01)",
+        "hits": [
+          "The 1% fee is rounded up to the next cent (ceil, with a 1e-9 epsilon) rather than to nearest."
+        ]
+      },
+      {
+        "id": "T15",
+        "label": "the withdrawal fee is capped at 25.00",
+        "hits": [
+          "The withdrawal fee is capped at a maximum of 25.00."
+        ]
+      },
+      {
+        "id": "T16",
+        "label": "the funds check includes the fee: a withdrawal of the whole balance is rejected",
+        "hits": [
+          "Operations report failure by returning a {ok:false, reason} result with fixed reason strings instead of throwing.",
+          "The insufficient-funds check runs before the daily-limit check, deciding which rejection reason wins.",
+          "A withdrawal is rejected unless the balance covers amount plus fee; no overdraft is allowed.",
+          "Rejected operations do not record their transaction id, so the same id can later succeed."
+        ]
+      },
+      {
+        "id": "T17",
+        "label": "the daily limit counts the withdrawn amount without the fee",
+        "hits": [
+          "Operations report failure by returning a {ok:false, reason} result with fixed reason strings instead of throwing.",
+          "Withdrawals are capped by a daily limit of 5000.00 per account.",
+          "The daily withdrawal counter never resets, so the 'daily' limit is effectively a lifetime limit.",
+          "Only the withdrawal amount, not the fee, counts toward the daily limit.",
+          "The insufficient-funds check runs before the daily-limit check, deciding which rejection reason wins.",
+          "Rejected operations do not record their transaction id, so the same id can later succeed."
+        ]
+      },
+      {
+        "id": "T18",
+        "label": "interest is rounded DOWN (truncated) to the cent",
+        "hits": [
+          "Interest is rounded down to the cent (floor with a 1e-7 epsilon)."
+        ]
+      },
+      {
+        "id": "T19",
+        "label": "interest that rounds to 0 cents is not credited: the call returns ok, no entry is recorded and the txnId is not consumed",
+        "hits": [
+          "Interest that rounds to zero returns success but records no entry and does not mark the transaction id as seen."
+        ]
+      },
+      {
+        "id": "T20",
+        "label": "a split's leftover cents go one each to the first recipients in list order",
+        "hits": [
+          "Split remainder cents go one each to the first recipients in list order.",
+          "Split allows duplicate recipients and the sender among the recipients."
+        ]
+      },
+      {
+        "id": "T21",
+        "label": "PLANTED NEW UNSOURCED RULE: a foreign deposit that converts to less than half a cent is rejected with 'amount-too-small' (unlike a plain sub-half-cent deposit, which is accepted as 0)",
+        "hits": [
+          "Operations report failure by returning a {ok:false, reason} result with fixed reason strings instead of throwing.",
+          "A foreign deposit that converts to zero cents is rejected as 'amount-too-small'."
+        ]
+      },
+      {
+        "id": "T22",
+        "label": "a split with no recipients is rejected with 'no-recipients'",
+        "hits": [
+          "Operations report failure by returning a {ok:false, reason} result with fixed reason strings instead of throwing.",
+          "Input validation runs before the duplicate check, so a retry with invalid input is rejected rather than treated as a replay.",
+          "A split with an empty recipient list is rejected as 'no-recipients'."
+        ]
+      },
+      {
+        "id": "T23",
+        "label": "a non-positive interest rate or day count, or a non-positive exchange rate, is rejected as 'invalid-amount'",
+        "hits": [
+          "Operations report failure by returning a {ok:false, reason} result with fixed reason strings instead of throwing.",
+          "The exchange rate must be positive, and a bad rate is reported as 'invalid-amount'.",
+          "Interest rate and days must be positive; fractional days are accepted."
+        ]
+      },
+      {
+        "id": "T24",
+        "label": "transfers and split payments are not charged a fee",
+        "hits": [
+          "Operations report failure by returning a {ok:false, reason} result with fixed reason strings instead of throwing.",
+          "Transfers and splits are rejected if the sender's balance would go negative.",
+          "A positive amount that rounds to zero cents (e.g. 0.001) is accepted for deposit, withdrawal, transfer and split, recording a 0.00 entry (a withdrawal is still charged the minimum fee).",
+          "Rejected operations do not record their transaction id, so the same id can later succeed."
+        ]
+      }
+    ]
+  },
+  "negative_controls": {
+    "total": 8,
+    "false_positives": 7,
+    "per_item": [
+      {
+        "id": "N1",
+        "label": "non-positive amounts rejected (P-005)",
+        "hits": [
+          "Operations report failure by returning a {ok:false, reason} result with fixed reason strings instead of throwing.",
+          "A positive amount that rounds to zero cents (e.g. 0.001) is accepted for deposit, withdrawal, transfer and split, recording a 0.00 entry (a withdrawal is still charged the minimum fee).",
+          "Infinity passes the positive-amount check and is accepted as an amount.",
+          "Input validation runs before the duplicate check, so a retry with invalid input is rejected rather than treated as a replay."
+        ]
+      },
+      {
+        "id": "N2",
+        "label": "history entry per accepted operation (P-008)",
+        "hits": [
+          "History entries store amounts as positive decimal units, with direction implied only by kind.",
+          "balance() and entry amounts are returned as floating-point currency units (cents/100), not cents."
+        ]
+      },
+      {
+        "id": "N3",
+        "label": "amounts rounded to the nearest cent, halves away from zero (P-011)",
+        "hits": [
+          "Cent rounding adds a 1e-7 epsilon before Math.round to counter floating-point error."
+        ]
+      },
+      {
+        "id": "N4",
+        "label": "withdrawal fee of 1% with a minimum of 0.50 (P-012)",
+        "hits": []
+      },
+      {
+        "id": "N5",
+        "label": "interest computed with a 365-day year on the current balance (P-015)",
+        "hits": [
+          "Interest takes the annual rate as a percentage, not a fraction.",
+          "Interest is simple (not compounded) over the given days."
+        ]
+      },
+      {
+        "id": "N6",
+        "label": "a split divides the amount evenly (P-016)",
+        "hits": [
+          "Split remainder cents go one each to the first recipients in list order."
+        ]
+      },
+      {
+        "id": "N7",
+        "label": "foreign amount converted at the given rate (P-014, conversion part)",
+        "hits": [
+          "Foreign deposits are rounded with the half-away-from-zero helper rather than half-to-even."
+        ]
+      },
+      {
+        "id": "N8",
+        "label": "balances kept in whole cents (P-010)",
+        "hits": [
+          "balance() and entry amounts are returned as floating-point currency units (cents/100), not cents."
+        ]
+      }
+    ]
+  },
+  "dropped_requirements": {
+    "truth": 3,
+    "found": 3,
+    "flagged": 3,
+    "precision": 1,
+    "recall": 1
+  },
+  "normalised": {
+    "flagged": [
+      {
+        "label": "Operations report failure by returning a {ok:false, reason} result with fixed reason strings instead of throwing.",
+        "lines": [
+          1,
+          50,
+          59,
+          62,
+          75,
+          77,
+          85,
+          90,
+          98,
+          99,
+          104,
+          114
+        ]
+      },
+      {
+        "label": "Withdrawals are capped by a daily limit of 5000.00 per account.",
+        "lines": [
+          9,
+          76,
+          77
+        ]
+      },
+      {
+        "label": "The daily withdrawal counter never resets, so the 'daily' limit is effectively a lifetime limit.",
+        "lines": [
+          32,
+          76,
+          78
+        ]
+      },
+      {
+        "label": "Only the withdrawal amount, not the fee, counts toward the daily limit.",
+        "lines": [
+          77,
+          78
+        ]
+      },
+      {
+        "label": "The insufficient-funds check runs before the daily-limit check, deciding which rejection reason wins.",
+        "lines": [
+          75,
+          76,
+          77
+        ]
+      },
+      {
+        "label": "The withdrawal fee is capped at a maximum of 25.00.",
+        "lines": [
+          12,
+          25
+        ]
+      },
+      {
+        "label": "The 1% fee is rounded up to the next cent (ceil, with a 1e-9 epsilon) rather than to nearest.",
+        "lines": [
+          24
+        ]
+      },
+      {
+        "label": "A withdrawal is rejected unless the balance covers amount plus fee; no overdraft is allowed.",
+        "lines": [
+          75
+        ]
+      },
+      {
+        "label": "The withdrawal and its fee are debited and recorded as one combined 'withdrawal' entry instead of a separate fee entry.",
+        "lines": [
+          79
+        ]
+      },
+      {
+        "label": "Transfers and splits are rejected if the sender's balance would go negative.",
+        "lines": [
+          90,
+          104
+        ]
+      },
+      {
+        "label": "Transfers and split payments charge no fee.",
+        "lines": [
+          91,
+          107
+        ]
+      },
+      {
+        "label": "Cent rounding adds a 1e-7 epsilon before Math.round to counter floating-point error.",
+        "lines": [
+          16
+        ]
+      },
+      {
+        "label": "Foreign deposits are rounded with the half-away-from-zero helper rather than half-to-even.",
+        "lines": [
+          61
+        ]
+      },
+      {
+        "label": "The exchange rate must be positive, and a bad rate is reported as 'invalid-amount'.",
+        "lines": [
+          59
+        ]
+      },
+      {
+        "label": "A foreign deposit that converts to zero cents is rejected as 'amount-too-small'.",
+        "lines": [
+          62
+        ]
+      },
+      {
+        "label": "A positive amount that rounds to zero cents (e.g. 0.001) is accepted for deposit, withdrawal, transfer and split, recording a 0.00 entry (a withdrawal is still charged the minimum fee).",
+        "lines": [
+          50,
+          53,
+          73,
+          89,
+          103
+        ]
+      },
+      {
+        "label": "Infinity passes the positive-amount check and is accepted as an amount.",
+        "lines": [
+          50,
+          70,
+          85,
+          98
+        ]
+      },
+      {
+        "label": "A repeated transaction id returns success without checking that the retry carries the same account, amount or operation type.",
+        "lines": [
+          51,
+          60,
+          71,
+          86,
+          100,
+          115
+        ]
+      },
+      {
+        "label": "Transaction ids are deduplicated in one global namespace across all accounts and operation types.",
+        "lines": [
+          31
+        ]
+      },
+      {
+        "label": "Input validation runs before the duplicate check, so a retry with invalid input is rejected rather than treated as a replay.",
+        "lines": [
+          50,
+          51,
+          98,
+          99,
+          100
+        ]
+      },
+      {
+        "label": "Rejected operations do not record their transaction id, so the same id can later succeed.",
+        "lines": [
+          54,
+          75,
+          77,
+          80,
+          90,
+          104
+        ]
+      },
+      {
+        "label": "Unknown accounts are created implicitly by any operation, including as withdrawal or transfer source and even when the operation is then rejected.",
+        "lines": [
+          34,
+          52,
+          72,
+          87,
+          88,
+          101,
+          102,
+          116
+        ]
+      },
+      {
+        "label": "Querying an unknown account returns balance 0 and empty history instead of an error.",
+        "lines": [
+          42,
+          46
+        ]
+      },
+      {
+        "label": "Account ids and transaction ids are not validated; empty strings are accepted.",
+        "lines": [
+          49,
+          58,
+          69,
+          84,
+          97,
+          113
+        ]
+      },
+      {
+        "label": "A transfer to the same account is accepted, writing a transfer-out and a transfer-in entry on that account.",
+        "lines": [
+          84,
+          87,
+          88,
+          91,
+          92
+        ]
+      },
+      {
+        "label": "Split remainder cents go one each to the first recipients in list order.",
+        "lines": [
+          105,
+          106,
+          108
+        ]
+      },
+      {
+        "label": "A split with an empty recipient list is rejected as 'no-recipients'.",
+        "lines": [
+          99
+        ]
+      },
+      {
+        "label": "Split allows duplicate recipients and the sender among the recipients.",
+        "lines": [
+          102,
+          108
+        ]
+      },
+      {
+        "label": "Interest takes the annual rate as a percentage, not a fraction.",
+        "lines": [
+          113,
+          117
+        ]
+      },
+      {
+        "label": "Interest is simple (not compounded) over the given days.",
+        "lines": [
+          117
+        ]
+      },
+      {
+        "label": "Interest is rounded down to the cent (floor with a 1e-7 epsilon).",
+        "lines": [
+          118
+        ]
+      },
+      {
+        "label": "Interest rate and days must be positive; fractional days are accepted.",
+        "lines": [
+          114
+        ]
+      },
+      {
+        "label": "Interest that rounds to zero returns success but records no entry and does not mark the transaction id as seen.",
+        "lines": [
+          119
+        ]
+      },
+      {
+        "label": "History entries store amounts as positive decimal units, with direction implied only by kind.",
+        "lines": [
+          5,
+          131,
+          136
+        ]
+      },
+      {
+        "label": "balance() and entry amounts are returned as floating-point currency units (cents/100), not cents.",
+        "lines": [
+          19,
+          20,
+          42,
+          131,
+          136
+        ]
+      }
+    ],
+    "dropped": [
+      "P-007",
+      "P-013",
+      "P-014"
+    ]
+  },
+  "decision_level": {
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 1,
+    "found": [
+      "T1",
+      "T11",
+      "T13",
+      "T14",
+      "T15",
+      "T16",
+      "T17",
+      "T18",
+      "T19",
+      "T2",
+      "T20",
+      "T21",
+      "T22",
+      "T23",
+      "T24",
+      "T4",
+      "T5",
+      "T8",
+      "T9"
+    ],
+    "missed": [
+      "T7",
+      "T10",
+      "T12"
+    ],
+    "recall": 0.864,
+    "recall_without_post_hoc": 0.864,
+    "precision": 0.962,
+    "valid_unlisted": [
+      "#1",
+      "#3",
+      "#17",
+      "#24",
+      "#28",
+      "#29",
+      "#30",
+      "#34",
+      "#35"
+    ],
+    "misbucketed": [
+      "#9→T25",
+      "#13→T26",
+      "#25→T6"
+    ],
+    "false_positives": [
+      "#12"
+    ],
+    "unadjudicated": []
+  }
+}

@@ -1,0 +1,22 @@
+{"list": "L03", "grades": [
+{"item": 1, "verdict": "T2", "note": "daily cap 5000"},
+{"item": 2, "verdict": "valid", "note": "limit never resets"},
+{"item": 3, "verdict": "T10", "note": "transfers not limited"},
+{"item": 4, "verdict": "T3", "note": "rounding to cents"},
+{"item": 5, "verdict": "T8", "note": "sub-half-cent accepted as 0"},
+{"item": 6, "verdict": "valid", "note": "float storage"},
+{"item": 7, "verdict": "T1", "note": "no overdraft"},
+{"item": 8, "verdict": "T9", "note": "funds before limit"},
+{"item": 9, "verdict": "T4", "note": "repeated id ignored"},
+{"item": 10, "verdict": "T4", "note": "global id namespace"},
+{"item": 11, "verdict": "T11", "note": "rejection consumes nothing"},
+{"item": 12, "verdict": "valid", "note": "validation before dedupe"},
+{"item": 13, "verdict": "valid", "note": "implicit account creation"},
+{"item": 14, "verdict": "valid", "note": "rejected op creates account"},
+{"item": 15, "verdict": "T5", "note": "unknown account as 0"},
+{"item": 16, "verdict": "valid", "note": "Infinity accepted"},
+{"item": 17, "verdict": "valid", "note": "ids not validated"},
+{"item": 18, "verdict": "valid", "note": "two-entry transfer shape"},
+{"item": 19, "verdict": "valid", "note": "minimal entry fields"},
+{"item": 20, "verdict": "valid", "note": "result object reason codes"}
+]}

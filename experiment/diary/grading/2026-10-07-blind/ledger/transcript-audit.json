@@ -1,0 +1,27 @@
+{
+  "sessions": [
+    "f58f99b4-0897-455b-979d-12619d8f59e7.jsonl"
+  ],
+  "calls": 21,
+  "by_tool": {
+    "Bash": 5,
+    "Read": 2,
+    "Write": 14
+  },
+  "mentions_of_key_folder": 0,
+  "mentions_of_repo_experiment": 0,
+  "flagged_outside_packet": [
+    {
+      "tool": "Read",
+      "input": "{\"file_path\":\"~/.claude/projects/<scratch-encoded>-gradin"
+    },
+    {
+      "tool": "Read",
+      "input": "{\"file_path\":\"~/.claude/projects/<scratch-encoded>-gradin"
+    },
+    {
+      "tool": "Write",
+      "input": "{\"file_path\":\"<scratch>/grading/ledger/grade_ledger.py\",\"content\":\"import json, sys, os\\n\\nout = sys.argv[1]\\n\\nN = {\\n    \\\"T1\\\": \\\"no overdraft\\\",\\n    \\\"T2\\\""
+    }
+  ]
+}

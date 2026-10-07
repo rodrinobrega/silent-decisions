@@ -1,0 +1,288 @@
+[
+  {
+    "item": 1,
+    "text": "Withdrawals are capped at a daily limit of 5000.00 per account, which the plan never mentioned.",
+    "lines": [
+      9,
+      77
+    ]
+  },
+  {
+    "item": 2,
+    "text": "The daily withdrawal total is never reset, so the 'daily' limit is really a lifetime limit for the ledger instance.",
+    "lines": [
+      32,
+      76,
+      78
+    ]
+  },
+  {
+    "item": 3,
+    "text": "The daily limit counts only the withdrawn amount, not the fee.",
+    "lines": [
+      77,
+      78
+    ]
+  },
+  {
+    "item": 4,
+    "text": "The withdrawal fee is capped at a maximum of 25.00.",
+    "lines": [
+      12,
+      25
+    ]
+  },
+  {
+    "item": 5,
+    "text": "The 1% withdrawal fee is rounded up to the next cent.",
+    "lines": [
+      24
+    ]
+  },
+  {
+    "item": 6,
+    "text": "The fee is added to the withdrawal and recorded as one combined history entry instead of its own separate entry.",
+    "lines": [
+      79
+    ]
+  },
+  {
+    "item": 7,
+    "text": "A withdrawal is rejected unless the balance covers both the amount and the fee, so no overdraft is allowed.",
+    "lines": [
+      75
+    ]
+  },
+  {
+    "item": 8,
+    "text": "Transfers and split payments are rejected when the sender's balance would go negative.",
+    "lines": [
+      90,
+      104
+    ]
+  },
+  {
+    "item": 9,
+    "text": "Insufficient funds is checked before the daily limit, which decides which rejection reason the customer sees.",
+    "lines": [
+      75,
+      77
+    ]
+  },
+  {
+    "item": 10,
+    "text": "A repeated transaction id returns success without doing anything and without checking that the account, amount or type match the original.",
+    "lines": [
+      51,
+      60,
+      71,
+      86,
+      100,
+      115
+    ]
+  },
+  {
+    "item": 11,
+    "text": "Transaction ids are unique across the whole ledger, not per account or per operation type.",
+    "lines": [
+      31
+    ]
+  },
+  {
+    "item": 12,
+    "text": "Input validation runs before the duplicate check, so a retry with a bad amount is rejected even if the txn id was already processed.",
+    "lines": [
+      50,
+      59,
+      70,
+      85,
+      98,
+      114
+    ]
+  },
+  {
+    "item": 13,
+    "text": "Rejected operations do not record their transaction id, so the same id can later succeed.",
+    "lines": [
+      75,
+      77,
+      90,
+      104
+    ]
+  },
+  {
+    "item": 14,
+    "text": "Accounts are created automatically on any operation, including withdrawals, transfers and splits that then fail.",
+    "lines": [
+      52,
+      63,
+      72,
+      87,
+      88,
+      101,
+      102,
+      116
+    ]
+  },
+  {
+    "item": 15,
+    "text": "Asking for the balance of an unknown account returns 0 rather than an error.",
+    "lines": [
+      42
+    ]
+  },
+  {
+    "item": 16,
+    "text": "A transfer from an account to itself is accepted instead of rejected.",
+    "lines": [
+      84,
+      85,
+      86
+    ]
+  },
+  {
+    "item": 17,
+    "text": "Foreign-currency deposits are rounded half away from zero instead of half to even.",
+    "lines": [
+      61
+    ]
+  },
+  {
+    "item": 18,
+    "text": "The foreign amount is multiplied by the rate (rate means account currency per foreign unit).",
+    "lines": [
+      61
+    ]
+  },
+  {
+    "item": 19,
+    "text": "A foreign deposit that converts to less than one cent is rejected as 'amount-too-small'.",
+    "lines": [
+      62
+    ]
+  },
+  {
+    "item": 20,
+    "text": "Foreign deposits are recorded as plain 'deposit' entries with no currency or rate kept.",
+    "lines": [
+      64
+    ]
+  },
+  {
+    "item": 21,
+    "text": "A regular deposit, withdrawal or transfer smaller than half a cent rounds to zero and is still accepted and recorded.",
+    "lines": [
+      50,
+      53,
+      73,
+      89
+    ]
+  },
+  {
+    "item": 22,
+    "text": "Infinity and arbitrarily large amounts pass the positive-number check.",
+    "lines": [
+      50,
+      59,
+      70,
+      85,
+      98
+    ]
+  },
+  {
+    "item": 23,
+    "text": "A small epsilon is added before rounding amounts to cents to absorb floating-point error.",
+    "lines": [
+      16
+    ]
+  },
+  {
+    "item": 24,
+    "text": "The interest rate is given as a percentage (5 means 5%), not a fraction.",
+    "lines": [
+      113,
+      117
+    ]
+  },
+  {
+    "item": 25,
+    "text": "Interest is simple (not compounded) over the given days.",
+    "lines": [
+      117
+    ]
+  },
+  {
+    "item": 26,
+    "text": "Interest is rounded down to the cent.",
+    "lines": [
+      118
+    ]
+  },
+  {
+    "item": 27,
+    "text": "When interest rounds to zero, or the balance is zero or negative, the call returns success with no entry and the transaction id is not recorded.",
+    "lines": [
+      119
+    ]
+  },
+  {
+    "item": 28,
+    "text": "A zero or negative interest rate or day count is rejected, and fractional days are allowed.",
+    "lines": [
+      114
+    ]
+  },
+  {
+    "item": 29,
+    "text": "In a split payment, leftover cents go one each to the first recipients in list order.",
+    "lines": [
+      105,
+      106,
+      108
+    ]
+  },
+  {
+    "item": 30,
+    "text": "A split with no recipients is rejected.",
+    "lines": [
+      99
+    ]
+  },
+  {
+    "item": 31,
+    "text": "Split recipients may repeat or include the payer.",
+    "lines": [
+      102,
+      108
+    ]
+  },
+  {
+    "item": 32,
+    "text": "Split payments charge no fee, and neither do transfers.",
+    "lines": [
+      89,
+      91,
+      103,
+      107
+    ]
+  },
+  {
+    "item": 33,
+    "text": "History amounts are stored as positive numbers for both credits and debits, so the direction comes only from the entry kind.",
+    "lines": [
+      131,
+      136
+    ]
+  },
+  {
+    "item": 34,
+    "text": "The rejection reason strings returned to callers are 'invalid-amount', 'amount-too-small', 'insufficient-funds', 'daily-limit' and 'no-recipients'.",
+    "lines": [
+      50,
+      62,
+      75,
+      77,
+      99
+    ]
+  }
+]

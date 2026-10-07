@@ -1,0 +1,267 @@
+[
+  {
+    "item": 1,
+    "text": "Withdrawals are capped by a daily limit of 5000.00 per account, rejected with 'daily-limit' when exceeded.",
+    "lines": [
+      9,
+      76,
+      77,
+      78
+    ]
+  },
+  {
+    "item": 2,
+    "text": "The daily withdrawal counter is never reset, so the 'daily' limit is in practice a lifetime limit for the ledger instance.",
+    "lines": [
+      32,
+      76,
+      78
+    ]
+  },
+  {
+    "item": 3,
+    "text": "The daily limit counts only the withdrawn amount, not the fee, and is checked after the funds check.",
+    "lines": [
+      75,
+      77
+    ]
+  },
+  {
+    "item": 4,
+    "text": "The withdrawal fee is capped at a maximum of 25.00.",
+    "lines": [
+      12,
+      25
+    ]
+  },
+  {
+    "item": 5,
+    "text": "The 1% fee is rounded up to the next cent (ceiling) with a small epsilon.",
+    "lines": [
+      24
+    ]
+  },
+  {
+    "item": 6,
+    "text": "A withdrawal is rejected as 'insufficient-funds' unless the balance covers the amount plus the fee; overdrafts are not allowed.",
+    "lines": [
+      75
+    ]
+  },
+  {
+    "item": 7,
+    "text": "Transfers and split payments are rejected as 'insufficient-funds' if the sender's balance would go negative.",
+    "lines": [
+      90,
+      104
+    ]
+  },
+  {
+    "item": 8,
+    "text": "Cent conversion adds a 1e-7 epsilon before rounding to compensate for floating-point error.",
+    "lines": [
+      16
+    ]
+  },
+  {
+    "item": 9,
+    "text": "A repeated transaction id returns success without doing anything and without checking that the retry has the same account, amount or operation type.",
+    "lines": [
+      51,
+      60,
+      71,
+      86,
+      100,
+      115
+    ]
+  },
+  {
+    "item": 10,
+    "text": "Transaction ids are global across all accounts and operation types, held in one set for the ledger's lifetime.",
+    "lines": [
+      31
+    ]
+  },
+  {
+    "item": 11,
+    "text": "Input validation runs before the duplicate check, so a retry of an accepted id with an invalid amount (or an empty recipient list) is rejected instead of treated as a duplicate.",
+    "lines": [
+      50,
+      59,
+      70,
+      85,
+      98,
+      99,
+      114
+    ]
+  },
+  {
+    "item": 12,
+    "text": "A transaction id is only marked as seen on success, so a failed operation can be retried with the same id and later succeed.",
+    "lines": [
+      54,
+      65,
+      80,
+      93,
+      109,
+      121
+    ]
+  },
+  {
+    "item": 13,
+    "text": "Accounts are created implicitly on first use by any operation, including withdrawals and as the source of transfers or splits.",
+    "lines": [
+      34,
+      52,
+      63,
+      72,
+      87,
+      88,
+      101,
+      102,
+      116
+    ]
+  },
+  {
+    "item": 14,
+    "text": "Querying an unknown account returns a balance of 0 and an empty history rather than an error.",
+    "lines": [
+      42,
+      46
+    ]
+  },
+  {
+    "item": 15,
+    "text": "Validation rejects NaN and non-positive values with 'invalid-amount' but accepts Infinity.",
+    "lines": [
+      50,
+      59,
+      70,
+      85,
+      98
+    ]
+  },
+  {
+    "item": 16,
+    "text": "Errors are returned as a result object with string reason codes rather than thrown.",
+    "lines": [
+      1,
+      50,
+      62,
+      75,
+      77,
+      90,
+      99,
+      104
+    ]
+  },
+  {
+    "item": 17,
+    "text": "The exchange rate must be positive or the foreign deposit is rejected with 'invalid-amount'.",
+    "lines": [
+      59
+    ]
+  },
+  {
+    "item": 18,
+    "text": "The foreign amount is multiplied by the rate without first rounding the foreign amount itself.",
+    "lines": [
+      61
+    ]
+  },
+  {
+    "item": 19,
+    "text": "A foreign deposit that converts to zero cents is rejected with 'amount-too-small'.",
+    "lines": [
+      62
+    ]
+  },
+  {
+    "item": 20,
+    "text": "A foreign deposit is recorded as a plain 'deposit' entry with no record of the original currency amount or rate.",
+    "lines": [
+      64
+    ]
+  },
+  {
+    "item": 21,
+    "text": "The withdrawal and its fee are debited together and recorded as a single 'withdrawal' entry whose amount includes the fee.",
+    "lines": [
+      79
+    ]
+  },
+  {
+    "item": 22,
+    "text": "Interest takes the rate as a percentage and computes simple (non-compounded) interest on the current balance.",
+    "lines": [
+      113,
+      117
+    ]
+  },
+  {
+    "item": 23,
+    "text": "Interest is rounded down (floor) to the cent, with an epsilon.",
+    "lines": [
+      118
+    ]
+  },
+  {
+    "item": 24,
+    "text": "Interest that rounds to zero returns success without a history entry and without marking the transaction id as seen.",
+    "lines": [
+      119
+    ]
+  },
+  {
+    "item": 25,
+    "text": "Interest requires a positive rate and positive days, and allows fractional days.",
+    "lines": [
+      114
+    ]
+  },
+  {
+    "item": 26,
+    "text": "A split with no recipients is rejected with 'no-recipients'.",
+    "lines": [
+      99
+    ]
+  },
+  {
+    "item": 27,
+    "text": "When a split amount does not divide evenly, the leftover cents go one each to the first recipients in list order.",
+    "lines": [
+      105,
+      106,
+      108
+    ]
+  },
+  {
+    "item": 28,
+    "text": "Split payments allow duplicate recipients and allow the sender to be a recipient.",
+    "lines": [
+      97,
+      102,
+      108
+    ]
+  },
+  {
+    "item": 29,
+    "text": "History entries store amounts as unsigned decimal currency units (not cents), with direction given only by the entry kind.",
+    "lines": [
+      6,
+      131,
+      136
+    ]
+  },
+  {
+    "item": 30,
+    "text": "Rejected operations are not recorded in history.",
+    "lines": [
+      50,
+      75,
+      77,
+      90,
+      104
+    ]
+  }
+]

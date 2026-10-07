@@ -1,0 +1,60 @@
+{
+  "case": "ledger",
+  "seed": 20261008,
+  "built_at": "2026-10-07T09:11:45.947Z",
+  "lists": {
+    "L01": {
+      "source": "003/e-c",
+      "items": 28
+    },
+    "L02": {
+      "source": "007/a-3",
+      "items": 24
+    },
+    "L03": {
+      "source": "007/a-2",
+      "items": 20
+    },
+    "L04": {
+      "source": "007/b-1",
+      "items": 23
+    },
+    "L05": {
+      "source": "003/e-a",
+      "items": 25
+    },
+    "L06": {
+      "source": "003/e-b",
+      "items": 25
+    },
+    "L07": {
+      "source": "003/f",
+      "items": 12
+    },
+    "L08": {
+      "source": "007/a-1",
+      "items": 21
+    },
+    "L09": {
+      "source": "007/b-2",
+      "items": 19
+    },
+    "L10": {
+      "source": "007/b-3",
+      "items": 20
+    },
+    "L11": {
+      "source": "007/c-1",
+      "items": 35
+    },
+    "L12": {
+      "source": "007/d-1",
+      "items": 39
+    },
+    "L13": {
+      "source": "007/b-3",
+      "items": 20,
+      "duplicate_of": "007/b-3"
+    }
+  }
+}

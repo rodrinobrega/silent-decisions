@@ -1,0 +1,370 @@
+{
+  "arm": "b",
+  "case": "ledger",
+  "truth_version": 2,
+  "run": "20261006T064356-1007b8",
+  "scored_at": "2026-10-07T09:17:08.264Z",
+  "cost": null,
+  "silent_decisions": {
+    "truth": 10,
+    "found": 9,
+    "flagged": 23,
+    "flagged_without_lines": 0,
+    "precision": 0.609,
+    "recall": 0.9,
+    "per_item": [
+      {
+        "id": "T1",
+        "label": "no overdrafts (balance may not go below 0)",
+        "hits": [
+          "Transfers are not counted against the daily withdrawal limit, so funds can leave an account without limit via transfer.",
+          "Overdrafts are forbidden: withdrawals and transfers that would take the balance below zero are rejected as insufficient-funds.",
+          "Failures are reported as result objects with fixed reason strings rather than thrown errors.",
+          "In a withdrawal the insufficient-funds check runs before the daily-limit check, deciding which reason is reported when both apply."
+        ]
+      },
+      {
+        "id": "T2",
+        "label": "daily withdrawal cap of 5000",
+        "hits": [
+          "Withdrawals are capped at a daily limit of 5000 per account, a value the plan never mentions.",
+          "The daily limit allows a withdrawal that brings the total to exactly 5000 (strict greater-than check).",
+          "The daily withdrawal counter is never reset, so the 'daily' limit is in fact a lifetime limit for the ledger instance.",
+          "The withdrawal limit is tracked per account rather than per customer or globally.",
+          "Failures are reported as result objects with fixed reason strings rather than thrown errors.",
+          "In a withdrawal the insufficient-funds check runs before the daily-limit check, deciding which reason is reported when both apply."
+        ]
+      },
+      {
+        "id": "T3",
+        "label": "amounts rounded half-up to cents",
+        "hits": [
+          "Amounts are rounded to two decimal places using Math.round (half-up toward positive infinity, subject to floating-point error)."
+        ]
+      },
+      {
+        "id": "T4",
+        "label": "repeated txn id with a different payload is acknowledged and ignored",
+        "hits": [
+          "A repeated transaction id returns success without checking that the account, amount or operation type match the original.",
+          "Amount validation runs before the duplicate check, so a retry with an invalid amount is rejected rather than acknowledged."
+        ]
+      },
+      {
+        "id": "T5",
+        "label": "unknown account reads as balance 0 instead of an error",
+        "hits": [
+          "Querying the balance of an unknown account returns 0 instead of an error."
+        ]
+      },
+      {
+        "id": "T7",
+        "label": "open() on an existing account is a silent no-op (not an error, not a reset)",
+        "hits": []
+      },
+      {
+        "id": "T8",
+        "label": "amount is validated before rounding: a positive amount below half a cent is accepted and recorded as 0",
+        "hits": [
+          "Amounts are rounded to two decimal places using Math.round (half-up toward positive infinity, subject to floating-point error).",
+          "The positive-amount check happens before rounding, so an amount such as 0.001 is accepted, rounds to 0, and records a zero-value entry."
+        ]
+      },
+      {
+        "id": "T9",
+        "label": "insufficient funds is checked before the daily limit",
+        "hits": [
+          "Withdrawals are capped at a daily limit of 5000 per account, a value the plan never mentions.",
+          "The daily limit allows a withdrawal that brings the total to exactly 5000 (strict greater-than check).",
+          "Overdrafts are forbidden: withdrawals and transfers that would take the balance below zero are rejected as insufficient-funds.",
+          "Failures are reported as result objects with fixed reason strings rather than thrown errors.",
+          "In a withdrawal the insufficient-funds check runs before the daily-limit check, deciding which reason is reported when both apply."
+        ]
+      },
+      {
+        "id": "T10",
+        "label": "transfers do not count toward the daily withdrawal limit",
+        "hits": [
+          "Transfers are not counted against the daily withdrawal limit, so funds can leave an account without limit via transfer.",
+          "Amounts are rounded to two decimal places using Math.round (half-up toward positive infinity, subject to floating-point error).",
+          "The positive-amount check happens before rounding, so an amount such as 0.001 is accepted, rounds to 0, and records a zero-value entry.",
+          "Overdrafts are forbidden: withdrawals and transfers that would take the balance below zero are rejected as insufficient-funds.",
+          "Failures are reported as result objects with fixed reason strings rather than thrown errors."
+        ]
+      },
+      {
+        "id": "T11",
+        "label": "a rejected operation consumes neither its txnId nor daily-limit allowance",
+        "hits": [
+          "Transaction ids are remembered only for accepted operations, so a rejected id can be reused and later succeed."
+        ]
+      }
+    ]
+  },
+  "negative_controls": {
+    "total": 2,
+    "false_positives": 2,
+    "per_item": [
+      {
+        "id": "N1",
+        "label": "non-positive amounts rejected (plan P-005)",
+        "hits": [
+          "The positive-amount check happens before rounding, so an amount such as 0.001 is accepted, rounds to 0, and records a zero-value entry.",
+          "The positive-amount check accepts Infinity as a valid amount.",
+          "Amount validation runs before the duplicate check, so a retry with an invalid amount is rejected rather than acknowledged.",
+          "Failures are reported as result objects with fixed reason strings rather than thrown errors."
+        ]
+      },
+      {
+        "id": "N2",
+        "label": "history entry per accepted operation (plan P-008)",
+        "hits": [
+          "Transaction ids are remembered only for accepted operations, so a rejected id can be reused and later succeed.",
+          "A transfer is recorded as two history entries sharing the same transaction id, transfer-out on the source then transfer-in on the destination.",
+          "History entries store only id, kind and rounded amount, with no timestamp, counterparty or resulting balance."
+        ]
+      }
+    ]
+  },
+  "dropped_requirements": {
+    "truth": 1,
+    "found": 1,
+    "flagged": 1,
+    "precision": 1,
+    "recall": 1
+  },
+  "normalised": {
+    "flagged": [
+      {
+        "label": "Withdrawals are capped at a daily limit of 5000 per account, a value the plan never mentions.",
+        "lines": [
+          10,
+          58
+        ]
+      },
+      {
+        "label": "The daily limit allows a withdrawal that brings the total to exactly 5000 (strict greater-than check).",
+        "lines": [
+          58
+        ]
+      },
+      {
+        "label": "The daily withdrawal counter is never reset, so the 'daily' limit is in fact a lifetime limit for the ledger instance.",
+        "lines": [
+          21,
+          57,
+          59
+        ]
+      },
+      {
+        "label": "The withdrawal limit is tracked per account rather than per customer or globally.",
+        "lines": [
+          21,
+          57
+        ]
+      },
+      {
+        "label": "Transfers are not counted against the daily withdrawal limit, so funds can leave an account without limit via transfer.",
+        "lines": [
+          66,
+          72,
+          73
+        ]
+      },
+      {
+        "label": "Amounts are rounded to two decimal places using Math.round (half-up toward positive infinity, subject to floating-point error).",
+        "lines": [
+          12,
+          13,
+          14,
+          43,
+          54,
+          71
+        ]
+      },
+      {
+        "label": "The positive-amount check happens before rounding, so an amount such as 0.001 is accepted, rounds to 0, and records a zero-value entry.",
+        "lines": [
+          39,
+          43,
+          51,
+          54,
+          67,
+          71
+        ]
+      },
+      {
+        "label": "The positive-amount check accepts Infinity as a valid amount.",
+        "lines": [
+          39,
+          51,
+          67
+        ]
+      },
+      {
+        "label": "Balances are kept as floating-point numbers and are not re-rounded after arithmetic, so cents drift can accumulate.",
+        "lines": [
+          18,
+          44,
+          60,
+          73,
+          74
+        ]
+      },
+      {
+        "label": "Overdrafts are forbidden: withdrawals and transfers that would take the balance below zero are rejected as insufficient-funds.",
+        "lines": [
+          55,
+          56,
+          72
+        ]
+      },
+      {
+        "label": "A repeated transaction id returns success without checking that the account, amount or operation type match the original.",
+        "lines": [
+          41,
+          52,
+          68
+        ]
+      },
+      {
+        "label": "Transaction ids are deduplicated in one global namespace shared across all accounts and operation kinds.",
+        "lines": [
+          20
+        ]
+      },
+      {
+        "label": "Transaction ids are remembered only for accepted operations, so a rejected id can be reused and later succeed.",
+        "lines": [
+          46,
+          62,
+          77
+        ]
+      },
+      {
+        "label": "Amount validation runs before the duplicate check, so a retry with an invalid amount is rejected rather than acknowledged.",
+        "lines": [
+          39,
+          41,
+          51,
+          52,
+          67,
+          68
+        ]
+      },
+      {
+        "label": "Seen transaction ids are kept forever with no expiry window.",
+        "lines": [
+          20
+        ]
+      },
+      {
+        "label": "Accounts are created implicitly on first use by any operation, including a withdrawal or transfer that is then rejected.",
+        "lines": [
+          42,
+          53,
+          69,
+          70
+        ]
+      },
+      {
+        "label": "Querying the balance of an unknown account returns 0 instead of an error.",
+        "lines": [
+          31
+        ]
+      },
+      {
+        "label": "Querying the history of an unknown account returns an empty list instead of an error.",
+        "lines": [
+          35
+        ]
+      },
+      {
+        "label": "Failures are reported as result objects with fixed reason strings rather than thrown errors.",
+        "lines": [
+          2,
+          39,
+          56,
+          58,
+          72
+        ]
+      },
+      {
+        "label": "In a withdrawal the insufficient-funds check runs before the daily-limit check, deciding which reason is reported when both apply.",
+        "lines": [
+          56,
+          58
+        ]
+      },
+      {
+        "label": "A transfer is recorded as two history entries sharing the same transaction id, transfer-out on the source then transfer-in on the destination.",
+        "lines": [
+          75,
+          76
+        ]
+      },
+      {
+        "label": "History entries store only id, kind and rounded amount, with no timestamp, counterparty or resulting balance.",
+        "lines": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          45,
+          61,
+          75,
+          76
+        ]
+      },
+      {
+        "label": "Account names and transaction ids are not validated, so empty or missing strings are accepted.",
+        "lines": [
+          38,
+          50,
+          66
+        ]
+      }
+    ],
+    "dropped": [
+      "P-007"
+    ]
+  },
+  "decision_level": {
+    "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+    "truth_version": 2,
+    "found": [
+      "T1",
+      "T10",
+      "T11",
+      "T2",
+      "T3",
+      "T4",
+      "T5",
+      "T8",
+      "T9"
+    ],
+    "missed": [
+      "T7"
+    ],
+    "recall": 0.9,
+    "recall_without_post_hoc": 1,
+    "precision": 1,
+    "valid_unlisted": [
+      "#3",
+      "#8",
+      "#9",
+      "#14",
+      "#15",
+      "#16",
+      "#18",
+      "#19",
+      "#21",
+      "#22",
+      "#23"
+    ],
+    "misbucketed": [],
+    "false_positives": [],
+    "unadjudicated": []
+  }
+}

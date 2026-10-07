@@ -1,0 +1,406 @@
+[
+  {
+    "item": 1,
+    "text": "A deposit credits the account and records a deposit entry. Given a new Ledger with no accounts; when 100 is deposited to account 'a' with txnId 't1'; then the result is ok, balance('a') is 100 and entries('a') is a single deposit entry of 100 with txnId 't1'.",
+    "lines": [
+      50,
+      20
+    ]
+  },
+  {
+    "item": 2,
+    "text": "A deposit smaller than half a cent is accepted but credits 0. Given a new Ledger; when 0.004 is deposited to 'a' with txnId 't1'; then the result is ok, balance('a') is 0 and a deposit entry of amount 0 is recorded.",
+    "lines": [
+      16,
+      50
+    ]
+  },
+  {
+    "item": 3,
+    "text": "Repeating a deposit with the same txnId is accepted but credits only once. Given 100 deposited to 'a' with txnId 't1'; when 100 is deposited to 'a' again with txnId 't1'; then the second call returns ok, balance('a') stays 100 and there is one entry.",
+    "lines": [
+      51
+    ]
+  },
+  {
+    "item": 4,
+    "text": "A txnId already used on one account blocks a deposit to another account. Given 100 deposited to 'a' with txnId 't1'; when 50 is deposited to 'b' with txnId 't1'; then the call returns ok but balance('b') is 0 and 'b' has no entries.",
+    "lines": [
+      51
+    ]
+  },
+  {
+    "item": 5,
+    "text": "An invalid amount is reported even when the txnId was already used. Given 100 deposited to 'a' with txnId 't1'; when 0 is deposited to 'a' with txnId 't1'; then the result is { ok: false, reason: 'invalid-amount' }.",
+    "lines": [
+      50,
+      51
+    ]
+  },
+  {
+    "item": 6,
+    "text": "An account that was never opened reads as balance 0 with no entries. Given a new Ledger; when balance('x') and entries('x') are read; then balance is 0 and entries is an empty list.",
+    "lines": [
+      42
+    ]
+  },
+  {
+    "item": 7,
+    "text": "Opening an existing account does not reset it. Given account 'a' holding 50 after a deposit with txnId 't1'; when open('a') is called; then balance('a') stays 50 and the deposit entry is still there.",
+    "lines": [
+      35
+    ]
+  },
+  {
+    "item": 8,
+    "text": "A foreign deposit is converted at the given rate and recorded as a deposit. Given a new Ledger; when depositForeign('a', 10, 1.5, 'f1') is called; then the result is ok, balance('a') is 15 and the entry is a deposit of 15.",
+    "lines": [
+      59
+    ]
+  },
+  {
+    "item": 9,
+    "text": "A converted foreign amount is rounded to the cent, half up. Given a new Ledger; when depositForeign('a', 1, 0.125, 'f1') is called (converted value 0.125); then balance('a') is 0.13.",
+    "lines": [
+      16
+    ]
+  },
+  {
+    "item": 10,
+    "text": "A foreign deposit with rate 0 is rejected as invalid-amount. Given a new Ledger; when depositForeign('a', 10, 0, 'f1') is called; then the result is { ok: false, reason: 'invalid-amount' } and balance('a') is 0.",
+    "lines": [
+      59
+    ]
+  },
+  {
+    "item": 11,
+    "text": "A foreign deposit with amount 0 or a negative rate is rejected as invalid-amount. Given a new Ledger; when depositForeign('a', 0, 1.5, 'f1') and depositForeign('a', 10, -2, 'f2') are called; then both return { ok: false, reason: 'invalid-amount' } and balance('a') is 0.",
+    "lines": [
+      59
+    ]
+  },
+  {
+    "item": 12,
+    "text": "A foreign deposit that converts to less than half a cent is rejected as amount-too-small. Given a new Ledger; when depositForeign('a', 0.004, 1, 'f1') is called; then the result is { ok: false, reason: 'amount-too-small' }, balance('a') is 0 and entries('a') is empty.",
+    "lines": [
+      62
+    ]
+  },
+  {
+    "item": 13,
+    "text": "A foreign deposit converting to exactly half a cent rounds up to 0.01 and is accepted. Given a new Ledger; when depositForeign('a', 0.005, 1, 'f1') is called; then the result is ok and balance('a') is 0.01.",
+    "lines": [
+      62,
+      16
+    ]
+  },
+  {
+    "item": 14,
+    "text": "A rejected too-small foreign deposit does not use up its txnId. Given depositForeign('a', 0.004, 1, 'f1') was rejected as amount-too-small; when depositForeign('a', 10, 1, 'f1') is called; then it is credited and balance('a') is 10.",
+    "lines": [
+      62,
+      60
+    ]
+  },
+  {
+    "item": 15,
+    "text": "A foreign deposit with an already used txnId returns ok before the too-small check. Given 100 deposited to 'a' with txnId 't1'; when depositForeign('a', 0.001, 1, 't1') is called; then the result is ok and balance('a') stays 100.",
+    "lines": [
+      60
+    ]
+  },
+  {
+    "item": 16,
+    "text": "Repeating a foreign deposit with the same txnId credits only once. Given depositForeign('a', 10, 1.5, 'f1') credited 15; when depositForeign('a', 10, 1.5, 'f1') is called again; then it returns ok and balance('a') stays 15.",
+    "lines": [
+      60
+    ]
+  },
+  {
+    "item": 17,
+    "text": "A withdrawal is charged a 1% fee, recorded together with the amount. Given account 'a' holding 200; when 100 is withdrawn from 'a' with txnId 'w1'; then the result is ok, balance('a') is 99 and the withdrawal entry amount is 101.",
+    "lines": [
+      10,
+      24,
+      20
+    ]
+  },
+  {
+    "item": 18,
+    "text": "The withdrawal fee is at least 0.50. Given account 'a' holding 100; when 10 is withdrawn (1% would be 0.10); then the fee charged is 0.50 and balance('a') is 89.5.",
+    "lines": [
+      11,
+      24
+    ]
+  },
+  {
+    "item": 19,
+    "text": "The 1% withdrawal fee is rounded up to the next cent. Given account 'a' holding 100; when 50.01 is withdrawn (1% is 0.5001); then the fee is 0.51 and balance('a') is 49.48.",
+    "lines": [
+      24,
+      11
+    ]
+  },
+  {
+    "item": 20,
+    "text": "A withdrawal fee above the minimum is exactly 1% with nothing added. Given account 'a' holding 100; when 60 is withdrawn; then the fee is 0.60 and balance('a') is 39.4.",
+    "lines": [
+      24,
+      11
+    ]
+  },
+  {
+    "item": 21,
+    "text": "The withdrawal fee is capped at 25. Given account 'a' holding 10000; when 3000 is withdrawn (1% would be 30); then the fee is 25 and balance('a') is 6975.",
+    "lines": [
+      12
+    ]
+  },
+  {
+    "item": 22,
+    "text": "A withdrawal must leave room for the fee. Given account 'a' holding 100; when 100 is withdrawn (fee 1, total 101); then the result is { ok: false, reason: 'insufficient-funds' } and the balance stays 100.",
+    "lines": [
+      75
+    ]
+  },
+  {
+    "item": 23,
+    "text": "A withdrawal that uses the balance exactly, fee included, is accepted. Given account 'a' holding 101; when 100 is withdrawn (fee 1, total 101); then the result is ok and balance('a') is 0.",
+    "lines": [
+      75
+    ]
+  },
+  {
+    "item": 24,
+    "text": "A withdrawal from an account that was never opened is rejected as insufficient-funds. Given a new Ledger; when 1 is withdrawn from 'x'; then the result is { ok: false, reason: 'insufficient-funds' } and balance('x') is 0.",
+    "lines": [
+      75
+    ]
+  },
+  {
+    "item": 25,
+    "text": "Repeating a withdrawal with the same txnId debits only once. Given account 'a' holding 200 and 100 withdrawn with txnId 'w1' (balance 99); when 100 is withdrawn again with txnId 'w1'; then the call returns ok and balance('a') stays 99.",
+    "lines": [
+      71
+    ]
+  },
+  {
+    "item": 26,
+    "text": "A withdrawal reusing a deposit's txnId is silently ignored. Given 100 deposited to 'a' with txnId 't1'; when 50 is withdrawn from 'a' with txnId 't1'; then the call returns ok and balance('a') stays 100.",
+    "lines": [
+      71
+    ]
+  },
+  {
+    "item": 27,
+    "text": "Withdrawing exactly the daily limit of 5000 is accepted; the fee does not count towards it. Given account 'a' holding 10000 with no withdrawals yet; when 5000 is withdrawn (fee 25); then the result is ok and balance('a') is 4975.",
+    "lines": [
+      9,
+      76,
+      77
+    ]
+  },
+  {
+    "item": 28,
+    "text": "A single withdrawal one cent over the daily limit is rejected. Given account 'a' holding 10000 with no withdrawals yet; when 5000.01 is withdrawn; then the result is { ok: false, reason: 'daily-limit' } and the balance stays 10000.",
+    "lines": [
+      77,
+      9
+    ]
+  },
+  {
+    "item": 29,
+    "text": "The daily limit counts all earlier withdrawals from the account. Given account 'a' holding 10000, from which 3000 was withdrawn (balance 6975); when 2000.01 is withdrawn; then the result is { ok: false, reason: 'daily-limit' } and the balance stays 6975.",
+    "lines": [
+      77,
+      76
+    ]
+  },
+  {
+    "item": 30,
+    "text": "Once 5000 has been withdrawn, even 1 more is refused; the allowance never resets. Given account 'a' holding 10000, from which 5000 was withdrawn (balance 4975); when 1 is withdrawn; then the result is { ok: false, reason: 'daily-limit' } and the balance stays 4975.",
+    "lines": [
+      77
+    ]
+  },
+  {
+    "item": 31,
+    "text": "A withdrawal refused for the daily limit does not use up any allowance. Given account 'a' holding 10000; a withdrawal of 5000.01 was refused for daily-limit; when 5000 is withdrawn; then the result is ok and balance('a') is 4975.",
+    "lines": [
+      77,
+      76
+    ]
+  },
+  {
+    "item": 32,
+    "text": "The daily limit is tracked per account. Given accounts 'a' and 'b' each holding 10000; 5000 already withdrawn from 'a'; when 5000 is withdrawn from 'b'; then the result is ok and balance('b') is 4975.",
+    "lines": [
+      76,
+      77
+    ]
+  },
+  {
+    "item": 33,
+    "text": "Insufficient funds is reported before the daily limit. Given account 'a' holding 100; when 6000 is withdrawn; then the result is { ok: false, reason: 'insufficient-funds' }.",
+    "lines": [
+      75,
+      77
+    ]
+  },
+  {
+    "item": 34,
+    "text": "A withdrawal refused for funds can be retried with the same txnId. Given account 'a' holding 100; withdrawing 200 with txnId 'w1' was refused; then 500 more is deposited (balance 600); when 200 is withdrawn again with txnId 'w1'; then the result is ok and balance('a') is 398.",
+    "lines": [
+      71,
+      75
+    ]
+  },
+  {
+    "item": 35,
+    "text": "A transfer of the whole balance moves it with no fee. Given account 'a' holding 100; when 100 is transferred from 'a' to 'b' with txnId 'x1'; then the result is ok, 'a' is 0, 'b' is 100, 'a' has a transfer-out entry of 100 and 'b' a transfer-in entry of 100.",
+    "lines": [
+      90
+    ]
+  },
+  {
+    "item": 36,
+    "text": "A transfer one cent over the balance is refused. Given account 'a' holding 100; when 100.01 is transferred from 'a' to 'b'; then the result is { ok: false, reason: 'insufficient-funds' }, 'a' stays 100 and 'b' stays 0.",
+    "lines": [
+      90
+    ]
+  },
+  {
+    "item": 37,
+    "text": "Repeating a transfer with the same txnId moves money only once. Given account 'a' holding 100 and 30 transferred to 'b' with txnId 'x1'; when the same transfer of 30 with txnId 'x1' is repeated; then the call returns ok, 'a' stays 70 and 'b' stays 30.",
+    "lines": [
+      86
+    ]
+  },
+  {
+    "item": 38,
+    "text": "A transfer of less than half a cent succeeds even from an empty account and records zero entries. Given a new Ledger with no money anywhere; when 0.004 is transferred from 'a' to 'b' with txnId 'x1'; then the result is ok, both balances are 0, 'a' has a transfer-out entry of 0 and 'b' a transfer-in entry of 0.",
+    "lines": [
+      16,
+      90
+    ]
+  },
+  {
+    "item": 39,
+    "text": "A transfer to the same account leaves the balance unchanged but records both legs. Given account 'a' holding 100; when 50 is transferred from 'a' to 'a' with txnId 'x1'; then the result is ok, balance('a') stays 100 and entries('a') ends with transfer-out 50 then transfer-in 50.",
+    "lines": [
+      90
+    ]
+  },
+  {
+    "item": 40,
+    "text": "A split that does not divide evenly gives the extra cent to the first recipient. Given account 'a' holding 100; when 100 is split from 'a' to ['b', 'c', 'd'] with txnId 's1'; then 'b' gets 33.34, 'c' and 'd' get 33.33 each, and 'a' is 0.",
+    "lines": [
+      105,
+      108
+    ]
+  },
+  {
+    "item": 41,
+    "text": "With two leftover cents, the first two recipients each get one. Given account 'a' holding 1; when 0.05 is split from 'a' to ['b', 'c', 'd']; then 'b' gets 0.02, 'c' gets 0.02, 'd' gets 0.01 and 'a' is 0.95.",
+    "lines": [
+      108,
+      105
+    ]
+  },
+  {
+    "item": 42,
+    "text": "A split with no recipients is rejected as no-recipients. Given account 'a' holding 100; when 10 is split from 'a' to []; then the result is { ok: false, reason: 'no-recipients' } and 'a' stays 100.",
+    "lines": [
+      99
+    ]
+  },
+  {
+    "item": 43,
+    "text": "A split of 0 with no recipients reports invalid-amount first. Given account 'a' holding 100; when 0 is split from 'a' to []; then the result is { ok: false, reason: 'invalid-amount' }.",
+    "lines": [
+      98,
+      99
+    ]
+  },
+  {
+    "item": 44,
+    "text": "A split with no recipients is rejected even if its txnId was already used. Given 100 deposited to 'a' with txnId 't1'; when 10 is split from 'a' to [] with txnId 't1'; then the result is { ok: false, reason: 'no-recipients' }.",
+    "lines": [
+      99,
+      100
+    ]
+  },
+  {
+    "item": 45,
+    "text": "Repeating a split with the same txnId pays out only once. Given account 'a' holding 100 and 10 split to ['b', 'c'] with txnId 's1'; when the same split is repeated with txnId 's1'; then it returns ok, 'a' stays 90 and 'b' stays 5.",
+    "lines": [
+      100
+    ]
+  },
+  {
+    "item": 46,
+    "text": "A split one cent over the balance is refused. Given account 'a' holding 10; when 10.01 is split from 'a' to ['b', 'c']; then the result is { ok: false, reason: 'insufficient-funds' }, 'a' stays 10 and 'b' and 'c' stay 0.",
+    "lines": [
+      104
+    ]
+  },
+  {
+    "item": 47,
+    "text": "A split of exactly the whole balance is accepted. Given account 'a' holding 10; when 10 is split from 'a' to ['b', 'c']; then the result is ok, 'a' is 0, 'b' and 'c' are 5 each.",
+    "lines": [
+      104
+    ]
+  },
+  {
+    "item": 48,
+    "text": "A recipient listed twice receives two shares. Given account 'a' holding 10; when 1 is split from 'a' to ['b', 'b'] with txnId 's1'; then 'b' receives 1 in total, recorded as two split-in entries of 0.5.",
+    "lines": [
+      105
+    ]
+  },
+  {
+    "item": 49,
+    "text": "Interest uses a 365-day year: 5% for 365 days on 1000 credits 50. Given account 'a' holding 1000; when applyInterest('a', 5, 365, 'i1') is called; then the result is ok, balance('a') is 1050 and an interest entry of 50 is recorded.",
+    "lines": [
+      13,
+      117,
+      114
+    ]
+  },
+  {
+    "item": 50,
+    "text": "Interest is rounded down to the cent. Given account 'a' holding 1000; when applyInterest('a', 5, 30, 'i1') is called (exact interest 4.10958…); then 4.10 is credited and balance('a') is 1004.1.",
+    "lines": [
+      118
+    ]
+  },
+  {
+    "item": 51,
+    "text": "Interest that works out to exactly one whole amount is credited in full. Given account 'a' holding 73; when applyInterest('a', 10, 50, 'i1') is called (exact interest 1.00); then 1.00 is credited and balance('a') is 74.",
+    "lines": [
+      118,
+      117
+    ]
+  },
+  {
+    "item": 52,
+    "text": "Interest below one cent returns ok, credits nothing and leaves the txnId unused. Given account 'a' holding 1; applyInterest('a', 1, 1, 'i1') returned ok (interest under one cent); when 5 is deposited to 'a' with the same txnId 'i1'; then the interest call added no entry, and the deposit is credited so balance('a') is 6.",
+    "lines": [
+      119
+    ]
+  },
+  {
+    "item": 53,
+    "text": "Interest with a rate of 0 or 0 days is rejected as invalid-amount. Given account 'a' holding 1000; when applyInterest('a', 0, 365, 'i1') and applyInterest('a', 5, 0, 'i2') are called; then both return { ok: false, reason: 'invalid-amount' } and the balance stays 1000.",
+    "lines": [
+      114
+    ]
+  },
+  {
+    "item": 54,
+    "text": "Repeating interest with the same txnId credits only once. Given account 'a' holding 1000 and applyInterest('a', 5, 365, 'i1') credited 50; when applyInterest('a', 5, 365, 'i1') is called again; then it returns ok and balance('a') stays 1050.",
+    "lines": [
+      115
+    ]
+  }
+]

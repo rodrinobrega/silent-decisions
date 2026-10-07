@@ -1,0 +1,55 @@
+{
+  "silent_decisions": [
+    {
+      "id": "T1",
+      "decision": "no overdrafts (balance may not go below 0)"
+    },
+    {
+      "id": "T2",
+      "decision": "daily withdrawal cap of 5000"
+    },
+    {
+      "id": "T3",
+      "decision": "amounts rounded half-up to cents"
+    },
+    {
+      "id": "T4",
+      "decision": "repeated txn id with a different payload is acknowledged and ignored"
+    },
+    {
+      "id": "T5",
+      "decision": "unknown account reads as balance 0 instead of an error"
+    },
+    {
+      "id": "T7",
+      "decision": "open() on an existing account is a silent no-op (not an error, not a reset)"
+    },
+    {
+      "id": "T8",
+      "decision": "amount is validated before rounding: a positive amount below half a cent is accepted and recorded as 0"
+    },
+    {
+      "id": "T9",
+      "decision": "insufficient funds is checked before the daily limit"
+    },
+    {
+      "id": "T10",
+      "decision": "transfers do not count toward the daily withdrawal limit"
+    },
+    {
+      "id": "T11",
+      "decision": "a rejected operation consumes neither its txnId nor daily-limit allowance"
+    }
+  ],
+  "not_implemented": [
+    {
+      "id": "T6",
+      "plan_statement": "P-007",
+      "what": "transfer to the same account is not rejected"
+    }
+  ],
+  "decided_by_the_plan": [
+    "non-positive amounts rejected (plan P-005)",
+    "history entry per accepted operation (plan P-008)"
+  ]
+}

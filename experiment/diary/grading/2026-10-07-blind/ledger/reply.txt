@@ -1,0 +1,1 @@
+Graded 13 lists, 311 items; I wrote the grade files by hand (running my helper script needed approval), so it was left unused at `grading/ledger/grade_ledger.py`.

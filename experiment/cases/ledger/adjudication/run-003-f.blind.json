@@ -1,0 +1,38 @@
+{
+  "case": "ledger",
+  "truth_version": 2,
+  "run": "003",
+  "arm": "f",
+  "rep": "f",
+  "adjudicator": "Blind grader: a fresh claude -p session (claude-opus-5-5) given only the plan, the code, the answer key (labels, no lines) and anonymous shuffled lists; it was not told which method produced which list. Transcript audited: no access to the key or the repo. 2026-10-07.",
+  "blind": true,
+  "list_code": "L07",
+  "items": {
+    "C-001": "invalid",
+    "C-002": "invalid",
+    "C-003": "invalid",
+    "C-004": "invalid",
+    "C-005": "invalid",
+    "C-007": "invalid",
+    "C-009": "invalid",
+    "C-010": "invalid",
+    "C-011": "invalid",
+    "C-012": "invalid",
+    "C-014": "invalid",
+    "C-015": "invalid"
+  },
+  "notes": [
+    "C-001: code snippet only, no decision stated",
+    "C-002: code snippet only, no decision stated",
+    "C-003: code snippet only, no decision stated",
+    "C-004: code snippet only, no decision stated",
+    "C-005: code snippet only, no decision stated",
+    "C-007: code snippet only, no decision stated",
+    "C-009: code snippet only, no decision stated",
+    "C-010: code snippet only, no decision stated",
+    "C-011: code snippet only, no decision stated",
+    "C-012: code snippet only, no decision stated",
+    "C-014: code snippet only, no decision stated",
+    "C-015: code snippet only, no decision stated"
+  ]
+}

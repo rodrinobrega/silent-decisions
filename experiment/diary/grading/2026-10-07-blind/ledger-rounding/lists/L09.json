@@ -1,0 +1,256 @@
+[
+  {
+    "item": 1,
+    "text": "A deposit that rounds to zero cents is still accepted and recorded as 0. Given an empty ledger; when 0.004 is deposited into account 'a' with transaction 'd1'; then the deposit is accepted, the balance stays 0 and the history holds a deposit entry of amount 0.",
+    "lines": [
+      16,
+      50
+    ]
+  },
+  {
+    "item": 2,
+    "text": "Zero or negative deposits are rejected and do not use up the transaction id. Given an empty ledger; when 0 is deposited with transaction 't1', then -5 with 't1', then 100 with 't1'; then the first two are rejected with reason 'invalid-amount' and the deposit of 100 is accepted, balance 100.",
+    "lines": [
+      50
+    ]
+  },
+  {
+    "item": 3,
+    "text": "Repeating a deposit transaction id is a silent no-op, even on another account. Given 100 has been deposited into 'a' with transaction 't1'; when 50 is deposited into 'a' with 't1', and 50 into 'b' with 't1'; then both calls report ok, 'a' stays at 100 with one entry, and 'b' stays at 0.",
+    "lines": [
+      51
+    ]
+  },
+  {
+    "item": 4,
+    "text": "An unknown account reads as balance 0 with empty history. Given an empty ledger; when the balance and entries of 'ghost' are read; then the balance is 0 and the entries are an empty list.",
+    "lines": [
+      42
+    ]
+  },
+  {
+    "item": 5,
+    "text": "Opening an existing account does not reset it. Given 100 has been deposited into 'a'; when open('a') is called; then the balance is still 100 and the history still has 1 entry.",
+    "lines": [
+      35
+    ]
+  },
+  {
+    "item": 6,
+    "text": "A foreign deposit is multiplied by the rate and recorded as a plain deposit. Given an empty ledger; when depositForeign of 100 at rate 1.5 into 'a' with transaction 'f1'; then the balance is 150 and the history holds a 'deposit' entry of 150.",
+    "lines": [
+      62
+    ]
+  },
+  {
+    "item": 7,
+    "text": "A converted half cent is rounded up, not to even. Given an empty ledger; when depositForeign of 1.25 at rate 0.5 into 'a' (exactly 0.625); then the balance is 0.63.",
+    "lines": [
+      16
+    ]
+  },
+  {
+    "item": 8,
+    "text": "A foreign deposit with a zero or negative rate or amount is 'invalid-amount'. Given an empty ledger; when depositForeign of 100 at rate 0, of 100 at rate -1.5, and of -100 at rate 1.5; then all three are rejected with reason 'invalid-amount' and the balance stays 0.",
+    "lines": [
+      59
+    ]
+  },
+  {
+    "item": 9,
+    "text": "A foreign deposit worth less than half a cent is 'amount-too-small'. Given an empty ledger; when depositForeign of 0.004 at rate 1 ('f1'), then of 0.005 at rate 1 ('f2'); then the first is rejected with reason 'amount-too-small'; the second is accepted and the balance becomes 0.01.",
+    "lines": [
+      62,
+      16
+    ]
+  },
+  {
+    "item": 10,
+    "text": "Repeating a foreign deposit transaction id is a no-op. Given an empty ledger; when depositForeign of 100 at rate 1.5 with 'f1' is called twice; then both report ok and the balance is 150.",
+    "lines": [
+      60
+    ]
+  },
+  {
+    "item": 11,
+    "text": "A small withdrawal is charged the minimum fee of 0.50. Given a balance of 100 in 'a'; when 10 is withdrawn; then the fee is 0.50 (1% would be 0.10) and the balance becomes 89.5.",
+    "lines": [
+      11,
+      10,
+      24
+    ]
+  },
+  {
+    "item": 12,
+    "text": "The fee is recorded inside the withdrawal entry, not as its own entry. Given a balance of 100 in 'a' from deposit 'd1'; when 10 is withdrawn with transaction 'w1'; then the history is the deposit of 100 followed by one 'withdrawal' entry of 10.5.",
+    "lines": [
+      11
+    ]
+  },
+  {
+    "item": 13,
+    "text": "A 1% fee with a fraction of a cent is rounded up. Given a balance of 100 in 'a'; when 60.01 is withdrawn (1% is 0.6001); then the fee is 0.61 and the balance becomes 39.38.",
+    "lines": [
+      24,
+      10
+    ]
+  },
+  {
+    "item": 14,
+    "text": "The withdrawal fee is capped at 25. Given a balance of 4000 in 'a'; when 3000 is withdrawn (1% would be 30); then the fee is 25 and the balance becomes 975.",
+    "lines": [
+      12
+    ]
+  },
+  {
+    "item": 15,
+    "text": "Withdrawing the whole balance is refused because the fee must also fit. Given a balance of 100 in 'a'; when 100 is withdrawn, then 99 is withdrawn; then the 100 withdrawal is rejected with 'insufficient-funds'; the 99 withdrawal (fee 0.99) is accepted, leaving 0.01.",
+    "lines": [
+      75
+    ]
+  },
+  {
+    "item": 16,
+    "text": "A withdrawal that leaves exactly 0 after the fee is allowed. Given a balance of 10.50 in 'a'; when 10.01 is withdrawn, then 10 is withdrawn; then 10.01 is rejected with 'insufficient-funds' (10.01 + 0.50 > 10.50); 10 is accepted and the balance becomes 0.",
+    "lines": [
+      75
+    ]
+  },
+  {
+    "item": 17,
+    "text": "Withdrawals are limited to 5000 in total per account; once used up, even 0.01 is refused. Given a balance of 10000 in 'a'; when 5000 is withdrawn, then 0.01 is withdrawn; then 5000 is accepted (balance 4975 after the 25 fee); 0.01 is rejected with 'daily-limit'.",
+    "lines": [
+      9,
+      76,
+      77
+    ]
+  },
+  {
+    "item": 18,
+    "text": "The fee does not count towards the withdrawal limit. Given a balance of 10000 in 'a'; when 4990 is withdrawn (4990 plus the 25 fee is 5015); then it is accepted and the balance becomes 4985.",
+    "lines": [
+      77,
+      9
+    ]
+  },
+  {
+    "item": 19,
+    "text": "A single withdrawal of 5000.01 exceeds the limit. Given a balance of 10000 in 'a'; when 5000.01 is withdrawn; then it is rejected with 'daily-limit' and the balance stays 10000.",
+    "lines": [
+      77,
+      9,
+      76
+    ]
+  },
+  {
+    "item": 20,
+    "text": "Insufficient funds is reported before the withdrawal limit. Given a balance of 100 in 'a'; when 6000 is withdrawn; then it is rejected with 'insufficient-funds'.",
+    "lines": [
+      75,
+      77
+    ]
+  },
+  {
+    "item": 21,
+    "text": "Zero or negative withdrawals are 'invalid-amount'. Given a balance of 100 in 'a'; when 0 is withdrawn, and -10 is withdrawn; then both are rejected with 'invalid-amount' and the balance stays 100.",
+    "lines": [
+      70
+    ]
+  },
+  {
+    "item": 22,
+    "text": "A withdrawal reusing any earlier transaction id is ignored. Given 100 has been deposited into 'a' with transaction 'x'; when 10 is withdrawn with 'x', then 10 is withdrawn twice with 'w1'; then the 'x' withdrawal reports ok but does nothing; only one 'w1' withdrawal applies, so the balance is 89.5.",
+    "lines": [
+      71
+    ]
+  },
+  {
+    "item": 23,
+    "text": "A transfer moves the amount with no fee and records out/in entries. Given a balance of 100 in 'a'; when 30 is transferred from 'a' to 'b' with transaction 't1'; then 'a' has 70 and 'b' has 30; 'a' records 'transfer-out' 30 and 'b' records 'transfer-in' 30.",
+    "lines": [
+      90
+    ]
+  },
+  {
+    "item": 24,
+    "text": "A transfer may empty the account exactly but not overdraw it. Given a balance of 100 in 'a'; when 100.01 is transferred to 'b', then 100 is transferred to 'b'; then 100.01 is rejected with 'insufficient-funds'; 100 is accepted, leaving 'a' at 0 and 'b' at 100.",
+    "lines": [
+      90
+    ]
+  },
+  {
+    "item": 25,
+    "text": "A transfer to the same account is accepted and leaves the balance unchanged. Given a balance of 100 in 'a' from deposit 'd1'; when 30 is transferred from 'a' to 'a' with transaction 't1'; then it is accepted, the balance stays 100, and the history gains 'transfer-out' 30 and 'transfer-in' 30.",
+    "lines": [
+      90
+    ]
+  },
+  {
+    "item": 26,
+    "text": "Zero or negative transfers are 'invalid-amount'. Given a balance of 100 in 'a'; when 0 and then -10 are transferred to 'b'; then both are rejected with 'invalid-amount'; 'a' stays 100 and 'b' 0.",
+    "lines": [
+      85
+    ]
+  },
+  {
+    "item": 27,
+    "text": "In a split, leftover cents go to the first recipients in list order. Given a balance of 100 in 'a'; when 10 is split from 'a' to ['b', 'c', 'd']; then 'b' gets 3.34, 'c' 3.33, 'd' 3.33, and 'a' has 90.",
+    "lines": [
+      105,
+      108,
+      104
+    ]
+  },
+  {
+    "item": 28,
+    "text": "A split too small for everyone gives the last recipient a 0 entry. Given a balance of 100 in 'a'; when 0.02 is split from 'a' to ['b', 'c', 'd'] with transaction 's1'; then 'b' gets 0.01, 'c' 0.01, 'd' 0, and 'd' still has a 'split-in' entry of amount 0.",
+    "lines": [
+      105,
+      108
+    ]
+  },
+  {
+    "item": 29,
+    "text": "A split with no recipients is refused; an invalid amount is reported first. Given a balance of 100 in 'a'; when 10 is split to [], 0 is split to [], and -1 is split to ['b']; then the first is rejected with 'no-recipients'; the second and third with 'invalid-amount'; 'a' stays 100.",
+    "lines": [
+      99,
+      98
+    ]
+  },
+  {
+    "item": 30,
+    "text": "A split may empty the payer exactly but not overdraw it. Given a balance of 10 in 'a'; when 10.01 is split to ['b', 'c'], then 10 is split to ['b', 'c']; then 10.01 is rejected with 'insufficient-funds' and nothing moves; 10 is accepted, 'a' becomes 0 and 'b' and 'c' get 5 each.",
+    "lines": [
+      104
+    ]
+  },
+  {
+    "item": 31,
+    "text": "Interest is rounded down to the cent. Given a balance of 1000 in 'a'; when interest at 5% annual for 30 days is applied with 'i1' (exactly 4.1095...); then 4.10 is credited as an 'interest' entry and the balance becomes 1004.1.",
+    "lines": [
+      118
+    ]
+  },
+  {
+    "item": 32,
+    "text": "Interest uses a 365-day year. Given a balance of 1000 in 'a'; when interest at 36% annual for 10 days is applied; then 9.86 is credited and the balance becomes 1009.86.",
+    "lines": [
+      13,
+      117
+    ]
+  },
+  {
+    "item": 33,
+    "text": "Interest that rounds to 0 reports ok, records nothing, and leaves the id reusable. Given a balance of 1 in 'a'; when interest at 1% for 1 day is applied with 'i1'; then 1000 is deposited and interest at 36% for 10 days is applied again with 'i1'; then the first call reports ok with no entry and balance 1; the second call credits 9.87 and the balance becomes 1010.87.",
+    "lines": [
+      119
+    ]
+  },
+  {
+    "item": 34,
+    "text": "Interest with a zero or negative rate or days is 'invalid-amount'. Given a balance of 1000 in 'a'; when interest is applied at 0% for 30 days, at 5% for 0 days, and at -5% for 30 days; then all three are rejected with 'invalid-amount' and the balance stays 1000.",
+    "lines": [
+      114
+    ]
+  }
+]

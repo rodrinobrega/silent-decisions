@@ -1,0 +1,60 @@
+{
+  "case": "ledger-rounding",
+  "seed": 20261007,
+  "built_at": "2026-10-07T09:11:45.936Z",
+  "lists": {
+    "L01": {
+      "source": "006/a-1",
+      "items": 34
+    },
+    "L02": {
+      "source": "006/b-1",
+      "items": 35
+    },
+    "L03": {
+      "source": "006/d-1",
+      "items": 54
+    },
+    "L04": {
+      "source": "005/e-b",
+      "items": 30
+    },
+    "L05": {
+      "source": "006/b-2",
+      "items": 35
+    },
+    "L06": {
+      "source": "006/a-3",
+      "items": 44
+    },
+    "L07": {
+      "source": "006/a-2",
+      "items": 30
+    },
+    "L08": {
+      "source": "005/e-c",
+      "items": 38
+    },
+    "L09": {
+      "source": "006/c-1",
+      "items": 34
+    },
+    "L10": {
+      "source": "005/e-a",
+      "items": 20
+    },
+    "L11": {
+      "source": "006/b-3",
+      "items": 30
+    },
+    "L12": {
+      "source": "006/b-3",
+      "items": 30,
+      "duplicate_of": "006/b-3"
+    },
+    "L13": {
+      "source": "005/f",
+      "items": 23
+    }
+  }
+}

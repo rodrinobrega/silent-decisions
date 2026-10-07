@@ -1,0 +1,119 @@
+{
+  "silent_decisions": [
+    {
+      "id": "T1",
+      "decision": "no overdrafts: withdrawal, transfer and split may not take the balance below 0"
+    },
+    {
+      "id": "T2",
+      "decision": "daily withdrawal cap of 5000 per account"
+    },
+    {
+      "id": "T4",
+      "decision": "a repeated txnId with a different payload (other account, other operation, other amount) is acknowledged and ignored"
+    },
+    {
+      "id": "T5",
+      "decision": "an unknown account reads as balance 0 / empty history, and operations on a never-opened account open it implicitly"
+    },
+    {
+      "id": "T7",
+      "decision": "open() on an existing account is a silent no-op"
+    },
+    {
+      "id": "T8",
+      "decision": "amount validated before rounding: a positive amount below half a cent is accepted and recorded as 0 (a 0-cent withdrawal still pays the minimum fee)"
+    },
+    {
+      "id": "T9",
+      "decision": "insufficient funds (including the fee) is checked before the daily limit"
+    },
+    {
+      "id": "T10",
+      "decision": "transfers and split payments do not count toward the daily withdrawal limit"
+    },
+    {
+      "id": "T11",
+      "decision": "a rejected operation consumes neither its txnId nor daily-limit allowance"
+    },
+    {
+      "id": "T12",
+      "decision": "entries() returns a copy; changing it does not change the history"
+    },
+    {
+      "id": "T13",
+      "decision": "amount validation happens before the duplicate-txnId check"
+    },
+    {
+      "id": "T14",
+      "decision": "the withdrawal fee is rounded UP to the cent (1% of 100.01 = 1.0001 -> 1.01)"
+    },
+    {
+      "id": "T15",
+      "decision": "the withdrawal fee is capped at 25.00"
+    },
+    {
+      "id": "T16",
+      "decision": "the funds check includes the fee: a withdrawal of the whole balance is rejected"
+    },
+    {
+      "id": "T17",
+      "decision": "the daily limit counts the withdrawn amount without the fee"
+    },
+    {
+      "id": "T18",
+      "decision": "interest is rounded DOWN (truncated) to the cent"
+    },
+    {
+      "id": "T19",
+      "decision": "interest that rounds to 0 cents is not credited: the call returns ok, no entry is recorded and the txnId is not consumed"
+    },
+    {
+      "id": "T20",
+      "decision": "a split's leftover cents go one each to the first recipients in list order"
+    },
+    {
+      "id": "T21",
+      "decision": "a foreign deposit that converts to less than half a cent is rejected with 'amount-too-small' (unlike a plain sub-half-cent deposit, which is accepted as 0)"
+    },
+    {
+      "id": "T22",
+      "decision": "a split with no recipients is rejected with 'no-recipients'"
+    },
+    {
+      "id": "T23",
+      "decision": "a non-positive interest rate or day count, or a non-positive exchange rate, is rejected as 'invalid-amount'"
+    },
+    {
+      "id": "T24",
+      "decision": "transfers and split payments are not charged a fee"
+    }
+  ],
+  "not_implemented": [
+    {
+      "id": "T6",
+      "plan_statement": "P-007",
+      "what": "transfer to the same account is not rejected"
+    },
+    {
+      "id": "T25",
+      "plan_statement": "P-013",
+      "what": "the fee is not recorded as its own history entry: the withdrawal entry carries amount + fee"
+    },
+    {
+      "id": "T26",
+      "plan_statement": "P-014",
+      "what": "foreign conversion rounds halves away from zero (up), not to even: 2.50 at 0.01 = 0.025 -> 0.03 instead of 0.02"
+    }
+  ],
+  "decided_by_the_plan": [
+    "non-positive amounts rejected (P-005)",
+    "history entry per accepted operation (P-008)",
+    "amounts rounded to the nearest cent, halves away from zero (P-011)",
+    "withdrawal fee of 1% with a minimum of 0.50 (P-012)",
+    "interest computed with a 365-day year on the current balance (P-015)",
+    "a split divides the amount evenly (P-016)",
+    "foreign amount converted at the given rate (P-014, conversion part)",
+    "balances kept in whole cents (P-010)"
+  ]
+}

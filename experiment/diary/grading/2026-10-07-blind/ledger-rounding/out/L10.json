@@ -1,0 +1,22 @@
+{"list": "L10", "grades": [
+{"item": 1, "verdict": "T5", "note": "unknown reads 0"},
+{"item": 2, "verdict": "T7", "note": "open no-op"},
+{"item": 3, "verdict": "T23", "note": "zero rate rejected"},
+{"item": 4, "verdict": "T21", "note": "amount-too-small"},
+{"item": 5, "verdict": "T4", "note": "dup different payload ok"},
+{"item": 6, "verdict": "T15", "note": "fee cap 25"},
+{"item": 7, "verdict": "T14", "note": "fee rounded up"},
+{"item": 8, "verdict": "T16", "note": "funds incl fee"},
+{"item": 9, "verdict": "T1", "note": "may reach 0, not below"},
+{"item": 10, "verdict": "T2", "note": "daily cap"},
+{"item": 11, "verdict": "T2", "note": "daily cap"},
+{"item": 12, "verdict": "T9", "note": "funds before limit"},
+{"item": 13, "verdict": "T11", "note": "refused uses no allowance"},
+{"item": 14, "verdict": "valid", "note": "amount checked before recipients"},
+{"item": 15, "verdict": "T13", "note": "validation before dup"},
+{"item": 16, "verdict": "T1", "note": "no overdraft split"},
+{"item": 17, "verdict": "T20", "note": "leftover to first"},
+{"item": 18, "verdict": "invalid", "note": "365-day year is plan"},
+{"item": 19, "verdict": "T18", "note": "interest floored"},
+{"item": 20, "verdict": "T19", "note": "zero interest no entry"}
+]}

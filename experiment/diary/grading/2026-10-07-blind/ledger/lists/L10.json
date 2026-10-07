@@ -1,0 +1,199 @@
+[
+  {
+    "item": 1,
+    "text": "Withdrawals are capped at a daily limit of 5000 per account, a value the plan never mentions.",
+    "lines": [
+      10,
+      57,
+      58,
+      59
+    ]
+  },
+  {
+    "item": 2,
+    "text": "The 'daily' withdrawal total is never reset, so the cap is effectively a lifetime limit per ledger instance.",
+    "lines": [
+      21,
+      57,
+      59
+    ]
+  },
+  {
+    "item": 3,
+    "text": "Only withdrawals count toward the daily limit; outgoing transfers are not limited.",
+    "lines": [
+      66,
+      72,
+      73
+    ]
+  },
+  {
+    "item": 4,
+    "text": "Amounts are rounded to two decimal places (cents) using Math.round, i.e. half-up toward positive infinity, with floating-point error.",
+    "lines": [
+      12,
+      13,
+      14,
+      43,
+      54,
+      71
+    ]
+  },
+  {
+    "item": 5,
+    "text": "The positive-amount check runs before rounding, so a tiny positive amount such as 0.004 is accepted and recorded as a zero-value operation.",
+    "lines": [
+      39,
+      43,
+      51,
+      54,
+      67,
+      71
+    ]
+  },
+  {
+    "item": 6,
+    "text": "Balances are stored as floating-point numbers and sums are not re-rounded, so cent errors can accumulate.",
+    "lines": [
+      18,
+      44,
+      60,
+      73,
+      74
+    ]
+  },
+  {
+    "item": 7,
+    "text": "Overdrafts are forbidden: a withdrawal or transfer that would make the balance negative is rejected with 'insufficient-funds'.",
+    "lines": [
+      55,
+      56,
+      72
+    ]
+  },
+  {
+    "item": 8,
+    "text": "When a withdrawal both exceeds the balance and the daily limit, insufficient funds is reported first.",
+    "lines": [
+      56,
+      58
+    ]
+  },
+  {
+    "item": 9,
+    "text": "A repeated transaction id is acknowledged as success and ignored, without checking that the account, amount or operation type match the original.",
+    "lines": [
+      40,
+      41,
+      52,
+      68
+    ]
+  },
+  {
+    "item": 10,
+    "text": "Transaction ids share one global namespace across all accounts and operation types.",
+    "lines": [
+      20
+    ]
+  },
+  {
+    "item": 11,
+    "text": "Only accepted operations mark their transaction id as seen, so retrying a rejected id can later succeed as a new operation.",
+    "lines": [
+      46,
+      56,
+      58,
+      62,
+      72,
+      77
+    ]
+  },
+  {
+    "item": 12,
+    "text": "Amount validation happens before the duplicate check, so a retry with an invalid amount is rejected rather than acknowledged.",
+    "lines": [
+      39,
+      41,
+      51,
+      52,
+      67,
+      68
+    ]
+  },
+  {
+    "item": 13,
+    "text": "Infinity passes the positive-amount check and is accepted, while NaN is rejected.",
+    "lines": [
+      39,
+      51,
+      67
+    ]
+  },
+  {
+    "item": 14,
+    "text": "Accounts are created implicitly with a zero balance on first use by any operation, including withdrawals and transfers that are then rejected.",
+    "lines": [
+      42,
+      53,
+      69,
+      70
+    ]
+  },
+  {
+    "item": 15,
+    "text": "An explicit public open() method exists and is a no-op for an existing account.",
+    "lines": [
+      23,
+      24,
+      25,
+      26,
+      27,
+      28
+    ]
+  },
+  {
+    "item": 16,
+    "text": "Querying the balance of an unknown account returns 0 instead of an error.",
+    "lines": [
+      31
+    ]
+  },
+  {
+    "item": 17,
+    "text": "Querying the history of an unknown account returns an empty list instead of an error.",
+    "lines": [
+      35
+    ]
+  },
+  {
+    "item": 18,
+    "text": "Account ids and transaction ids are not validated, so empty or arbitrary strings are accepted.",
+    "lines": [
+      38,
+      50,
+      66
+    ]
+  },
+  {
+    "item": 19,
+    "text": "Rejections are returned as {ok:false, reason} values with fixed reason strings rather than thrown errors.",
+    "lines": [
+      2,
+      39,
+      51,
+      56,
+      58,
+      67,
+      72
+    ]
+  },
+  {
+    "item": 20,
+    "text": "A transfer is recorded as two history entries, transfer-out and transfer-in, sharing the same transaction id and a positive amount.",
+    "lines": [
+      6,
+      75,
+      76
+    ]
+  }
+]
